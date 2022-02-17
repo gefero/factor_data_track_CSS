@@ -1,0 +1,145 @@
+---
+title: "Clase 3"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati y Laia Domenech Burin"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+theme: Boadilla
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
+```
+
+## Explorando datos categóricos
+
+En esta clase nos vamos a concentrar en la exploración de datos categóricos a través de medidas resumen, tablas y  visualizaciones. Para hacerlo vamos a trabajar y usar como ejemplo la base de datos del útlimo trimestre de 2020. 
+
+Como primer paso, vamos a importar tidyverse, la base de datos, y vamos a pasarle las etiquetas.   
+```{r, echo=TRUE, warning=TRUE}
+library(tidyverse)
+library(eph)
+
+df <-  read_delim("usu_individual_T320.txt", 
+                  delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+df <- df %>% organize_labels(type='individual')
+
+df <- df %>% mutate_at(vars(CH03, CH04, CH07:CAT_INAC), ~as.character(.))
+
+df <- df %>% select(CH03:CAT_INAC)
+```
+
+
+R base tiene funciones para generar la tabla de frecuencias de una variable:
+
+- `table`: para hacer las frecuencias simples
+- `prop.table`: para hacer las frecuencias proporcionales. 
+
+```{r}
+table(df$CH04)
+```
+
+```{r}
+prop.table(table(df$CH04))
+```
+
+A su vez, podemos hacer una tabla de contingencia cruzando dos variables. Veamos por ejemplo el sexo según estado de ocupación:
+```{r}
+table(df$CH04, df$ESTADO)
+```
+
+Ahora bien, en la clase 2 también vimos el uso de las funciones `group_by` y `summarize`. ¿Qué realizaban? 
+```{r}
+df %>%
+        group_by(CH04)%>%
+        summarize(n=n())
+```
+Nos devuelven las frecuencias de las categorías de una variable. Esto nos permite ver también la **moda** de una variable categórica. Si queremos ordenar las frecuencias en orden descendente, para que aparezca en la primera fila la **moda** hay que usar la función `arrange()`.
+```{r}
+df %>% group_by(CH07)%>%
+  summarize(n=n())%>%
+  arrange(desc(n))
+```
+Podemos hacer el cálculo por proporción con operaciones matematicas. 
+```{r}
+freq_prop <- df %>% group_by(CH07)%>%
+  summarize(n=n())%>%
+  ungroup()%>%
+  mutate(total = sum(n), #Creo una columna que contenga el total de observaciones
+         prop = n/total, #Obtengo la frecuencia de cada grupo sobre el total
+         perc = (prop)*100) #Calculo el porcentaje
+
+freq_prop
+```
+
+### Gráficos con `ggplot()`
+
+Una de las grandes ventajas de `tidyverse` es el paquete para realizar gráficos, `ggplot`. Incluye funciones para realizar uan gran variedad de visualizaciones. Su concepto central es la asignación (*mapping* en inglés) de atributos estéticos a los valores que toma una variable. Dicho de otra forma, como mostrar de modo perceptible a la vista la diferencia entre valores: con distintos colores, distintos tamaños, distintas posiciones en un gráfico, etc.
+
+Su funcionamiento básico consiste en:
+
+- una llamada a la función `ggplot()`, pasándole un dataset y una "asignación de atributos estéticos" (_aesthetic mapping_ en inglés) usando `aes()` 
+- al menos una capa "geom", que define el recurso gráfico que mostrará los datos; por ejemplo `geom_bar()` para dibujar barras.
+
+Por ejemplo, podemos ver en forma gráfica la frecuencia de hombres y mujeres:
+```{r}
+ggplot(df, aes(x=CH07))+
+  geom_bar()
+```
+
+`geom_bar()` calcula automáticamente la frecuencia de la variable que le pasamos. Sin embargo, también podemos usar `geom_col()`. A esta función se le pueden pasar atributos `x` e `y`, y se puede, por ejemplo, graficar el porcentaje que calculamos más arriba. 
+
+```{r}
+ggplot(freq_prop, aes(x=CH07, y = perc))+
+  geom_col()
+```
+
+Podemos usar el atributo estético `fill`, que es similar `color` pero se aplica como relleno, "pintando" por dentro áreas como las barras de un gráfico o las regiones en un mapa (`color`, en cambio, se usa para líneas y puntos). Por ejemplo, podemos usar el atributo estético `fill` con `geom_col()` para pintar el interior de cada barra. Vamos a probarlo. Generemos un gráfico de `CH04` en las $x$, la frecuencia en las $y$ `ESTADO` y coloreemos el interior de las barras según el `ESTADO`.
+
+```{r}
+ggplot(df, aes(x=CH04, fill=ESTADO))+
+  geom_bar()
+```
+
+El atributo `fill` tiene el atributo `position`, que nos permite hacer tres tipos de gráficos: `dodge`, `stack` y `fill`. En el primer ejemplo que vimos están ubicados con `stack.`
+
+```{r}
+ggplot(df, aes(x=CH04, fill=ESTADO))+
+  geom_bar(position = "fill")
+```
+```{r}
+ggplot(df, aes(x=CH04, fill=ESTADO))+
+  geom_bar(position = "dodge")
+```
+
+Este tipo de gráficos son una forma útil de comparar o visualizar la relación entre dos variables. Estos graficos que estuvimos viendo nos muestran que los varones tienen un mayor nivel de ocupación que las mujeres. Otra función útil que tiene `ggplot`, para realizar comparaciones por tres variables, es `facet_wrap()`. Por ejemplo, veamos si estos niveles de actividad por género son iguales entre los niveles educativos alcanzados: 
+
+```{r, fig.width=6, fig.height=4}
+df %>% 
+ filter(CH14 != 0 & CH14 != "Ns/Nr." & ESTADO != "Entrevista individual no realizada (no respuesta al cuestionario individual)")%>% #Elimino los casos donde no hay respuesta
+  ggplot( aes(x=CH04, fill=ESTADO))+
+  geom_bar(position = "fill")+
+  facet_wrap(CH12~.)
+```
+
+
+- **¿Qué podemos decir sobre la condición de actividad según este gráfico?**
+
+Finalmente, también tenemos la opción de pasar la capa `labs` para para agregar título, subtítulo y cambiar los nombres del eje x e y. 
+
+```{r}
+ggplot(df, aes(x=CH04, fill=ESTADO))+
+  geom_bar(position = "fill")+
+  labs(title = "Condición de actividad según sexo",
+       subtitle = "Segundo trimestre de 2020",
+       x = "Sexo",
+       y = "prop",
+       fill = "Condición de actividad")
+```
+
