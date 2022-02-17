@@ -1,0 +1,223 @@
+---
+title: "Intro a R - Clase 4. Aproximándonos al esquema de clases de Erik Olin Wright y a la ENES"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Laia Domenech Burin y Germán Rosati"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+# Introducción al esquema de clases
+
+# Encuesta Nacional sobre la Estructura Social (ENES-PISAC)
+
+
+```{r, echo=TRUE, warning=TRUE}
+library(tidyverse)
+```
+
+
+# Replicando (o aproximando el esquema)
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- read_rds('./data/ENES_Personas_M1.rds')
+```
+
+
+## Procesamiento de variables de ocupación
+### CNO
+Para el caso del CNO, se extrajeron las 5 componentes del código
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(CNO_carac=str_sub(v183cno_cod,1,2),
+               CNO_calif=factor(str_sub(v183cno_cod,5,5),
+                                levels=c('1','2','3','4',' '),
+                                labels=c('Profesional', 'Técnica',
+                                         'Operativa', 'No calificada', NA)),
+               CNO_jerarq=factor(str_sub(v183cno_cod,3,3),
+                                 levels=c('0','1','2','3', ' '),
+                                 labels=c('Dirección', 'Cuenta propia',
+                                          'Jefatura', 'Ejecución directa','SD')),
+               CNO_tecn=factor(str_sub(v183cno_cod,4,4),
+                               levels=c('1','2','3','0','9',' '),
+                               labels=c('Sin operación de maquinaria',
+                                        'Operación de maquinaria y equipos electromecánicos',
+                                        'Operación de sistemas y equipos informartizados',
+                                        'SD', 'SD', NA))
+        )
+```
+
+### CIUO
+Para el caso del CIUO se extrajo el primer dígito (gran grupo)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(CIUO_1d=factor(str_sub(v183ciuo_cod, 1, 1),
+                              levels=c('1','2','3','4','5','6','7','8','9','0'),
+                              labels=c('Directivos y gerentes','Profesionales científicos e intelectuales',
+                                       'Técnicos y profesionales de nivel medio',
+                                       'Personal de apoyo administrativo',
+                                       'Trabajadores de los servicios y vendedores de comercios y mercados',
+                                       'Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros',
+                                       'Oficiales, operarios y artesanos de artes mecánicas y de otros oficios',
+                                       'Operadores de instalaciones y máquinas y ensambladores',
+                                       'Ocupaciones elementales',
+                                       'Ocupaciones militares'))
+               )
+```
+
+
+## Replicación del esquema de clases de Wright (1974)
+Uno de los objetivos del ejercicio es replicar algunos análisis del texto de Erik Olin Wright sobre la relación entre la estructura social y la determinación de ingresos.
+
+Para ello, era necesario reproducir el esquema de clases del autor de la forma más aproximada posible.
+
+### Empleadores
+Para la construcción de la categoría **empleadores** (ver esquena de Wright 1974 pp. 242-247) se siguieron los siguientes criterios
+        
+* Se consideró a los patrones, cuenta propia y trabajadores familiares como autónomos (*self employed*)
+* Para "limpiar" la variable categoría ocupacional (`cat_ocup`) se decidió tomar como criterio definitorio si contrataban asalariados (`v196`) de forma permanente o eventual, independientemente de si estaban clasificados como patrones, TCP o familiares.
+* Como aproximación al criterio de supervisión y control, se tomó la pregunta `v186` de la ENES y se consideró que si se trataban de empleadores -y, por ende, patrones-, entonces, sí realizaban tareas de supervisión, independiente de que hubieran contestado que no.
+
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df$EOW_class <- NA
+
+employers <- (df$cat_ocup == 'Patrón' | df$cat_ocup == 'Cuenta propia' | df$cat_ocup=='Trabajador familiar sin remuneración') & 
+        (df$v196 == 'Sí, siempre' | df$v196 == 'Sólo a veces, por temporadas') & 
+        (df$v186 == 'Sí' | df$v186 == 'No')
+
+df$EOW_class[employers]<-'Empleadores'
+
+```
+
+### Managers
+Para la aproximación a la categoría de **managers**, se consideró a los asalariados que 
+
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre 5 o más trabajadores (`v187`), que constituye la mediana de esta variable. Este criterio se toma en reemplazo de la pregunta original de Wright acerca de si los entrevistados tenían voz sobre la definición de remuneraciones o promociones de las personas que supervisaban.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+managers <- (df$cat_ocup == 'Obrero o empleado') & 
+        (df$v186 == 'Sí') & (df$v187 >= 5)
+
+df$EOW_class[managers]<-'Managers'
+```
+
+### Supervisores
+Los **supervisores** fueron aproximados tomando a los asalariados que
+
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre menos de 5 trabajadores (`v187`)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+supervisors <- (df$cat_ocup == 'Obrero o empleado') &
+        (df$v186 == 'Sí' | df$v186 == 'NS/NR') & (df$v187 < 5 | is.na(df$v187))
+
+df$EOW_class[supervisors]<-'Supervisores'
+```
+
+
+### Trabajadores
+Los **trabajadores** están constituidos por todos los asalariados que no son ni **managers** ni **supervisores**: aquellos que no realizan tareas de supervisión ni control sobre otros -`v196`.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+workers <- (df$cat_ocup == 'Obrero o empleado') &
+        (df$v186 == 'No')
+
+df$EOW_class[workers]<-'Trabajadores'
+
+```
+
+### Pequeña burguesía
+La **pequeña burguesía** está constituida por todos aquellos autónomos que no contratan asalariados en ningún momento.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+pettyb<- (df$cat_ocup == 'Cuenta propia' | df$cat_ocup=='Trabajador familiar sin remuneración') &
+        (df$v196 == 'No contrata' | is.na(df$v196))
+
+df$EOW_class[pettyb]<-'Pequeña burguesía'
+
+```
+
+### Consistencias
+
+```{r}
+df %>% select(estado, EOW_class) %>%
+        count(estado,EOW_class)
+```
+
+
+## Generación de años de educación (ver INDEC 2018)
+
+```{r}
+df <- df %>%
+        mutate(years_educ=
+case_when(
+        nivel_ed=='Menores de 5 años'~ 0,
+        nivel_ed=='Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)'~ 0,
+        nivel_ed=='Educación especial'~ 0,
+        nivel_ed=='Primaria/EGB completo'~ 7,
+        nivel_ed=='Secundario/Polimodal completo'~ 12,
+        nivel_ed=='Terciario completo'~ 15,
+        nivel_ed=='Universitario completo'~ 17,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Ninguno'~ 0,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Primero'~ 1,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Segundo'~ 2,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Tercero'~ 3,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Cuarto'~ 4,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Quinto'~ 5,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Sexto'~ 6,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Séptimo'~ 7,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Octavo'~ 8,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Noveno'~ 9,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Ninguno'~ 7+0,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Primero'~ 7+1,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Segundo'~ 7+2,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Tercero'~ 7+3,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Cuarto'~ 7+4,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Quinto'~ 12,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Sexto'~ 12,
+        nivel_ed=='Terciario incompleto' & v123=='Ninguno'~ 12+0,
+        nivel_ed=='Terciario incompleto' & v123=='Primero'~ 12+1,
+        nivel_ed=='Terciario incompleto' & v123=='Segundo'~ 12+2,
+        nivel_ed=='Terciario incompleto' & v123=='Tercero'~ 12+3,
+        nivel_ed=='Terciario incompleto' & v123=='Cuarto'~ 15,
+        nivel_ed=='Terciario incompleto' & v123=='Quinto'~ 15,
+        nivel_ed=='Terciario incompleto' & v123=='Sexto'~ 15,
+        nivel_ed=='Universitario incompleto' & v123=='Ninguno'~ 12+0,
+        nivel_ed=='Universitario incompleto' & v123=='Primero'~ 12+1,
+        nivel_ed=='Universitario incompleto' & v123=='Segundo'~ 12+2,
+        nivel_ed=='Universitario incompleto' & v123=='Tercero'~ 12+3,
+        nivel_ed=='Universitario incompleto' & v123=='Cuarto'~ 12+4,
+        nivel_ed=='Universitario incompleto' & v123=='Quinto'~ 12+5,
+        nivel_ed=='Universitario incompleto' & v123=='Sexto'~ 17,
+        nivel_ed=='Universitario incompleto' & v123=='Séptimo'~ 17,
+        TRUE~ 0)
+        )
+```
+
+
+Finalmente, se reordenan las variables, se eliminan productos intermedios y se guarda el archivo en formato .sav (SPSS)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(EOW_class=as.factor(EOW_class),
+               GSF=grupos) %>%
+        select(1:32, years_educ, 33:118, EOW_class, GSF, everything())
+
+rm(employers, managers, pettyb, supervisors, workers)
+
+#library(haven)
+#write_sav(df, "../data/ENES_personas.sav")
+```
+
