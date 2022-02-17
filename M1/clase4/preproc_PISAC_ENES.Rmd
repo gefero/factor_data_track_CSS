@@ -1,0 +1,415 @@
+
+
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- read_rds('./data/ENES_Personas_M1.rds')
+```
+
+
+## Procesamiento de variables de ocupación
+### CNO
+Para el caso del CNO, se extrajeron las 5 componentes del código
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(CNO_carac=str_sub(v183cno_cod,1,2),
+               CNO_calif=factor(str_sub(v183cno_cod,5,5),
+                                levels=c('1','2','3','4',' '),
+                                labels=c('Profesional', 'Técnica',
+                                         'Operativa', 'No calificada', NA)),
+               CNO_jerarq=factor(str_sub(v183cno_cod,3,3),
+                                 levels=c('0','1','2','3', ' '),
+                                 labels=c('Dirección', 'Cuenta propia',
+                                          'Jefatura', 'Ejecución directa','SD')),
+               CNO_tecn=factor(str_sub(v183cno_cod,4,4),
+                               levels=c('1','2','3','0','9',' '),
+                               labels=c('Sin operación de maquinaria',
+                                        'Operación de maquinaria y equipos electromecánicos',
+                                        'Operación de sistemas y equipos informartizados',
+                                        'SD', 'SD', NA))
+        )
+```
+
+### CIUO
+Para el caso del CIUO se extrajo el primer dígito (gran grupo)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(CIUO_1d=factor(str_sub(v183ciuo_cod, 1, 1),
+                              levels=c('1','2','3','4','5','6','7','8','9','0'),
+                              labels=c('Directivos y gerentes','Profesionales científicos e intelectuales',
+                                       'Técnicos y profesionales de nivel medio',
+                                       'Personal de apoyo administrativo',
+                                       'Trabajadores de los servicios y vendedores de comercios y mercados',
+                                       'Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros',
+                                       'Oficiales, operarios y artesanos de artes mecánicas y de otros oficios',
+                                       'Operadores de instalaciones y máquinas y ensambladores',
+                                       'Ocupaciones elementales',
+                                       'Ocupaciones militares'))
+               )
+```
+
+
+## Replicación del esquema de clases de Wright (1974)
+Uno de los objetivos del ejercicio es replicar algunos análisis del texto de Erik Olin Wright sobre la relación entre la estructura social y la determinación de ingresos.
+
+Para ello, era necesario reproducir el esquema de clases del autor de la forma más aproximada posible.
+
+### Empleadores
+Para la construcción de la categoría **empleadores** (ver esquena de Wright 1974 pp. 242-247) se siguieron los siguientes criterios
+        
+* Se consideró a los patrones, cuenta propia y trabajadores familiares como autónomos (*self employed*)
+* Para "limpiar" la variable categoría ocupacional (`cat_ocup`) se decidió tomar como criterio definitorio si contrataban asalariados (`v196`) de forma permanente o eventual, independientemente de si estaban clasificados como patrones, TCP o familiares.
+* Como aproximación al criterio de supervisión y control, se tomó la pregunta `v186` de la ENES y se consideró que si se trataban de empleadores -y, por ende, patrones-, entonces, sí realizaban tareas de supervisión, independiente de que hubieran contestado que no.
+
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df$EOW_class <- NA
+
+employers <- (df$cat_ocup == 'Patrón' | df$cat_ocup == 'Cuenta propia' | df$cat_ocup=='Trabajador familiar sin remuneración') & 
+        (df$v196 == 'Sí, siempre' | df$v196 == 'Sólo a veces, por temporadas') & 
+        (df$v186 == 'Sí' | df$v186 == 'No')
+
+df$EOW_class[employers]<-'Empleadores'
+
+```
+
+### Managers
+Para la aproximación a la categoría de **managers**, se consideró a los asalariados que 
+
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre 5 o más trabajadores (`v187`), que constituye la mediana de esta variable. Este criterio se toma en reemplazo de la pregunta original de Wright acerca de si los entrevistados tenían voz sobre la definición de remuneraciones o promociones de las personas que supervisaban.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+managers <- (df$cat_ocup == 'Obrero o empleado') & 
+        (df$v186 == 'Sí') & (df$v187 >= 5)
+
+df$EOW_class[managers]<-'Managers'
+```
+
+### Supervisores
+Los **supervisores** fueron aproximados tomando a los asalariados que
+
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre menos de 5 trabajadores (`v187`)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+supervisors <- (df$cat_ocup == 'Obrero o empleado') &
+        (df$v186 == 'Sí' | df$v186 == 'NS/NR') & (df$v187 < 5 | is.na(df$v187))
+
+df$EOW_class[supervisors]<-'Supervisores'
+```
+
+
+### Trabajadores
+Los **trabajadores** están constituidos por todos los asalariados que no son ni **managers** ni **supervisores**: aquellos que no realizan tareas de supervisión ni control sobre otros -`v196`.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+workers <- (df$cat_ocup == 'Obrero o empleado') &
+        (df$v186 == 'No')
+
+df$EOW_class[workers]<-'Trabajadores'
+
+```
+
+### Pequeña burguesía
+La **pequeña burguesía** está constituida por todos aquellos autónomos que no contratan asalariados en ningún momento.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+pettyb<- (df$cat_ocup == 'Cuenta propia' | df$cat_ocup=='Trabajador familiar sin remuneración') &
+        (df$v196 == 'No contrata' | is.na(df$v196))
+
+df$EOW_class[pettyb]<-'Pequeña burguesía'
+
+```
+
+### Consistencias
+
+```{r}
+df %>% select(estado, EOW_class) %>%
+        count(estado,EOW_class)
+```
+
+
+## Generación de años de educación (ver INDEC 2018)
+
+```{r}
+df <- df %>%
+        mutate(years_educ=
+case_when(
+        nivel_ed=='Menores de 5 años'~ 0,
+        nivel_ed=='Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)'~ 0,
+        nivel_ed=='Educación especial'~ 0,
+        nivel_ed=='Primaria/EGB completo'~ 7,
+        nivel_ed=='Secundario/Polimodal completo'~ 12,
+        nivel_ed=='Terciario completo'~ 15,
+        nivel_ed=='Universitario completo'~ 17,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Ninguno'~ 0,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Primero'~ 1,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Segundo'~ 2,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Tercero'~ 3,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Cuarto'~ 4,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Quinto'~ 5,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Sexto'~ 6,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Séptimo'~ 7,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Octavo'~ 8,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Noveno'~ 9,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Ninguno'~ 7+0,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Primero'~ 7+1,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Segundo'~ 7+2,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Tercero'~ 7+3,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Cuarto'~ 7+4,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Quinto'~ 12,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Sexto'~ 12,
+        nivel_ed=='Terciario incompleto' & v123=='Ninguno'~ 12+0,
+        nivel_ed=='Terciario incompleto' & v123=='Primero'~ 12+1,
+        nivel_ed=='Terciario incompleto' & v123=='Segundo'~ 12+2,
+        nivel_ed=='Terciario incompleto' & v123=='Tercero'~ 12+3,
+        nivel_ed=='Terciario incompleto' & v123=='Cuarto'~ 15,
+        nivel_ed=='Terciario incompleto' & v123=='Quinto'~ 15,
+        nivel_ed=='Terciario incompleto' & v123=='Sexto'~ 15,
+        nivel_ed=='Universitario incompleto' & v123=='Ninguno'~ 12+0,
+        nivel_ed=='Universitario incompleto' & v123=='Primero'~ 12+1,
+        nivel_ed=='Universitario incompleto' & v123=='Segundo'~ 12+2,
+        nivel_ed=='Universitario incompleto' & v123=='Tercero'~ 12+3,
+        nivel_ed=='Universitario incompleto' & v123=='Cuarto'~ 12+4,
+        nivel_ed=='Universitario incompleto' & v123=='Quinto'~ 12+5,
+        nivel_ed=='Universitario incompleto' & v123=='Sexto'~ 17,
+        nivel_ed=='Universitario incompleto' & v123=='Séptimo'~ 17,
+        TRUE~ 0)
+        )
+```
+
+
+Finalmente, se reordenan las variables, se eliminan productos intermedios y se guarda el archivo en formato .sav (SPSS)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(EOW_class=as.factor(EOW_class),
+               GSF=grupos) %>%
+        select(1:32, years_educ, 33:118, EOW_class, GSF, everything())
+
+rm(employers, managers, pettyb, supervisors, workers)
+
+library(haven)
+write_sav(df, "../data/ENES_personas.sav")
+```
+
+## Agregado de variables de movilidad social
+Dado que una de las dimensiones para construir el modelo de ingresos de Wright son las de "background familiar", las mismas fueron agregadas desde la tabla de hogares de la ENES:
+
+* se carga el dataset
+* se eliminan las variables que no se utilizarán
+* se normalizan los nombres
+* dado que las variables de movilidad de PSH y cónyuge se encuentran como columnas en la tabla de hogar, lo cual significa que cada fila es un hogar (formato wide); se las pasa a formato long, es decir, que ahora cada fila es un PSH o un cónyuge
+* se reordenan las columnas
+
+
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df_hogar<-read.spss('F:/PEN/Datasets_ML/PISAC_ENES/data/ENES_Hogares_version_final.sav',
+                    to.data.frame = TRUE)
+
+df_hogar<-df_hogar %>% 
+                select(c(1:3, 175:226))
+
+
+df_hogar_cod<-read.spss('F:/PEN/Datasets_ML/PISAC_ENES/data/ENES_Hogares_version_final.sav',
+                    to.data.frame = TRUE,
+                    use.value.labels = FALSE)
+
+
+df_hogar$v247a_CIUO08_cod<-df_hogar_cod$v247a_CIUO08
+df_hogar$v247a_CNO01_cod<-df_hogar_cod$v247a_CNO01
+df_hogar$v252a_CAES_cod<-df_hogar_cod$v252a_CAES
+df_hogar$v247b_CIUO08_cod<-df_hogar_cod$v247b_CIUO08
+df_hogar$v247b_CNO01_cod<-df_hogar_cod$v247b_CNO01
+df_hogar$v252b_CAES_cod<-df_hogar_cod$v252b_CAES
+
+
+df_hogar <- df_hogar %>%
+                select(1:14,v247a_CIUO08_cod, v247a_CNO01, v247a_CNO01_cod, 15:17,
+                        v252a_CAES, v252a_CAES_cod, 18:40, v247b_CIUO08_cod, v247b_CNO01, 
+                       v247b_CNO01_cod, 42:44, v252b_CAES_cod, everything())
+```
+
+
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df_hogar<-df_hogar %>% 
+        select(c(1:2,4:32)) %>%
+        rename_all(funs(str_replace(., "a", ""))) %>%
+        rename(miembro=vnropsh) %>%
+        mutate(miembro=as.numeric(miembro)) %>%
+        bind_rows(
+                df_hogar %>%
+                        select(c(1:2, 33:61)) %>%
+                        rename_all(funs(str_replace(., "b", ""))) %>%
+                        rename(miembro=vnrocon) %>%
+                        mutate(miembro=as.numeric(miembro))
+                ) %>%
+        select(1:2, miembro, everything())
+
+```
+
+### Procesamiento variables de ocupación
+#### CNO
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+
+df_hogar <- df_hogar %>%
+        mutate(MS_CNO_carac=str_sub(v247_CNO01_cod,1,2),
+               MS_CNO_calif=factor(str_sub(v247_CNO01_cod,5,5),
+                                levels=c('1','2','3','4',' '),
+                                labels=c('Profesional', 'Técnica',
+                                         'Operativa', 'No calificada', NA)),
+               MS_CNO_jerarq=factor(str_sub(v247_CNO01_cod,3,3),
+                                 levels=c('0','1','2','3', ' '),
+                                 labels=c('Dirección', 'Cuenta propia',
+                                          'Jefatura', 'Ejecución directa','SD')),
+               MS_CNO_tecn=factor(str_sub(v247_CNO01_cod,4,4),
+                               levels=c('1','2','3','0','9',' '),
+                               labels=c('Sin operación de maquinaria',
+                                        'Operación de maquinaria y equipos electromecánicos',
+                                        'Operación de sistemas y equipos informartizados',
+                                        'SD', 'SD', NA))
+        )
+
+```
+
+#### CIUO
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df_hogar <- df_hogar %>%
+                mutate(MS_CIUO_1d=factor(str_sub(v247_CIUO08_cod, 1, 1),
+                              levels=c('1','2','3','4','5','6','7','8','9','0'),
+                              labels=c('Directivos y gerentes','Profesionales científicos e intelectuales',
+                                       'Técnicos y profesionales de nivel medio',
+                                       'Personal de apoyo administrativo',
+                                       'Trabajadores de los servicios y vendedores de comercios y mercados',
+                                       'Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros',
+                                       'Oficiales, operarios y artesanos de artes mecánicas y de otros oficios',
+                                       'Operadores de instalaciones y máquinas y ensambladores',
+                                       'Ocupaciones elementales',
+                                       'Ocupaciones militares'))
+               )
+
+
+
+df_hogar <- df_hogar %>%
+        rename_at(vars(starts_with('v')), funs(str_replace(., "v", "MS_v"))) %>%
+        rename(MS_egp11=egp11, MS_CSO=CSO)
+```
+
+
+### Niveles educativos de PSHs y cónyuges para movilidad social (modulo hogar)
+
+Dado que en cada variable de historia educativa había una proporción grande de No Respuestas, se imputó cada una con la moda de la distribución:
+`MS_v244=='Primario'`, `MS_v245=='Sí'`, `MS_v246==Tercero`
+```{r}
+
+#df_hogar <- df_hogar %>%
+#        mutate(MS_nivel_ed=
+#case_when(
+#        MS_v244=='Ninguno'~'Ninguno',
+#        MS_v244=='Educación especial'~'Educación especial',
+#        MS_v244=='NS/NR'~'Primario',
+#        
+#        MS_v244=='Primario' & MS_v245=='Sí'~'Primaria/EGB completo',
+#        MS_v244=='EGB' & MS_v245=='Sí'~'Primaria/EGB completo',
+#        MS_v244=='Secundario' & MS_v245=='Sí'~'Secundario/Polimodal completo',
+#        MS_v244=='Polimodal' & MS_v245=='Sí'~'Secundario/Polimodal completo',
+#        MS_v244=='Terciario' & MS_v245=='Sí'~'Terciario completo',
+#        MS_v244=='Universitario' & MS_v245=='Sí'~'Universitario completo',
+#        MS_v244=='Posgrado' & MS_v245=='Sí'~'Universitario completo',
+#        
+#        MS_v244=='Primario' & MS_v245=='NS/NR'~'Primaria/EGB completo',
+#        MS_v244=='EGB' & MS_v245=='NS/NR'~'Primaria/EGB completo',
+#        MS_v244=='Secundario' & MS_v245=='NS/NR'~'Secundario/Polimodal completo',
+#        MS_v244=='Polimodal' & MS_v245=='NS/NR'~'Secundario/Polimodal completo',
+#        MS_v244=='Terciario' & MS_v245=='NS/NR'~'Terciario completo',
+#        MS_v244=='Universitario' & MS_v245=='NS/NR'~'Universitario completo',
+#        MS_v244=='Posgrado' & MS_v245=='NS/NR'~'Universitario completo',
+#        
+#        MS_v244=='Primario' & MS_v245=='No'~'Primaria/EGB incompleto',
+#        MS_v244=='EGB' & MS_v245=='No'~'Primaria/EGB incompleto',
+#        MS_v244=='Secundario' & MS_v245=='No'~'Secundario/Polimodal incompleto',
+#        MS_v244=='Polimodal' & MS_v245=='No'~'Secundario/Polimodal incompleto',
+#        MS_v244=='Terciario' & MS_v245=='No'~'Terciario incompleto',
+#        MS_v244=='Universitario' & MS_v245=='No'~'Universitario incompleto',
+#        MS_v244=='Posgrado' & MS_v245=='No'~'Universitario incompleto'
+#        )
+#)
+```
+
+
+
+```{r}
+#df_hogar<-df_hogar %>%
+#        mutate(MS_v246=case_when(MS_v246=='NS/NR'~ 'Tercero'))
+```
+
+
+
+```{r}
+#df_hogar <- df_hogar %>%
+#        mutate(MS_years_educ=
+#case_when(
+#        MS_nivel_ed=='Ninguno'~ 0,
+#        MS_nivel_ed=='Educación especial'~ 0,
+#        MS_nivel_ed=='Primaria/EGB completo'~ 7,
+#        MS_nivel_ed=='Secundario/Polimodal completo'~ 12,
+#        MS_nivel_ed=='Terciario completo'~ 15,
+#        MS_nivel_ed=='Universitario completo'~ 17,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Ninguno'~ 0,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Primero'~ 1,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Segundo'~ 2,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Tercero'~ 3,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Cuarto'~ 4,
+#       MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Quinto'~ 5,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Sexto'~ 6,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Séptimo'~ 7,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Octavo'~ 8,
+#        MS_nivel_ed=='Primaria/EGB incompleto' & MS_v123=='Noveno'~ 9,
+#        MS_nivel_ed=='Secundario/Polimodal incompleto' & MS_v123=='Ninguno'~ 7+0,
+#        MS_nivel_ed=='Secundario/Polimodal incompleto' & MS_v123=='Primero'~ 7+1,
+#        MS_nivel_ed=='Secundario/Polimodal incompleto' & MS_v123=='Segundo'~ 7+2,
+#        MS_nivel_ed=='Secundario/Polimodal incompleto' & MS_v123=='Tercero'~ 7+3,
+#        MS_nivel_ed=='Secundario/Polimodal incompleto' & MS_v123=='Cuarto'~ 7+4,
+#        MS_nivel_ed=='Secundario/Polimodal incompleto' & MS_v123=='Quinto'~ 12,
+#        MS_nivel_ed=='Secundario/Polimodal incompleto' & MS_v123=='Sexto'~ 12,
+#        MS_nivel_ed=='Terciario incompleto' & MS_v123=='Ninguno'~ 12+0,
+#        MS_nivel_ed=='Terciario incompleto' & MS_v123=='Primero'~ 12+1,
+#        MS_nivel_ed=='Terciario incompleto' & MS_v123=='Segundo'~ 12+2,
+#        MS_nivel_ed=='Terciario incompleto' & MS_v123=='Tercero'~ 12+3,
+#        MS_nivel_ed=='Terciario incompleto' & MS_v123=='Cuarto'~ 15,
+#        MS_nivel_ed=='Terciario incompleto' & MS_v123=='Quinto'~ 15,
+#        nivel_ed=='Terciario incompleto' & v123=='Sexto'~ 15,
+#        nivel_ed=='Universitario incompleto' & v123=='Ninguno'~ 12+0,
+#        nivel_ed=='Universitario incompleto' & v123=='Primero'~ 12+1,
+#        nivel_ed=='Universitario incompleto' & v123=='Segundo'~ 12+2,
+#        nivel_ed=='Universitario incompleto' & v123=='Tercero'~ 12+3,
+#        nivel_ed=='Universitario incompleto' & v123=='Cuarto'~ 12+4,
+#        nivel_ed=='Universitario incompleto' & v123=='Quinto'~ 12+5,
+#        nivel_ed=='Universitario incompleto' & v123=='Sexto'~ 17,
+#        nivel_ed=='Universitario incompleto' & v123=='Séptimo'~ 17,
+#        TRUE~ 0)
+#        )
+```
+
+
+
+
+De la base de personas, se filtran los PSH y cónyuges, se hace un join con la tabla de hogares reformulada y se guarda el dataset resultante:
+
+```{r include=FALSE}
+df_psh_c <- df %>%
+                filter((v111 == 'PSH' | v111 == 'Cónyuge'))
+
+df_psh_c<-df_psh_c %>%
+        left_join(df_hogar, by=c('nocues', 'nhog', 'miembro'))
+
+write_sav(df_psh_c, "../data/ENES_psh_cony.sav")
+
+```
+

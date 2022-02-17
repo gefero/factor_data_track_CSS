@@ -1,0 +1,86 @@
+---
+title: "Generación dataset ENES para trabajar en clase"
+output: html_notebook
+---
+
+El presente documento busca identificar las principales operaciones realizadas para el procesamiento de la base de la [ENES-PISAC](http://pisac.mincyt.gob.ar/datos.php) para la replicación de algunos ejercicios de análisis de determinantes de ingresos. 
+
+
+# Base personas
+En primer lugar, se realizan los siguientes procedimientos para la base de personas:
+
+        1. Homogeneización de tipos de campos
+        2. Recodificación de variable edad
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+library(foreign)
+library(tidyverse)
+
+df<-read.spss('../data/ENES_Personas_version_final_GSF_PIMSA.sav',
+               to.data.frame = TRUE,
+              
+               use.value.labels = TRUE)
+
+
+# Homogeneización
+df <- df %>%
+        mutate(v108=as.character(v108),
+               v112=as.numeric(as.character(v112)),
+               v113=as.numeric(as.character(v113)),
+               v115=as.numeric(as.character(v115)),
+               t_hogar=as.numeric(as.character(t_hogar)),
+               v151=as.numeric(as.character(v151)),
+               v163=as.numeric(as.character(v163)),
+               v167=as.numeric(as.character(v167)),
+               v187=as.numeric(as.character(v187)),
+               v205=as.numeric(as.character(v205)),
+               v206a=as.numeric(as.character(v206a)),
+               v206b=as.numeric(as.character(v206b)),
+               v211=as.numeric(as.character(v211)),
+               v213b=as.numeric(as.character(v213b)),               
+               v213bi=as.numeric(as.character(v213bi)),
+               v214b=as.numeric(as.character(v214b)),
+               v214bi=as.numeric(as.character(v214bi)),
+               v215b=as.numeric(as.character(v215b)),
+               v215bi=as.numeric(as.character(v215bi)),
+               v216b=as.numeric(as.character(v216b)),
+               v216bi=as.numeric(as.character(v216bi)),
+               v217b=as.numeric(as.character(v217b)),
+               v217bi=as.numeric(as.character(v217bi)),
+               ITI=as.numeric(as.character(ITI))
+        ) %>% 
+        mutate(v108 = as.numeric(case_when(
+                v108 == 'Menor de un año' ~ '0',
+                v108 == '99 años y más' ~ '99',
+                TRUE ~ v108))
+        )
+```
+
+Luego, se agregan a las etiquetas, los códigos de rama (CAES) y ocupación (CNO y CIUO)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df1<-read.spss('../data/ENES_Personas_version_final.sav',
+               to.data.frame = TRUE,
+               use.value.labels = FALSE)
+
+
+df$v182caes_cod<-df1$v182caes
+df$v183cno_cod<-df1$v183cno
+df$v183ciuo_cod<-df1$v183ciuo
+```
+
+Finalmente, se ordenan las variables y se eliminan productos intermedios
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        select(1:97,v182caes, v182caes_cod, v183ciuo_cod, v183cno, v183cno_cod, everything())
+
+rm(df1)
+```
+
+Exportamos datos a rds
+
+```{r}
+write_rds(df, '../data/ENES_Personas_M1.rds')
+```
+
