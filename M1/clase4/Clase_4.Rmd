@@ -16,25 +16,214 @@ knitr::opts_chunk$set(echo=FALSE)
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ```
 
-## Explorando datos categóricos
+# Introducción al esquema de clases
 
-En esta clase nos vamos a concentrar en la exploración de datos categóricos a través de medidas resumen, tablas y  visualizaciones. Para hacerlo vamos a trabajar y usar como ejemplo la base de datos del útlimo trimestre de 2020. 
+# Encuesta Nacional sobre la Estructura Social (ENES-PISAC)
 
-Como primer paso, vamos a importar tidyverse, la base de datos, y vamos a pasarle las etiquetas.   
+
 ```{r, echo=TRUE, warning=TRUE}
 library(tidyverse)
-library(eph)
-
-df <-  read_delim("usu_individual_T320.txt", 
-                  delim = ";", escape_double = FALSE, trim_ws = TRUE)
-
-df <- df %>% organize_labels(type='individual')
-
-df <- df %>% mutate_at(vars(CH03, CH04, CH07:CAT_INAC), ~as.character(.))
-
-df <- df %>% select(CH03:CAT_INAC)
 ```
 
+
+# Replicando (o aproximando el esquema)
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- read_rds('./data/ENES_Personas_M1.rds')
+```
+
+
+## Procesamiento de variables de ocupación
+### CNO
+Para el caso del CNO, se extrajeron las 5 componentes del código
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(CNO_carac=str_sub(v183cno_cod,1,2),
+               CNO_calif=factor(str_sub(v183cno_cod,5,5),
+                                levels=c('1','2','3','4',' '),
+                                labels=c('Profesional', 'Técnica',
+                                         'Operativa', 'No calificada', NA)),
+               CNO_jerarq=factor(str_sub(v183cno_cod,3,3),
+                                 levels=c('0','1','2','3', ' '),
+                                 labels=c('Dirección', 'Cuenta propia',
+                                          'Jefatura', 'Ejecución directa','SD')),
+               CNO_tecn=factor(str_sub(v183cno_cod,4,4),
+                               levels=c('1','2','3','0','9',' '),
+                               labels=c('Sin operación de maquinaria',
+                                        'Operación de maquinaria y equipos electromecánicos',
+                                        'Operación de sistemas y equipos informartizados',
+                                        'SD', 'SD', NA))
+        )
+```
+
+### CIUO
+Para el caso del CIUO se extrajo el primer dígito (gran grupo)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(CIUO_1d=factor(str_sub(v183ciuo_cod, 1, 1),
+                              levels=c('1','2','3','4','5','6','7','8','9','0'),
+                              labels=c('Directivos y gerentes','Profesionales científicos e intelectuales',
+                                       'Técnicos y profesionales de nivel medio',
+                                       'Personal de apoyo administrativo',
+                                       'Trabajadores de los servicios y vendedores de comercios y mercados',
+                                       'Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros',
+                                       'Oficiales, operarios y artesanos de artes mecánicas y de otros oficios',
+                                       'Operadores de instalaciones y máquinas y ensambladores',
+                                       'Ocupaciones elementales',
+                                       'Ocupaciones militares'))
+               )
+```
+
+
+## Replicación del esquema de clases de Wright (1974)
+Uno de los objetivos del ejercicio es replicar algunos análisis del texto de Erik Olin Wright sobre la relación entre la estructura social y la determinación de ingresos.
+
+Para ello, era necesario reproducir el esquema de clases del autor de la forma más aproximada posible.
+
+### Empleadores
+Para la construcción de la categoría **empleadores** (ver esquena de Wright 1974 pp. 242-247) se siguieron los siguientes criterios
+        
+* Se consideró a los patrones, cuenta propia y trabajadores familiares como autónomos (*self employed*)
+* Para "limpiar" la variable categoría ocupacional (`cat_ocup`) se decidió tomar como criterio definitorio si contrataban asalariados (`v196`) de forma permanente o eventual, independientemente de si estaban clasificados como patrones, TCP o familiares.
+* Como aproximación al criterio de supervisión y control, se tomó la pregunta `v186` de la ENES y se consideró que si se trataban de empleadores -y, por ende, patrones-, entonces, sí realizaban tareas de supervisión, independiente de que hubieran contestado que no.
+
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df$EOW_class <- NA
+
+employers <- (df$cat_ocup == 'Patrón' | df$cat_ocup == 'Cuenta propia' | df$cat_ocup=='Trabajador familiar sin remuneración') & 
+        (df$v196 == 'Sí, siempre' | df$v196 == 'Sólo a veces, por temporadas') & 
+        (df$v186 == 'Sí' | df$v186 == 'No')
+
+df$EOW_class[employers]<-'Empleadores'
+
+```
+
+### Managers
+Para la aproximación a la categoría de **managers**, se consideró a los asalariados que 
+
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre 5 o más trabajadores (`v187`), que constituye la mediana de esta variable. Este criterio se toma en reemplazo de la pregunta original de Wright acerca de si los entrevistados tenían voz sobre la definición de remuneraciones o promociones de las personas que supervisaban.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+managers <- (df$cat_ocup == 'Obrero o empleado') & 
+        (df$v186 == 'Sí') & (df$v187 >= 5)
+
+df$EOW_class[managers]<-'Managers'
+```
+
+### Supervisores
+Los **supervisores** fueron aproximados tomando a los asalariados que
+
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre menos de 5 trabajadores (`v187`)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+supervisors <- (df$cat_ocup == 'Obrero o empleado') &
+        (df$v186 == 'Sí' | df$v186 == 'NS/NR') & (df$v187 < 5 | is.na(df$v187))
+
+df$EOW_class[supervisors]<-'Supervisores'
+```
+
+
+### Trabajadores
+Los **trabajadores** están constituidos por todos los asalariados que no son ni **managers** ni **supervisores**: aquellos que no realizan tareas de supervisión ni control sobre otros -`v196`.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+workers <- (df$cat_ocup == 'Obrero o empleado') &
+        (df$v186 == 'No')
+
+df$EOW_class[workers]<-'Trabajadores'
+
+```
+
+### Pequeña burguesía
+La **pequeña burguesía** está constituida por todos aquellos autónomos que no contratan asalariados en ningún momento.
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+pettyb<- (df$cat_ocup == 'Cuenta propia' | df$cat_ocup=='Trabajador familiar sin remuneración') &
+        (df$v196 == 'No contrata' | is.na(df$v196))
+
+df$EOW_class[pettyb]<-'Pequeña burguesía'
+
+```
+
+### Consistencias
+
+```{r}
+df %>% select(estado, EOW_class) %>%
+        count(estado,EOW_class)
+```
+
+
+## Generación de años de educación (ver INDEC 2018)
+
+```{r}
+df <- df %>%
+        mutate(years_educ=
+case_when(
+        nivel_ed=='Menores de 5 años'~ 0,
+        nivel_ed=='Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)'~ 0,
+        nivel_ed=='Educación especial'~ 0,
+        nivel_ed=='Primaria/EGB completo'~ 7,
+        nivel_ed=='Secundario/Polimodal completo'~ 12,
+        nivel_ed=='Terciario completo'~ 15,
+        nivel_ed=='Universitario completo'~ 17,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Ninguno'~ 0,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Primero'~ 1,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Segundo'~ 2,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Tercero'~ 3,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Cuarto'~ 4,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Quinto'~ 5,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Sexto'~ 6,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Séptimo'~ 7,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Octavo'~ 8,
+        nivel_ed=='Primaria/EGB incompleto' & v123=='Noveno'~ 9,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Ninguno'~ 7+0,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Primero'~ 7+1,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Segundo'~ 7+2,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Tercero'~ 7+3,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Cuarto'~ 7+4,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Quinto'~ 12,
+        nivel_ed=='Secundario/Polimodal incompleto' & v123=='Sexto'~ 12,
+        nivel_ed=='Terciario incompleto' & v123=='Ninguno'~ 12+0,
+        nivel_ed=='Terciario incompleto' & v123=='Primero'~ 12+1,
+        nivel_ed=='Terciario incompleto' & v123=='Segundo'~ 12+2,
+        nivel_ed=='Terciario incompleto' & v123=='Tercero'~ 12+3,
+        nivel_ed=='Terciario incompleto' & v123=='Cuarto'~ 15,
+        nivel_ed=='Terciario incompleto' & v123=='Quinto'~ 15,
+        nivel_ed=='Terciario incompleto' & v123=='Sexto'~ 15,
+        nivel_ed=='Universitario incompleto' & v123=='Ninguno'~ 12+0,
+        nivel_ed=='Universitario incompleto' & v123=='Primero'~ 12+1,
+        nivel_ed=='Universitario incompleto' & v123=='Segundo'~ 12+2,
+        nivel_ed=='Universitario incompleto' & v123=='Tercero'~ 12+3,
+        nivel_ed=='Universitario incompleto' & v123=='Cuarto'~ 12+4,
+        nivel_ed=='Universitario incompleto' & v123=='Quinto'~ 12+5,
+        nivel_ed=='Universitario incompleto' & v123=='Sexto'~ 17,
+        nivel_ed=='Universitario incompleto' & v123=='Séptimo'~ 17,
+        TRUE~ 0)
+        )
+```
+
+
+Finalmente, se reordenan las variables, se eliminan productos intermedios y se guarda el archivo en formato .sav (SPSS)
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+        mutate(EOW_class=as.factor(EOW_class),
+               GSF=grupos) %>%
+        select(1:32, years_educ, 33:118, EOW_class, GSF, everything())
+
+rm(employers, managers, pettyb, supervisors, workers)
+
+#library(haven)
+#write_sav(df, "../data/ENES_personas.sav")
+```
+
+# Explorando los datos
+
+A continuación, vamos a concentrarnos en la exploración de datos categóricos a través de medidas resumen, tablas y  visualizaciones. 
 
 R base tiene funciones para generar la tabla de frecuencias de una variable:
 
@@ -42,33 +231,38 @@ R base tiene funciones para generar la tabla de frecuencias de una variable:
 - `prop.table`: para hacer las frecuencias proporcionales. 
 
 ```{r}
-table(df$CH04)
+table(df$EOW_class)
 ```
 
 ```{r}
-prop.table(table(df$CH04))
+prop.table(table(df$EOW_class))
 ```
 
-A su vez, podemos hacer una tabla de contingencia cruzando dos variables. Veamos por ejemplo el sexo según estado de ocupación:
+A su vez, podemos hacer una tabla de contingencia cruzando dos variables. Veamos por ejemplo el sexo según clase social:
 ```{r}
-table(df$CH04, df$ESTADO)
+table(df$v109, df$EOW_class)
 ```
 
 Ahora bien, en la clase 2 también vimos el uso de las funciones `group_by` y `summarize`. ¿Qué realizaban? 
+
 ```{r}
 df %>%
-        group_by(CH04)%>%
+        group_by(EOW_class)%>%
+        filter(!is.na(EOW_class))%>% #Borro inactivos
         summarize(n=n())
 ```
 Nos devuelven las frecuencias de las categorías de una variable. Esto nos permite ver también la **moda** de una variable categórica. Si queremos ordenar las frecuencias en orden descendente, para que aparezca en la primera fila la **moda** hay que usar la función `arrange()`.
 ```{r}
-df %>% group_by(CH07)%>%
+df %>% group_by(EOW_class)%>%
+  filter(!is.na(EOW_class))%>%
   summarize(n=n())%>%
-  arrange(desc(n))
+  arrange(desc(n))%>%
+  mutate(frec_acum = cumsum(n))
 ```
 Podemos hacer el cálculo por proporción con operaciones matematicas. 
 ```{r}
-freq_prop <- df %>% group_by(CH07)%>%
+freq_prop <- df %>% group_by(EOW_class)%>%
+  filter(!is.na(EOW_class))%>%
   summarize(n=n())%>%
   ungroup()%>%
   mutate(total = sum(n), #Creo una columna que contenga el total de observaciones
@@ -87,45 +281,61 @@ Su funcionamiento básico consiste en:
 - una llamada a la función `ggplot()`, pasándole un dataset y una "asignación de atributos estéticos" (_aesthetic mapping_ en inglés) usando `aes()` 
 - al menos una capa "geom", que define el recurso gráfico que mostrará los datos; por ejemplo `geom_bar()` para dibujar barras.
 
-Por ejemplo, podemos ver en forma gráfica la frecuencia de hombres y mujeres:
+Por ejemplo, podemos ver en forma gráfica la frecuencia de clases:
 ```{r}
-ggplot(df, aes(x=CH07))+
+df %>%
+  ggplot(aes(x=EOW_class))+
+  geom_bar()
+```
+
+Este paquete tiene un uso cohesionado con `tidyverse`, de manera que se le puede pasar un objeto mediante pipes. 
+
+```{r}
+df %>%
+  filter(!is.na(EOW_class))%>% #Filtro los NA para sacar los inactivos
+  ggplot(aes(x=EOW_class))+
   geom_bar()
 ```
 
 `geom_bar()` calcula automáticamente la frecuencia de la variable que le pasamos. Sin embargo, también podemos usar `geom_col()`. A esta función se le pueden pasar atributos `x` e `y`, y se puede, por ejemplo, graficar el porcentaje que calculamos más arriba. 
 
 ```{r}
-ggplot(freq_prop, aes(x=CH07, y = perc))+
+ggplot(freq_prop, aes(x=EOW_class, y = perc))+
   geom_col()
 ```
 
-Podemos usar el atributo estético `fill`, que es similar `color` pero se aplica como relleno, "pintando" por dentro áreas como las barras de un gráfico o las regiones en un mapa (`color`, en cambio, se usa para líneas y puntos). Por ejemplo, podemos usar el atributo estético `fill` con `geom_col()` para pintar el interior de cada barra. Vamos a probarlo. Generemos un gráfico de `CH04` en las $x$, la frecuencia en las $y$ `ESTADO` y coloreemos el interior de las barras según el `ESTADO`.
+Podemos usar el atributo estético `fill`, que es similar `color` pero se aplica como relleno, "pintando" por dentro áreas como las barras de un gráfico o las regiones en un mapa (`color`, en cambio, se usa para líneas y puntos). Por ejemplo, podemos usar el atributo estético `fill` con `geom_col()` para pintar el interior de cada barra. Vamos a probarlo. Generemos un gráfico de `v109` en las $x$, la frecuencia en las $y$ `ESTADO` y coloreemos el interior de las barras según el `EOW_class`.
 
 ```{r}
-ggplot(df, aes(x=CH04, fill=ESTADO))+
+df %>%
+  filter(!is.na(EOW_class) & v109 != "Otro")%>% #Filtro los NA para sacar los inactivos y el sexo "Otro" porque tiene n muy bajo
+  ggplot(aes(x=v109, fill=EOW_class))+
   geom_bar()
 ```
-
 El atributo `fill` tiene el atributo `position`, que nos permite hacer tres tipos de gráficos: `dodge`, `stack` y `fill`. En el primer ejemplo que vimos están ubicados con `stack.`
 
 ```{r}
-ggplot(df, aes(x=CH04, fill=ESTADO))+
+df %>%
+  filter(!is.na(EOW_class) & v109 != "Otro")%>%
+  ggplot(aes(x=v109, fill=EOW_class))+
   geom_bar(position = "fill")
 ```
+
 ```{r}
-ggplot(df, aes(x=CH04, fill=ESTADO))+
+df %>%
+  filter(!is.na(EOW_class) & v109 != "Otro")%>% 
+  ggplot(aes(x=v109, fill=EOW_class))+
   geom_bar(position = "dodge")
 ```
 
 Este tipo de gráficos son una forma útil de comparar o visualizar la relación entre dos variables. Estos graficos que estuvimos viendo nos muestran que los varones tienen un mayor nivel de ocupación que las mujeres. Otra función útil que tiene `ggplot`, para realizar comparaciones por tres variables, es `facet_wrap()`. Por ejemplo, veamos si estos niveles de actividad por género son iguales entre los niveles educativos alcanzados: 
 
 ```{r, fig.width=6, fig.height=4}
-df %>% 
- filter(CH14 != 0 & CH14 != "Ns/Nr." & ESTADO != "Entrevista individual no realizada (no respuesta al cuestionario individual)")%>% #Elimino los casos donde no hay respuesta
-  ggplot( aes(x=CH04, fill=ESTADO))+
+df %>%
+  filter(!is.na(EOW_class) & v109 != "Otro" & nivel_ed != "NS/NR" & nivel_ed != "Educación especial")%>% 
+  ggplot(aes(x=v109, fill=EOW_class))+
   geom_bar(position = "fill")+
-  facet_wrap(CH12~.)
+  facet_wrap(nivel_ed~.)
 ```
 
 
@@ -134,12 +344,14 @@ df %>%
 Finalmente, también tenemos la opción de pasar la capa `labs` para para agregar título, subtítulo y cambiar los nombres del eje x e y. 
 
 ```{r}
-ggplot(df, aes(x=CH04, fill=ESTADO))+
-  geom_bar(position = "fill")+
-  labs(title = "Condición de actividad según sexo",
-       subtitle = "Segundo trimestre de 2020",
-       x = "Sexo",
-       y = "prop",
-       fill = "Condición de actividad")
+df %>%
+        filter(!is.na(EOW_class) & v109 != "Otro")%>% 
+        ggplot(aes(x=v109, fill=EOW_class))+
+        geom_bar(position = "fill")+
+        labs(title = "Clase según sexo",
+             subtitle = "Encuesta Nacional de la Estructura Social",
+             x = "Sexo",
+             y = "prop",
+             fill = "Clase")
 ```
 
