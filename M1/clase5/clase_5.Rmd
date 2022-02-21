@@ -1,0 +1,107 @@
+---
+title: "Clase 5"
+author: "Rosati, Germán y Domenech Burin, Laia"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+theme: Boadilla
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
+```
+
+#Exploración de datos categóricos 
+
+# Encuesta Permanente de Hogares
+
+
+```{r, echo=TRUE, warning=TRUE}
+library(tidyverse)
+```
+
+
+# Importo datos y los etiqueto
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- read_delim("usu_individual_T320.txt", delim = ";") # ESTO DESPUES CAMBIAR POR GET_MICRODATA DE ESTE AÑO
+
+df <- organize_labels(df=df, type='individual') # Vamos a etiquetar la base
+
+df <- df %>% mutate_at(vars(CH03, CH04, CH07:CAT_INAC), ~as.character(.))
+```
+
+# Explorando los datos 
+
+La clase de hoy vamos a concentrarnos en el análisis de datos **cuantitativos**. Recordarán que existen algunas medidas resumen de este tipo de variables:
+
+- **cuantiles:** con la función `quantile()` podemos expresar el tipo de cuantil que deseamos. En el parámetro `probs` colocamos los cuantiles que queremos. Por default nos devuelve los cuartiles, pero en el parámetro 
+  + **cuartiles:**
+
+```{r}
+quantile(df$CH06)
+```
+
+  + **deciles:**
+
+```{r}
+quantile(df$CH06, probs = seq(0, 1, 0.1))
+```
+- **media:**
+```{r}
+mean(df$CH06)
+```
+- **mediana:**
+```{r}
+median(df$CH06)
+```
+- **desvío estándar:**
+```{r}
+sd(df$CH06)
+```
+
+- ¿Con qué función que vimos en las primeras clases podemos ver una aproximación a las medidas resumen? 
+```{r}
+summary(df$CH06)
+```
+
+# Representación gráfica de los datos
+
+- El **boxplot** es un gráfico que resume los valores que vimos un poco más arriba. 
+
+```{r}
+df %>%
+  ggplot(aes(y=CH06))+
+  geom_boxplot()
+```
+
+- **histograma**
+
+```{r}
+df %>%
+  ggplot(aes(x=CH06))+
+  geom_histogram()+
+  labs(x="Edad",
+       y = "n")
+```
+- **scatterplot:** es un gráfico que nos sirve para mostrar la correlación entre dos variables cuantitativas. 
+
+```{r}
+frecs_edades <- df %>%
+                    group_by(CH06)%>%
+                    summarise(n=n())
+  
+df %>% 
+  ggplot(aes(x=CH06, y = P47T))+
+  geom_point()+
+  labs(x="Edad",
+       y = "n")
+
+```
+
