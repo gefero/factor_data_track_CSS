@@ -24,6 +24,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 
 ```{r, echo=TRUE, warning=TRUE}
 library(tidyverse)
+library(eph)
 ```
 
 
@@ -33,8 +34,9 @@ library(tidyverse)
 df <- read_delim("usu_individual_T320.txt", delim = ";") # ESTO DESPUES CAMBIAR POR GET_MICRODATA DE ESTE AÑO
 
 df <- organize_labels(df=df, type='individual') # Vamos a etiquetar la base
-
-df <- df %>% mutate_at(vars(CH03, CH04, CH07:CAT_INAC), ~as.character(.))
+```
+```{r}
+options(scipen=999)
 ```
 
 # Explorando los datos 
@@ -45,63 +47,59 @@ La clase de hoy vamos a concentrarnos en el análisis de datos **cuantitativos**
   + **cuartiles:**
 
 ```{r}
-quantile(df$CH06)
+quantile(df$ITF)
 ```
 
   + **deciles:**
 
 ```{r}
-quantile(df$CH06, probs = seq(0, 1, 0.1))
+quantile(df$ITF, probs = seq(0, 1, 0.1))
 ```
+Aquí vemos que hasta el 10% de la población indica que gana 0 pesos per capita mensuales, y el último decil de ingresos gana más de 10 veces de lo que gana la mitad de la población. Esto nos indica que hay muchos **outliers** en nuestra distribución de la variable, lo cual va a afectar el promedio de los ingresos.  
+
 - **media:**
 ```{r}
-mean(df$CH06)
+mean(df$ITF)
 ```
 - **mediana:**
 ```{r}
-median(df$CH06)
+median(df$ITF)
 ```
 - **desvío estándar:**
 ```{r}
-sd(df$CH06)
+sd(df$ITF)
 ```
-
-- ¿Con qué función que vimos en las primeras clases podemos ver una aproximación a las medidas resumen? 
+¿Con qué función que vimos en las primeras clases podemos ver una aproximación a las medidas resumen? 
 ```{r}
-summary(df$CH06)
+summary(df$ITF)
 ```
-
 # Representación gráfica de los datos
 
-- El **boxplot** es un gráfico que resume los valores que vimos un poco más arriba. 
+- El **boxplot** es un gráfico que resume los valores que vimos: nos muestra los otuliers, los rangos intercuartiles y la media. 
 
 ```{r}
 df %>%
-  ggplot(aes(y=CH06))+
+  ggplot(aes(y=ITF))+
   geom_boxplot()
 ```
 
-- **histograma**
+- **histograma:** nos muestra la frecuencia de una variable cuantitativa continua
 
 ```{r}
 df %>%
-  ggplot(aes(x=CH06))+
+  ggplot(aes(x=ITF))+
   geom_histogram()+
-  labs(x="Edad",
+  labs(x="Ingreso total del hogar",
        y = "n")
 ```
+
 - **scatterplot:** es un gráfico que nos sirve para mostrar la correlación entre dos variables cuantitativas. 
-
 ```{r}
-frecs_edades <- df %>%
-                    group_by(CH06)%>%
-                    summarise(n=n())
-  
 df %>% 
-  ggplot(aes(x=CH06, y = P47T))+
+  #filter(CH06 > 16 & P47T > 1500)%>%
+  ggplot(aes(x=ITF, y = DECCFR))+
   geom_point()+
-  labs(x="Edad",
-       y = "n")
+  labs(x="Ingreso total familiar",
+       y = "Decil de ingresos")
 
 ```
-
