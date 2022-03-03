@@ -31,10 +31,11 @@ library(eph)
 # Importo datos y los etiqueto
 
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
-df <- read_delim("usu_individual_T320.txt", delim = ";") # ESTO DESPUES CAMBIAR POR GET_MICRODATA DE ESTE AÑO
+df <- get_microdata(year = 2021, trimester = 2, type = "individual")
 
 df <- organize_labels(df=df, type='individual') # Vamos a etiquetar la base
 ```
+
 ```{r}
 options(scipen=999)
 ```
@@ -73,6 +74,7 @@ sd(df$ITF)
 ```{r}
 summary(df$ITF)
 ```
+
 # Representación gráfica de los datos
 
 - El **boxplot** es un gráfico que resume los valores que vimos: nos muestra los otuliers, los rangos intercuartiles y la media. 
@@ -92,14 +94,25 @@ df %>%
   labs(x="Ingreso total del hogar",
        y = "n")
 ```
+Puedo "recortar" el gráfico con los atributos `ylim()` o `xlim()` :
+
+```{r}
+df %>%
+  ggplot(aes(x=ITF))+
+  geom_histogram()+
+  labs(x="Ingreso total del hogar",
+       y = "n")+
+  xlim(0, 400000)
+```
 
 - **scatterplot:** es un gráfico que nos sirve para mostrar la correlación entre dos variables cuantitativas. 
 ```{r}
 df %>% 
-  #filter(CH06 > 16 & P47T > 1500)%>%
-  ggplot(aes(x=ITF, y = DECCFR))+
+  ggplot(aes(x=P21, y = ITF))+
   geom_point()+
-  labs(x="Ingreso total familiar",
-       y = "Decil de ingresos")
+  labs(x="Ingreso de la ocupación principal",
+       y = "Ingreso Total Familiar")#+
+  #scale_x_log10()+
+  #scale_y_log10()
 
 ```
