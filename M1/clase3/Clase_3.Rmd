@@ -1,0 +1,59 @@
+---
+title: "Clase 3"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati y Laia Domenech Burin"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+theme: Boadilla
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
+```
+
+### Práctica tidyverse
+
+1. Importe las liberías `tidyverse` y `eph`. 
+
+```{r}
+
+```
+
+2. Almacene en un objeto llamado `df` los datos individuales del primer trimestre de 2021. 
+
+```{r}
+
+```
+
+3. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo?
+  + Tasa de actividad: PEA/población total
+  + Tasa de empleo: población ocupada/población total
+  + Tasa de desempleo: Población desocupada/PEA
+  
+```{r}
+```
+
+4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)?
+
+```{r}
+
+```
+
+5. ¿Qué región presenta los mayores niveles de desocupación? 
+
+```{r}
+
+```
+
+6. ¿Qué región presenta el promedio de ingresos más altos? 
+
+```{r}
+
+```
+
+7. ¿Cómo son los niveles de actividad y desocupación para esta última región? 
