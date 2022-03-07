@@ -24,18 +24,17 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 
 ```
 
-2. Almacene en un objeto llamado `df` los datos individuales del primer trimestre de 2021. 
-
-```{r}
-
-```
-
-3. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo?
+2. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo del último trimestre de 2020?
   + Tasa de actividad: PEA/población total
   + Tasa de empleo: población ocupada/población total
   + Tasa de desempleo: Población desocupada/PEA
   
 ```{r}
+```
+
+3. ¿Cómo variaron estos niveles entre 2020 y el primer trimestre de 2021? Plasme los resultados en una tabla comparativa. 
+```{r}
+
 ```
 
 4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)?
@@ -50,10 +49,4 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 
 ```
 
-6. ¿Qué región presenta el promedio de ingresos más altos? 
-
-```{r}
-
-```
-
-7. ¿Cómo son los niveles de actividad y desocupación para esta última región? 
+6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? 
