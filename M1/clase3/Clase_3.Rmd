@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 1. Importe las liberías `tidyverse` y `eph`. 
 
 ```{r}
-
+### 
 ```
 
 2. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo del último trimestre de 2020?
@@ -30,23 +30,28 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
   + Tasa de desempleo: Población desocupada/PEA
   
 ```{r}
+### 
 ```
 
 3. ¿Cómo variaron estos niveles entre 2020 y el primer trimestre de 2021? Plasme los resultados en una tabla comparativa. 
 ```{r}
-
+### 
 ```
 
 4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)?
 
 ```{r}
-
+### 
 ```
 
 5. ¿Qué región presenta los mayores niveles de desocupación? 
 
 ```{r}
-
+### 
 ```
 
 6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? 
+```{r}
+### 
+```
+
