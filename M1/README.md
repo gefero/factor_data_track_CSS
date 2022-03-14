@@ -16,7 +16,7 @@ El curso está centrado en brindar insumos que sirvan para que les estudiantes l
 Tanto los contenidos de los ejercicios prácticos como las lecturas más conceptuales giran en torno de una misma temática, que para el primer semestre de 2022 será la estructura social. Esta focalización en un único tema pretende facilitar la comprensión de métodos y técnicas y, al mismo tiempo, aportar a la formación sustantiva de les estudiantes. Para el procesamiento y análisis estadístico se utilizará el lenguaje R y datos de la Encuesta Permanente de Hogares del INDEC y de la Encuesta Nacional sobre la Estructura Social (ENES) realizada por el PISAC.
 
 # Contenidos y materiales
-## Clase 1. Presentación - Intro R
+## Clase 1. Presentación - Introducción a R
 
 - [Slides - pdf](/clase1/M1_Clase_1.pdf)
 - [Explicación y práctica - Notebook](/clase1/notebooks/Clase_1.html)
