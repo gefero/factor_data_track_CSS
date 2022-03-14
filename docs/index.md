@@ -1,37 +1,28 @@
-## Welcome to GitHub Pages
+![](../imgs/logo-factor-data-solo.jpg)
 
-You can use the [editor on GitHub](https://github.com/gefero/factor_data_track_CSS/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+# Procesamiento de datos en R y estadística para Ciencias Sociales
+## Docentes
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+- [Germán Rosati](https://gefero.github.io/)
+- [Laia Domenech]()
 
-### Markdown
+# Presentación
+Esta materia se constituye como la primera de un trayecto de materias optativas orientado a incorporar a las carreras de la EIDAES un conjunto de materias que permitan realizar a les estudiantes un primer acercamiento al campo disciplinar conocido como "Ciencias Sociales Computacionales". Por ello, se plantean como una continuación y profundización de la materia Metodologías Cuantitativas. En este sentido, la orientación es correlativa a las materias “Metodología de la Investigación” y “Metodologías Cuantitativas”.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+El objetivo general de este primer módulo es brindar un acercamiento desde un enfoque conceptual (fundamentos teórico-metodológicos, casos y problemas de aplicación, etc.) como técnico (análisis de algoritmos, herramientas con interfaces gráficas, etc.) para la investigación empírica.
 
-```markdown
-Syntax highlighted code block
+El curso está centrado en brindar insumos que sirvan para que les estudiantes logren realizar procesamientos básicos de información (recodificación de variables, construcción de tipologías, generación de distribuciones de frecuencias, tablas de contingencia, visualización) y un primer análisis de la misma (correlaciones bivariadas, estadística descriptiva e inferencial).
 
-# Header 1
-## Header 2
-### Header 3
+Tanto los contenidos de los ejercicios prácticos como las lecturas más conceptuales giran en torno de una misma temática, que para el primer semestre de 2022 será la estructura social. Esta focalización en un único tema pretende facilitar la comprensión de métodos y técnicas y, al mismo tiempo, aportar a la formación sustantiva de les estudiantes. Para el procesamiento y análisis estadístico se utilizará el lenguaje R y datos de la Encuesta Permanente de Hogares del INDEC y de la Encuesta Nacional sobre la Estructura Social (ENES) realizada por el PISAC.
 
-- Bulleted
-- List
+# Contenidos y materiales
+## Clase 1. Presentación - Introducción a R
 
-1. Numbered
-2. List
+- [Slides - pdf](../M1/clase1/M1_Clase_1.pdf)
+- [Explicación y práctica - Notebook](../M1/clase1/notebooks/Clase_1.html)
+- [Explicación y práctica - RMarkdown](../M1/clase1/notebooks/Clase_1.Rmd)
+- [Práctica Independiente - RMarkdown](../M1/clase1/notebooks/Clase_1_práctica.R)
 
-**Bold** and _Italic_ and `Code` text
+Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/gefero/factor_data_track_CSS/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+[![](../imgs/Download.png)](clase1.zip)
