@@ -19,7 +19,7 @@ Tanto los contenidos de los ejercicios prácticos como las lecturas más concept
 ## Clase 1. Presentación - Introducción a R
 
 - [Slides - pdf](/M1/clase1/M1_Clase_1.pdf)
-- [Explicación y práctica - Notebook](/M1/clase1/notebooks/Clase_1.html)
+- [Explicación y práctica - Notebook](https://raw.githubusercontent.com/gefero/factor_data_track_CSS/main/M1/clase1/Clase_1.Rmd)
 - [Explicación y práctica - RMarkdown](/M1/clase1/notebooks/Clase_1.Rmd)
 - [Práctica Independiente - RMarkdown](/M1/clase1/notebooks/Clase_1_práctica.R)
 
