@@ -1,4 +1,4 @@
-![](./M1/imgs/logo-factor-data-solo.jpg)
+![](./imgs/logo-factor-data-solo.jpg)
 
 # Procesamiento de datos en R y estadística para Ciencias Sociales
 ## Docentes
@@ -25,4 +25,4 @@ Tanto los contenidos de los ejercicios prácticos como las lecturas más concept
 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 
-[![](./imgs/Download.png)](clase1.zip)
+[![](./Download.png)](clase1.zip)
