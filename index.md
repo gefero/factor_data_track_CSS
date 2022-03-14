@@ -20,8 +20,8 @@ Tanto los contenidos de los ejercicios prácticos como las lecturas más concept
 
 - [Slides - pdf](./M1/clase1/M1_Clase_1.pdf)
 - [Explicación y práctica - Notebook](./M1/clase1/Clase_1.html)
-- [Explicación y práctica - RMarkdown](./M1/clase1/notebooks/Clase_1.Rmd)
-- [Práctica Independiente - RMarkdown](./M1/clase1/notebooks/Clase_1_práctica.R)
+- [Explicación y práctica - RMarkdown](./M1/clase1/Clase_1.Rmd)
+- [Práctica Independiente - RMarkdown](./M1/clase1/Clase_1_práctica.R)
 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 
