@@ -84,123 +84,7 @@ freq_prop
 ¿Qué nos dice esta distribución?
 ---
 
-## Tablas de contingencia (dos variable)
-La siguiente tabla nos resume la condición de actividad en función del sexo.
-```{r echo=FALSE}
-df %>%
-  filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  janitor::tabyl(ESTADO, CH04) %>%
-  janitor::adorn_totals(where = c('row','col')) %>%
-  gt::gt()  
-```
-
-Cada valor en la tabla (celda) representa la cantidad de veces que una combinación particular de valores ocurrieron. Asi, Por ejemplo, la tabla nos dice que hubo 12.147 personas inactivas que eran mujeres. Los *totales de columna* proveen información sobre el total de casos para cada columna y lo propio sucede con los *totales de fila*-
-
-Otra forma común de representar esto es mediante un gráfico "facetado":
-
-```{r echo=FALSE}
-df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
-  summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=ESTADO, y=n)) +
-    facet_wrap(~CH04) +
-    theme_minimal()
-```
-
-El gráfico anterior nos muestra la misma información que la tabla: cada panel es una de las columnas de la tabla, en el eje X encontramos las filas de la tabla y en el eje Y el conteo de valores. Sin embargo, falta algo...
-
-## Visualizando dos variables categóricas
-### Gráficos de barra con dos variables
-Podemos mostrar las distribuciones de dos variables categóricas en un gráfico de barras al mismo tiempo. Estos gráficos suelen ser útiles para visualizar la relación entre dos variables categóricas. La figura siguiente muestra tres gráficos de este tipo que visualizan la relación entre sexo y condición de actividad. El siguiente es un gráfico de barras apiladas:
-
-```{r}
-df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
-  summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=CH04, y=n, fill=ESTADO), position="stack") +
-    theme_minimal()
-```
-
-Este gráfico muestra que las mujeres son más que los varones. Es difícil decir, basándose únicamente en este diagrama, cómo las diferentes condiciones de actividad varían según sexo. Pareciera ser que los varones están ocupadas en mayor medida.
-
-La gráfica B es una gráfica de barras "desplazadas".
-```{r}
-df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
-  summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=CH04, y=n, fill=ESTADO), position='dodge') +
-    theme_minimal()
-```
-
-Este gráfico muestra claramente que dentro de cada sexo la principal forma de actividad es diferente: ocupados en varones, inactivas en mujeres.
-
-Finalmente, el gráfico C es un gráfico de barras estandarizado (también conocido como gráfico de barras rellenas). 
-
-```{r}
-df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
-  summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=CH04, y=n, fill=ESTADO), position = 'fill') +
-    theme_minimal()
-```
-
-
-Este gráfico muestra con mayor claridad que la condición de actividad más común entre mujeres es la inactividad y entre los varones la ocupación. A su vez, la proporción de desocupados es muy similar entre varones y mujeres.
-
-El gráfico de barras apiladas es más útil cuando es razonable asignar una variable como variable explicativa (aquí, sexo `CH04`) y la otra variable como respuesta (aquí, condición de actividad `ESTADO`), ya que estamos agrupando primero por una variable y luego separándola por las demás. .
-
-Los diagramas de barras esquivadas son más agnósticos en su visualización sobre qué variable, si alguna, representa la variable explicativa y cuál la variable de respuesta. También es fácil discernir el número de casos en cada una de las seis combinaciones de grupos diferentes. Sin embargo, una desventaja es que tiende a requerir más espacio horizontal; la estrechez del segundo gráfico en comparación con las otras dos . Además, cuando dos grupos son de tamaños muy diferentes, como vemos en el propio grupo en relación con cualquiera de los otros dos grupos, es difícil discernir si existe una asociación entre las variables.
-
-El gráfico de barras apiladas estandarizado es útil si la variable principal en el gráfico de barras apiladas está relativamente desequilibrada. En este caso la distribucion por `CH04` no está muy desequilibrada pero aún así resulta más complejo en ese gráfico de barras apiladas simple verificar una asociación. La principal desventaja de la versión estandarizada es que perdemos todo sentido de cuántos casos representa cada una de las barras.
-
-## Porcentajes de filas y columnas
-En las secciones anteriores, inspeccionamos visualizaciones de dos variables categóricas en gráficos de barras. Sin embargo, no hemos discutido cómo se calculan los valores. En esta sección investigaremos cómo calcular las diferentes proporciones en una tabla de contingencia. 
-
-La siguiente tabla muestra las *proporciones por fila* para la primera tabla que vimos antes. Las mismas se calculan como los conteos divididos por los totales de las filas. 
-
-El valor 12147 en la intersección de mujer e inactivo se reemplaza por: $\frac{12147}{19765} = 0.615$. Entonces, ¿qué representa 0,615? Corresponde a la proporción de encuestades inactivas que son mujeres.
-
-```{r echo=FALSE}
-df %>%
-  filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  janitor::tabyl(ESTADO, CH04) %>%
-  janitor::adorn_totals(where = c('row','col')) %>%
-  janitor::adorn_percentages(denominator = 'row') %>%
-  gt::gt() %>%
-  gt::fmt_number(
-          columns = c(-ESTADO),
-          decimals=3)
-```
-Una tabla de contingencia con las *proporciones por columnas* se calcula de manera similar, donde cada una se calcula como el recuento dividido por el total de la columna correspondiente. La siguiente es una tabla de este tipo, y aquí el valor 0.57 indica que el 57% de las mujeres son inactivas. Esta tasa es notablemente superior a la de los varones (0.39). A su vez, los varones tienen una mayor tasa de ocupación. Esto constituye evidencia de que las variables pueden estar asociadas.
-
-```{r echo=FALSE}
-df %>%
-  filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  janitor::tabyl(ESTADO, CH04) %>%
-  janitor::adorn_totals(where = c('row','col')) %>%
-  janitor::adorn_percentages(denominator = 'col') %>%
-  gt::gt() %>%
-  gt::fmt_number(
-          columns = c(-ESTADO),
-          decimals=3)
-```
-
-Las proporciones de fila y columna también pueden considerarse proporciones condicionales, ya que nos informan sobre la proporción de observaciones en un nivel dado de una variable categórica condicional en el nivel de otra variable categórica.
-
-## Comparando datos numéricos en diferentes grupos
-
-
-
 ## Gráficos con `ggplot()`
-
 Una de las grandes ventajas de `tidyverse` es el paquete para realizar gráficos, `ggplot`. Incluye funciones para realizar uan gran variedad de visualizaciones. Su concepto central es la asignación (*mapping* en inglés) de atributos estéticos a los valores que toma una variable. Dicho de otra forma, como mostrar de modo perceptible a la vista la diferencia entre valores: con distintos colores, distintos tamaños, distintas posiciones en un gráfico, etc.
 
 Su funcionamiento básico consiste en:
@@ -212,16 +96,18 @@ Por ejemplo, podemos ver en forma gráfica la frecuencia de los niveles de activ
 ```{r}
 df %>%
   ggplot(aes(x=ESTADO))+
-  geom_bar()
+  geom_bar() +
+  theme_minimal()
 ```
 
-Este paquete tiene un uso cohesionado con `tidyverse`, de manera que se le puede pasar un objeto mediante pipes. 
+Este paquete tiene un uso cohesionado con `tidyverse`, de manera que se le puede pasar un objeto mediante pipes. Por ejemplo, ahora vamos a filtrar a aquellas personas que sean menores de 10 años y que no hayan realizado la entrevista
 
 ```{r}
 df %>%
   filter(ESTADO != "Menor de 10 anios." & ESTADO != "Entrevista individual no realizada (no respuesta al cuestionario individual)")%>% #Filtro los casos que no corresponden
   ggplot(aes(x=ESTADO))+
-  geom_bar()
+  geom_bar() +
+  theme_minimal()
 ```
 
 `geom_bar()` calcula automáticamente la frecuencia de la variable que le pasamos. Sin embargo, también podemos usar `geom_col()`. A esta función se le pueden pasar atributos `x` e `y`, y se puede, por ejemplo, graficar el porcentaje que calculamos más arriba. 
