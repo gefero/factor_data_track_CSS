@@ -1,5 +1,5 @@
 ---
-title: "Clase 3"
+title: "Clase 2"
 output: 
   html_document:
     toc: TRUE
@@ -297,13 +297,31 @@ pivot_longer_resumen%>% pivot_wider(id_cols= sexo,
   + `right_join():` incluye todas las filas que estén en y.
   + `full_join():` incluye todas las filas que estén en x o y.
   
-Supongamos que queremos juntar la base que tenemos con la variable del monto del ingreso total familiar, que está en el registro de hogares. La columna **CODSU** nos da un identificador único de cada registro. De manera que podemos hacer un seguimiento de los individuos en el hogar a través de esa columna
+Supongamos que queremos "joinear" la base que tenemos con las variables de resumen del hogar (cantidad de personas en el hogar `IX_TOT`, las personas menores de 10 años `IX_MEN10` y las personas de 10 o más años de edad, `IX_MAYEQ10`). Todas estas variables están en la tabla de hogares. La columna **CODSU** nos da un identificador único de cada registro. De manera que podemos hacer un seguimiento de los individuos en el hogar a través de esa columna:
 ```{r}
-df_2 <- get_microdata(year=2020, trimester=2, type='hogar')  %>% select(CODUSU, ITF) # Selecciono únicamente las variables de ID y el ingreso total familiar
+df_2 <- get_microdata(year=2020, trimester=2, type='hogar') %>%
+        organize_labels(type='hogar')
 
-df_2 <- df_2%>% organize_labels(type='hogar')
+df_2 <- df_2 %>%
+    select(CODUSU, IX_TOT:IX_MAYEQ10) # Selecciono únicamente las variables de ID y las variables de resumen del hogar 
 
 df_merged <- df %>% left_join(df_2, by = "CODUSU")
+```
 
+Ahora podemos chequear el resultado revisando los nombres de columnas que se agregaron a la tabla.
+
+```{r}
 colnames(df_merged)
 ```
+
+
+## Ejercicios 
+
+1. ¿Cómo podrían calcular (sin hacer el join) las variables que trajimos de la tabla de hogar? 
+  - cantidad de personas en el hogar `IX_TOT` 
+  - cantidad de personas menores de 10 años `IX_MEN10` 
+  - cantidad de personas de 10 o más años de edad, `IX_MAYEQ10`
+
+2. Hagan un join de la variable Ingreso Total Familiar (`ITF`) de la tabla de hogar y chequeen los resultados con la misma variable que ya existe en la tabla de individuos.
+
+
