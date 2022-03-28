@@ -28,7 +28,6 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 [![](./imgs/Download.png)](./M1/clase1/clase1.zip)
 
 
-# Contenidos y materiales
 ## Clase 2. Introducción a `tidyverse`
 
 - [Slides - pdf](./M1/clase2/M1_Clase_2.pdf)
