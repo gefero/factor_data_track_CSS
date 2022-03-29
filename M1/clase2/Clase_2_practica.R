@@ -4,7 +4,8 @@
 
 ### 3. Asignar a las variables CH04, CH06 y CH07 los nombres: sexo, edad y estado_civil
 
-### 4. Filtre de la base a aquellas personas menores de 18 y mayores de 70.
+### 4. Filtre de la base a aquellas personas menores de 18 y mayores de 70 y guárdelas 
+#en un objeto que se llame "base_mayores"
 
 ### 5. Agrupar según las variables de sexo, edad y ESTADO y hacer un conteo de frecuencias. 
 
