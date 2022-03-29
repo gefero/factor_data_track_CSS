@@ -39,3 +39,14 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 
 [![](./imgs/Download.png)](./M1/clase2/clase2.zip)
 
+
+## Clase 3. Intuiciones de muestreo -  Ejercicio integrador `tidyverse`
+
+- [Slides - pdf](./M1/clase3/M1_Clase_3.pdf)
+- [Explicación y práctica - Notebook](./M1/clase3/Clase_3.html)
+- [Explicación y práctica - RMarkdown](./M1/clase3/Clase_3.Rmd)
+
+Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
+
+[![](./imgs/Download.png)](./M1/clase3/clase3.zip)
+
