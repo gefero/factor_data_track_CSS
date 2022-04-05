@@ -305,7 +305,7 @@ df_2 <- get_microdata(year=2020, trimester=2, type='hogar') %>%
 df_2 <- df_2 %>%
     select(CODUSU, IX_TOT:IX_MAYEQ10) # Selecciono únicamente las variables de ID y las variables de resumen del hogar 
 
-df_merged <- df %>% left_join(df_2, by = "CODUSU")
+df_merged <- df %>% left_join(df_2, by = c("CODUSU", "NRO_HOGAR"))
 ```
 
 Ahora podemos chequear el resultado revisando los nombres de columnas que se agregaron a la tabla.

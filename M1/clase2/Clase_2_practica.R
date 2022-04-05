@@ -1,6 +1,6 @@
 ### 1. Importar librerías tidyverse y eph
 
-### 2. Importar datos del primer trimestre de la eph para hogares y etiquetar la base.
+### 2. Importar datos del primer trimestre de la eph para individuos y etiquetar la base.
 
 ### 3. Asignar a las variables CH04, CH06 y CH07 los nombres: sexo, edad y estado_civil
 
