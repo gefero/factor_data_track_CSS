@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ### 
 ```
 
-2. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo del último trimestre de 2020?
+2. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo del tercer trimestre de 2020?
   + Tasa de actividad: PEA/población total
   + Tasa de empleo: población ocupada/población total
   + Tasa de desempleo: Población desocupada/PEA
@@ -33,24 +33,24 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ### 
 ```
 
-3. ¿Cómo variaron estos niveles entre 2020 y el primer trimestre de 2021? Plasme los resultados en una tabla comparativa. 
+3. ¿Cómo variaron estos niveles entre 2020 y el tercer trimestre de 2021? Plasme los resultados en una tabla comparativa. 
 ```{r}
 ### 
 ```
 
-4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)?
-
-```{r}
-### 
-```
-
-5. ¿Qué región presenta los mayores niveles de desocupación? 
+4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)? Calcularla para el III trimestre de 2021
 
 ```{r}
 ### 
 ```
 
-6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? 
+5. ¿Qué región presenta los mayores niveles de desocupación? Calcularla para el III trimestre de 2021
+
+```{r}
+### 
+```
+
+6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? Calcularla para el III trimestre de 2021
 ```{r}
 ### 
 ```
