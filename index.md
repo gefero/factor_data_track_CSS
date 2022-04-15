@@ -57,7 +57,7 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 - [Explicación teórica - RMarkdown](./M1/clase4/Clase_4_Teoria.Rmd)
 - [Práctica guiada - Notebook](./M1/clase4/Clase_4_Practica.html)
 - [Práctica guiada - RMarkdown](./M1/clase4/Clase_4_Practica.Rmd)
-- [Práctica independiente - RMarkdown](./M1/clase4/Clase_4_practica_independiente.R)
+- [Práctica independiente - RScript](./M1/clase4/Clase_4_practica_independiente.R)
 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 
