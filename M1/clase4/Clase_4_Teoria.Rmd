@@ -147,22 +147,29 @@ Vamos a analizary comparar el ingreso total familiar promedio, la cantidad prome
 
 el conjunto de datos del condado y compararemos el ingreso familiar medio de los condados que aumentaron la población entre 2010 y 2017 con los condados que no aumentaron. Si bien nos gustaría hacer una conexión causal entre el ingreso y el crecimiento de la población, recuerde que estos son datos de observación y, por lo tanto, tal interpretación sería, en el mejor de los casos, a medias.
 
-ACA PODEMOS HACER INGRESO PER CAPITA DEL HOGAR EDAD MEDIANA Y TAMAÑO PROMEDIO DEL HOGAR SEGUN REGION
-
 ```{r echo=FALSE}
 df %>%
         group_by(CODUSU, NRO_HOGAR) %>%
-        mutate(cant_miembros = n()) %>%
+        mutate(cant_miembros=n()) %>%
         ungroup() %>%
         group_by(REGION) %>%
-        summarise(itf_medio = mean(ITF),
-                  edad_media = mean(CH06),
-                  cant_miembros = mean(cant_miembros)) %>%
-  gt::gt() %>%
-  gt::fmt_number(
-                columns=-c(REGION),
+        summarise(ifpc_medio = weighted.mean(IPCF, w=PONDIH),
+                  edad_media = weighted.mean(CH06, w=PONDERA),
+                  cantidad_miembros = weighted.mean(cant_miembros, w=PONDERA)) %>%
+        arrange(desc(ifpc_medio)) %>%
+        gt::gt() %>%
+        gt::fmt_currency(
+          columns = ifpc_medio,
+          decimals=2
+        ) %>%
+        gt::fmt_number(
+                columns=c(edad_media, cantidad_miembros),
                 decimals = 2)
 ``` 
 
 
-Tenemos datos de 3142 condados en los Estados Unidos. Nos faltan los datos de población de 2017 de 3 de ellos, y de los 3139 condados restantes, en 1541 la población aumentó de 2010 a 2017 y en los 1598 restantes la población disminuyó. La tabla 4.6 muestra una muestra de 5 observaciones de cada grupo.
+> ¿Cuáles son las variables que están en juego acá? ¿Qué nivel de medición tiene cada una de ellas?
+
+Se observa que la Patagonia es la región que mayores ingresos per cápita muestra y de las de menores hogares. En contraste, la zona del Nordeste y Noroeste son las que menores ingresos per cápita familiares presentan y que mayores tamaños medios de hogar presentan.
+
+
