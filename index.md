@@ -50,3 +50,15 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 
 [![](./imgs/Download.png)](./M1/clase3/clase3.zip)
 
+
+## Clase 4. Explorando datos categóricos
+
+- [Explicación teórica - Notebook](./M1/clase4/Clase_4_Teoria.html)
+- [Explicación teórica - RMarkdown](./M1/clase4/Clase_4_Teoria.Rmd)
+- [Práctica guiada - Notebook](./M1/clase4/Clase_4_Practica.html)
+- [Práctica guiada - RMarkdown](./M1/clase4/Clase_4_Practica.Rmd)
+- [Práctica independiente - RMarkdown](./M1/clase4/Clase_4_practica_independiente.R)
+
+Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
+
+[![](./imgs/Download.png)](./M1/clase4/clase4.zip)
