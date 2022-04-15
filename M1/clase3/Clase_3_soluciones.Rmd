@@ -21,7 +21,8 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 1. Importe las liberías `tidyverse` y `eph`. 
 
 ```{r}
-### 
+library(eph)
+library(tidyverse)
 ```
 
 2. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo del tercer trimestre de 2020?
@@ -29,9 +30,32 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
   + Tasa de empleo: población ocupada/población total
   + Tasa de desempleo: Población desocupada/PEA
   
+Input para las tasas de actividad y empleo
 ```{r}
-### 
+eph2020 <- get_microdata(year=2020,
+                         trim=3)
+eph2020 <- eph2020 %>% organize_labels()
+
+eph2020 %>%
+        filter(ESTADO > 0 ) %>%
+        group_by(CH04, ESTADO) %>%
+        summarise(n=n()) %>%
+        mutate(por = n/sum(n)*100) %>%
+        pivot_wider(names_from = CH04,
+                    values_from = c(n, por))
 ```
+
+Tasas de desocupación
+```{r}
+eph2020 %>%
+        filter(ESTADO > 0 & ESTADO < 3) %>%
+        group_by(CH04, ESTADO) %>%
+        summarise(n=n()) %>%
+        mutate(prop = n/sum(n)*100) %>%
+        pivot_wider(names_from = CH04,
+                    values_from =c(prop,n))
+```
+
 
 3. ¿Cómo variaron estos niveles entre 2020 y el tercer trimestre de 2021? Plasme los resultados en una tabla comparativa. 
 ```{r}
@@ -41,7 +65,14 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)? Calcularla para el III trimestre de 2020
 
 ```{r}
-### 
+eph2020 %>%
+        filter(CH06 >= 36 & CH06 <= 70) %>%
+        group_by(CH04) %>%
+        summarise(media_inglab = mean(P21)) %>%
+        pivot_wider(names_from = CH04,
+                    values_from = media_inglab) %>%
+        mutate(brecha = Mujer/Varon*100)
+
 ```
 
 5. ¿Qué región presenta los mayores niveles de desocupación? Calcularla para el III trimestre de 2021

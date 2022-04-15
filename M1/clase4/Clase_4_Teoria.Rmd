@@ -59,7 +59,7 @@ El gráfico anterior nos muestra la misma información que la tabla: cada panel 
 ### Gráficos de barra con dos variables
 Podemos mostrar las distribuciones de dos variables categóricas en un gráfico de barras al mismo tiempo. Estos gráficos suelen ser útiles para visualizar la relación entre dos variables categóricas. La figura siguiente muestra tres gráficos de este tipo que visualizan la relación entre sexo y condición de actividad. El siguiente es un gráfico de barras apiladas:
 
-```{r}
+```{r echo=FALSE}
 df %>%
     filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
   group_by(CH04, ESTADO) %>%
@@ -72,7 +72,7 @@ df %>%
 Este gráfico muestra que las mujeres son más que los varones. Es difícil decir, basándose únicamente en este diagrama, cómo las diferentes condiciones de actividad varían según sexo. Pareciera ser que los varones están ocupadas en mayor medida.
 
 La gráfica B es una gráfica de barras "desplazadas".
-```{r}
+```{r echo=FALSE}
 df %>%
     filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
   group_by(CH04, ESTADO) %>%
@@ -86,7 +86,7 @@ Este gráfico muestra claramente que dentro de cada sexo la principal forma de a
 
 Finalmente, el gráfico C es un gráfico de barras estandarizado (también conocido como gráfico de barras rellenas). 
 
-```{r}
+```{r echo=FALSE}
 df %>%
     filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
   group_by(CH04, ESTADO) %>%
