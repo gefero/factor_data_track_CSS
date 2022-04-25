@@ -64,3 +64,15 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 
 [![](./imgs/Download.png)](./M1/clase4/clase4.zip)
+
+## Clase 5. Explorando datos cuantitativos
+
+- [Explicación teórica - Notebook](./M1/clase5/Clase_5_Teoria.html)
+- [Explicación teórica - RMarkdown](./M1/clase5/Clase_5_Teoria.Rmd)
+- [Práctica guiada - Notebook](./M1/clase5/Clase_5_Practica.html)
+- [Práctica guiada - RMarkdown](./M1/clase5/Clase_5_Practica.Rmd)
+- [Práctica independiente - RScript](./M1/clase5/Clase_5_practica_independiente.R)
+
+Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
+1
+[![](./imgs/Download.png)](./M1/clase4/clase4.zip)

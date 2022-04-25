@@ -180,19 +180,8 @@ Los histogramas son especialmente convenientes para comprender la forma de la di
 
 La figura siguiente muestra un gráfico de densidad que es un histograma suavizado. Los detalles técnicos sobre cómo dibujar gráficos de densidad (precisamente cómo suavizar el histograma) están más allá del alcance de esta materia. Pero se nota que la forma, la escala y la dispersión de las observaciones se muestran de manera similar en un histograma que en un gráfico de densidad.
 
-```{r echo=FALSE}
-df %>%
-  mutate(P21 = as.numeric(as.character(P21))) %>%
-  mutate(P21 = case_when(
-    P21 >= 75000 ~ 75000, 
-    P21 < 75000 ~ P21)) %>%
-  filter(P21 > 0) %>%
-  ggplot() +
-    geom_density(aes(x=P21), color='white', fill='lightblue') +
-    theme_minimal() +
-    labs(x='Ingresos laborales',
-         y='Frec.')
-```
+
+
 
 
 Se dice que las variables con la característica inversa (una cola larga y más delgada hacia la izquierda) están sesgadas (o son asimétricas) a la izquierda. También decimos que tal distribución tiene una larga cola izquierda. Las variables que muestran un final aproximadamente igual en ambas direcciones se denominan simétricas.
@@ -239,6 +228,38 @@ Al igual que la media, los valores de población para la varianza y la desviaci�
 
 
 ## Boxplots, cuantiles y mediana (para la próxima)
+
+Un boxplot resume un dataset usando cinco números, cinco estadísticos.
+```{r echo=FALSE}
+df %>%
+  mutate(P21 = as.numeric(as.character(P21))) %>%
+  mutate(P21 = case_when(
+    P21 >= 75000 ~ 75000, 
+    P21 < 75000 ~ P21)) %>%
+  filter(P21 > 0) %>%
+  ggplot() +
+    geom_boxplot(aes(x=P21)) +
+    theme_minimal() +
+    labs(x='Ingresos laborales')
+```
+
+La línea oscura dentro del cuadro representa la _mediana_, que divide los datos por la mitad. El 50% de los datos caen por debajo de este valor y el 50% por encima. Dado que en el conjunto de datos de préstamo50 hay 50 observaciones (un número par), la mediana se define como el promedio de las dos observaciones centrales. Cuando hay un número impar de observaciones, habrá exactamente una observación que divide los datos en dos mitades y, en tal caso, esa observación es la mediana (no se necesita un promedio).
+
+Si los datos están ordenados de menor a mayor, la mediana es la observación justo en el medio. Si hay un número par de observaciones, habrá dos valores en el medio y la mediana se tomará como su promedio.
+
+El segundo paso en la construcción de un boxplot es dibujar un rectángulo para representar el 50% medio de los datos. La longitud de la caja se llama rango intercuartílico (o IQR por sus siglas en inglés para abreviar). Al igual que la desviación estándar, es una medida de la variabilidad de los datos. Cuanto más variables sean los datos, mayor será la desviación estándar y el IQR. Los dos límites de la caja se denominan primer cuartil (es decir, el valor que deja por debajo el 25% de los datos) y el tercer cuartil (es decir, el 75% de los datos caen por debajo de este valor), y estos a menudo se etiquetan $Q1$ $Q3$ respectivamente.
+
+El rango intercuartílico $IQR$ es la longitud de la caja en un diagrama de caja. se calcula como $Q3-Q1$. Un $\alpha$ percentil es un número con $\alpha$\% de observaciones por encima y $100 - \alpha$\% de observaciones por debajo. Por ejemplo, el 90 avo. percentil de puntajes SAT es el valor del puntaje SAT con el 90% de los estudiantes por debajo de ese valor y el 10% de los estudiantes por encima de ese valor.
+
+Extendiéndose desde la caja, los bigotes intentan capturar los datos fuera de la caja. Los bigotes de un diagrama de caja alcanzan los valores mínimo y máximo de los datos, a menos que haya puntos que se consideren inusualmente altos o inusualmente bajos, que el diagrama de caja identifica como posibles valores atípicos. Estos están etiquetados con un punto en el diagrama de caja. El propósito de etiquetar los puntos periféricos, en lugar de extender los bigotes a los valores mínimos y máximos observados, es ayudar a identificar cualquier observación que parezca inusualmente distante del resto de los datos. Hay una variedad de fórmulas para determinar si un punto de datos en particular se considera un valor atípico, y diferentes software estadísticos usan fórmulas diferentes. Una fórmula comúnmente utilizada es que cualquier observación más allá $1.5 \times IQR$ lejos del primer o tercer cuartil se considera un valor atípico. En cierto sentido, la caja es como el cuerpo del diagrama de caja y los bigotes son como sus brazos que intentan alcanzar el resto de los datos, hasta los valores atípicos.
+
+Un _valor atípico_ es una observación que parece extrema en relación con el resto de los datos. Examinar los datos en busca de valores atípicos tiene muchos propósitos útiles, que incluyen
+
+- identificando un fuerte sesgo en la distribución,
+- identificar posibles errores de recopilación o ingreso de datos, y
+- proporcionando información sobre propiedades interesantes de los datos.
+
+Tenga en cuenta, sin embargo, que algunos conjuntos de datos tienen un sesgo naturalmente largo y los puntos periféricos no representan ningún tipo de problema en el conjunto de datos.
 
 ## Estadística robusta
 

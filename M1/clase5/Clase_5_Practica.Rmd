@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ```
 
-# Exploración de datos cuantitativos 
+## Exploración de datos cuantitativos 
 
 ## Encuesta Permanente de Hogares
 ```{r, echo=TRUE, warning=TRUE}
@@ -29,6 +29,9 @@ library(eph)
 ## Importamos datos y los etiquetamos
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 df <- get_microdata(year = 2021, trimester = 2, type = "individual")
+
+#Vamos a agregarle la cantidad de miembros del hogar
+df <- df %>% left_join(get_microdata(year=2021, trimester=2, type = "hogar", vars = c("CODUSU", "NRO_HOGAR", "IX_TOT")))
 ```
 
 ```{r}
@@ -92,6 +95,19 @@ df %>%
   geom_boxplot()
 ```
 
+¿Qué podemos decir de este gráfico? ¿Les parece útil para mostrar la información de la variable? 
+
+En los casos de variables que tenemos grandes disparidades en los valores (como puede ser ingresos, superficie, etc.) los valores no se ven muy bien representados gráficamente ya que hay mucha distancia entre cada punto, barra o línea. Por eso, es muy útil utilizar una **escala logarítmica**. El eje en el que plasmamos la información no crece proporcionalmente sino en potencias de 10. Esto se logra tomando el logaritmo en base 10 de los datos antes de proyectarlos. Esto permite que los valores pequeños tengan espacio para diferenciarse, y a la vez que los muy grandes no aparezcan tan alejados, logrando un gráfico más compacto y en general más legible. 
+
+En todo caso, `ggplot2` incluye varias funciones para transformar las escala de las x o de las y, entre ellas las que pasan las variables a escala logarítmica de base 10: `scale_x_log10()` y `scale_x_log10()`. 
+
+```{r}
+df %>%
+  ggplot(aes(y=ITF))+
+  geom_boxplot()+
+  scale_y_log10()
+```
+
 - **histograma:** nos muestra la frecuencia de una variable cuantitativa continua
 
 ```{r}
@@ -101,12 +117,26 @@ df %>%
   labs(x="Ingreso total del hogar",
        y = "n")
 ```
+
+Probemos cómo se ve el mismo gráfico en una escala logarítmica...
+
+```{r}
+df %>%
+  ggplot(aes(x=ITF))+
+  geom_histogram()+
+  scale_x_log10()+
+  labs(x="Ingreso total del hogar",
+       y = "n")
+
+```
+
 Puedo "recortar" el gráfico con los atributos `ylim()` o `xlim()` :
 
 ```{r}
 df %>%
   ggplot(aes(x=ITF))+
   geom_histogram()+
+  scale_x_log10()+
   labs(x="Ingreso total del hogar",
        y = "n")+
   xlim(0, 400000)
@@ -120,31 +150,30 @@ df %>%
   geom_point() +
   labs(x="Edad",
        y = "Ingreso de la ocupación principal")
-
 ```
 
-¿Qué pasa si re-escalamos esto mediante logartimos? Podemos hacerlo transformando directamente la variable en `aes()`:
+¿Qué pasa si re-escalamos esto mediante logartimos? Podemos hacerlo transformando directamente la variable en 
+`aes()`:
+
 ```{r echo=TRUE}
 df %>% 
   filter(ESTADO==1 & P21 > 0) %>%
   ggplot(aes(x=log10(CH06), y=log10(P21))) +
-  geom_point()
+  geom_point()+
   labs(x="Edad",
        y = "Ingreso de la ocupación principal")
 ```
 
 O usando las funciones para reescalar los ejes:
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-
 df %>% 
   filter(ESTADO==1 & P21 > 0) %>%
   ggplot(aes(x=CH06, y=P21)) +
   scale_y_log10() + 
   scale_x_log10() +
-  geom_point()
+  geom_point()+
   labs(x="Edad",
        y = "Ingreso de la ocupación principal")
-
 ```
 
 ¿Qué diferencias ven en cada uno de los gráficos?
