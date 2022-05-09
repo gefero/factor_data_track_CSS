@@ -76,3 +76,17 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 1
 [![](./imgs/Download.png)](./M1/clase4/clase4.zip)
+
+
+## Clase 6. Tipologías en R
+
+- [Slides - Notebook](./M1/clase6/M1_Clase_6.pdf)
+- [Explicación y práctica - Notebook](./M1/clase6/Clase_6_Esquema_EOW.html)
+- [Explicación y práctica - RMarkdown](./M1/clase6/Clase_6_Esquema_EOW.Rmd)
+- [Cuestionario - ENES](./M1/clase6/material_pisac/formulario_enes.pdf)
+- [Diseño de registro - personas - ENES](./M1/clase6/material_pisac/manual_codigos_base_personas.odf)
+- [Marco conceptual - ENES](./M1/clase6/material_pisac/marco_teorico_metodologico_enes_pisac.pdf)
+
+Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
+1
+[![](./imgs/Download.png)](./M1/clase6/clase6.zip)

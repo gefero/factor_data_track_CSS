@@ -1,0 +1,179 @@
+---
+title: "Clase 5. Explorando datos cuantitativos"
+subtitle: "Práctica R"
+author: "Laia Domenech Burin y Germán Rosati"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+theme: Boadilla
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
+```
+
+## Exploración de datos cuantitativos 
+
+## Encuesta Permanente de Hogares
+```{r, echo=TRUE, warning=TRUE}
+library(tidyverse)
+library(eph)
+```
+
+## Importamos datos y los etiquetamos
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- get_microdata(year = 2021, trimester = 2, type = "individual")
+
+#Vamos a agregarle la cantidad de miembros del hogar
+df <- df %>% left_join(get_microdata(year=2021, trimester=2, type = "hogar", vars = c("CODUSU", "NRO_HOGAR", "IX_TOT")))
+```
+
+```{r}
+options(scipen=999)
+```
+
+## Explorando los datos 
+La clase de hoy vamos a concentrarnos en el análisis de datos **cuantitativos**. Recordarán que existen algunas medidas resumen de este tipo de variables:
+
+- **cuantiles:** con la función `quantile()` podemos expresar el tipo de cuantil que deseamos. En el parámetro `probs` colocamos los cuantiles que queremos. Por default nos devuelve los cuartiles, pero en el parámetro 
+  + **cuartiles:**
+```{r}
+quantile(df$ITF)
+```
+
+  + **deciles:**
+```{r}
+quantile(df$ITF, probs = seq(0, 1, 0.1))
+```
+
+Aquí vemos que hasta el 10% de la población indica que gana 0 pesos per capita mensuales, y el último decil de ingresos gana más de 10 veces de lo que gana la mitad de la población. Esto nos indica que hay muchos **outliers** en nuestra distribución de la variable, lo cual va a afectar el promedio de los ingresos.  
+
+- **media:**
+```{r}
+mean(df$ITF)
+```
+- **mediana:**
+```{r}
+median(df$ITF)
+```
+- **desvío estándar:**
+```{r}
+sd(df$ITF)
+```
+¿Con qué función que vimos en las primeras clases podemos ver una aproximación a las medidas resumen? 
+```{r}
+summary(df$ITF)
+```
+
+### Ahora en formato `tidyverse`
+Hasta aquí hemos venido usando las funciones de R-base. Pero lo bueno de tidyverse es que podemos ordenar todos estos resultados en una sola tabla. Veamos. Vamos a hacer una tabla en la que concentremos algunas de las medidas que vimos hasta aquí (la media, la varianza y el desvío estándar).
+
+```{r}
+df %>%
+  summarise(media_itf = mean(ITF),
+            sd_itf = sd(ITF),
+            var_itf = var(ITF))
+```
+
+Ahora ustedes pueden armar una tabla con el mínimo, la mediana, la media, y el máximo
+```{r}
+###
+```
+
+## Representación gráfica de los datos
+
+- El **boxplot** es un gráfico que resume los valores que vimos: nos muestra los otuliers, los rangos intercuartiles y la media. 
+```{r}
+df %>%
+  ggplot(aes(y=ITF))+
+  geom_boxplot()
+```
+
+¿Qué podemos decir de este gráfico? ¿Les parece útil para mostrar la información de la variable? 
+
+En los casos de variables que tenemos grandes disparidades en los valores (como puede ser ingresos, superficie, etc.) los valores no se ven muy bien representados gráficamente ya que hay mucha distancia entre cada punto, barra o línea. Por eso, es muy útil utilizar una **escala logarítmica**. El eje en el que plasmamos la información no crece proporcionalmente sino en potencias de 10. Esto se logra tomando el logaritmo en base 10 de los datos antes de proyectarlos. Esto permite que los valores pequeños tengan espacio para diferenciarse, y a la vez que los muy grandes no aparezcan tan alejados, logrando un gráfico más compacto y en general más legible. 
+
+En todo caso, `ggplot2` incluye varias funciones para transformar las escala de las x o de las y, entre ellas las que pasan las variables a escala logarítmica de base 10: `scale_x_log10()` y `scale_x_log10()`. 
+
+```{r}
+df %>%
+  ggplot(aes(y=ITF))+
+  geom_boxplot()+
+  scale_y_log10()
+```
+
+- **histograma:** nos muestra la frecuencia de una variable cuantitativa continua
+
+```{r}
+df %>%
+  ggplot(aes(x=ITF))+
+  geom_histogram()+
+  labs(x="Ingreso total del hogar",
+       y = "n")
+```
+
+Probemos cómo se ve el mismo gráfico en una escala logarítmica...
+
+```{r}
+df %>%
+  ggplot(aes(x=ITF))+
+  geom_histogram()+
+  scale_x_log10()+
+  labs(x="Ingreso total del hogar",
+       y = "n")
+
+```
+
+Puedo "recortar" el gráfico con los atributos `ylim()` o `xlim()` :
+
+```{r}
+df %>%
+  ggplot(aes(x=ITF))+
+  geom_histogram()+
+  scale_x_log10()+
+  labs(x="Ingreso total del hogar",
+       y = "n")+
+  xlim(0, 400000)
+```
+
+- **scatterplot:** es un gráfico que nos sirve para mostrar la correlación entre dos variables cuantitativas. Vamos a analizar la relación entre el ingreso de la ocupación principal (P21) y la edad (CH06) entre les ocupades.
+```{r}
+df %>% 
+  filter(ESTADO==1 & P21 > 0) %>%
+  ggplot(aes(x=CH06, y=P21)) +
+  geom_point() +
+  labs(x="Edad",
+       y = "Ingreso de la ocupación principal")
+```
+
+¿Qué pasa si re-escalamos esto mediante logartimos? Podemos hacerlo transformando directamente la variable en 
+`aes()`:
+
+```{r echo=TRUE}
+df %>% 
+  filter(ESTADO==1 & P21 > 0) %>%
+  ggplot(aes(x=log10(CH06), y=log10(P21))) +
+  geom_point()+
+  labs(x="Edad",
+       y = "Ingreso de la ocupación principal")
+```
+
+O usando las funciones para reescalar los ejes:
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+df %>% 
+  filter(ESTADO==1 & P21 > 0) %>%
+  ggplot(aes(x=CH06, y=P21)) +
+  scale_y_log10() + 
+  scale_x_log10() +
+  geom_point()+
+  labs(x="Edad",
+       y = "Ingreso de la ocupación principal")
+```
+
+¿Qué diferencias ven en cada uno de los gráficos?

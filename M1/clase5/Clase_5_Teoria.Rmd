@@ -227,7 +227,7 @@ La desviación estándar representa la desviación típica de las observaciones 
 Al igual que la media, los valores de población para la varianza y la desviación estándar tienen símbolos especiales: $\sigma^2$  por la varianza y $\sigma$ para la desviación estándar.
 
 
-## Boxplots, cuantiles y mediana (para la próxima)
+## Boxplots, cuantiles y mediana
 
 Un boxplot resume un dataset usando cinco números, cinco estadísticos.
 ```{r echo=FALSE}

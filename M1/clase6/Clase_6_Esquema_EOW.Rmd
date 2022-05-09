@@ -1,0 +1,341 @@
+---
+title: "Clase 5. Construyendo un esquema de clases. Tipologías en R"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Laia Domenech Burin y Germán Rosati"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+
+# Introducción
+Hoy vamos a centrarnos en la generación de tipologías. Si bien no entraremos en detalles epistemológicos, diremos que la construcción de tipologías es una herramienta fundamental para la investigación social. Si bien tienen utilidad como herramienta puramente conceptual, aqui nos centraremos en la construcción de tipologías de carácter empírico, es decir, en estrecha relación con los datos. Pueden encontrar discusiones sumamente interesantes al respecto [aquí](https://dialnet.unirioja.es/descarga/articulo/5275947.pdf) y [aquí](https://consejopsuntref.files.wordpress.com/2017/08/cap-iii-el-concepto-de-espacio-de-propiedades.pdf).
+
+Para esto, vamos a tomar como ejemplo una operacionalización posible del concepto de "clase social": el de Erik Olin Wright, particularmente en el esquema en que idenficaba  "posiciones contradictorias de clase". Pero primero, vamos a introducir algunas herramientas en R.
+
+# Combinando variables en R
+De la lectura de los textos mencionados más arriba, puede concluirse que la construcción de una tipología es básicamente una combinación de otras variables. Así, por ejemplo, la variable "condición de actividad" tal y como es utilizada en nuestro Sistema Estadístico Nacional puede ser pensado como una tipología que combina varias variables:
+
+|                  | Trabajó al menos una hora | No trabajó al menos una hora |
+|------------------|---------------------------|------------------------------|
+| Buscó trabajo    | /////                     | Desocupado                   |
+| No buscó trabajo | Ocupado                   | Inactivo                     |
+
+De esta forma, tenemos que introducir alguna herrmienta que nos permita realizar este tipo de combinaciones. Vamos a usar una función que se llama `case_when()`. Con frecuencia, cuando manipulamos datos en R, necesitamos modificar los datos en función de varias condiciones posibles. Esto es particularmente cierto cuando estamos creando nuevas variables con la función de mutación de dplyr.
+
+Veamos el siguiente ejemplo... Hoy vamos a trabajar con la Encuesta Nacional sobre Estructura Social, llevada adelante por el PISAC. Pueden encontrar más información [aquí](https://www.argentina.gob.ar/ciencia/pisac/bases-de-datos).
+
+```{r message=FALSE}
+library(tidyverse)
+df <- read_rds('./data/ENES_Personas_M1.rds')
+```
+
+```{r}
+df %>%
+  group_by(nivel_ed) %>%
+  summarise(n=n())
+```
+ La variable `nivel_ed` tiene demasiadas categorías. Supongamos que solamente queremos poder separarlas en tres categorías:
+
+- bajo: hasta primario completo
+- medio hasta secundario completo
+- alto: mayor a secundario completo
+
+
+## `case_when()` para una sola variable
+
+Podemos hacer uso de esta instrucción de la siguiente manera:
+
+```{r}
+df <- df %>%
+  mutate(nivel_ed_agg = case_when(
+    nivel_ed == 'Menores de 5 años' | nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
+      nivel_ed == 'Primaria/EGB incompleto' | nivel_ed == 'Primaria/EGB completo' | 
+      nivel_ed == 'Educación especial' | nivel_ed == 'NS/NR'~ 'Bajo',
+    
+    nivel_ed == 'Secundario/Polimodal incompleto' | nivel_ed == 'Secundario/Polimodal completo' ~ 'Medio',
+    
+    nivel_ed == 'Terciario incompleto' | nivel_ed == 'Terciario completo' | nivel_ed == 'Universitario incompleto' | nivel_ed == 'Universitario completo' ~ 'Alto'
+  )
+  )
+```
+ Podemos ver, entonces, que 
+ 
+```{r}
+df %>%
+  group_by(nivel_ed_agg) %>%
+  summarise(n=n())
+```
+Podemos usar `case_when` para implementar un tipo de lógica simple, donde la función solo prueba la condición única y genera un valor si esa condición es VERDADERA.
+
+Para hacer esto sintácticamente, simplemente escribimos el nombre de la función: case_when().
+
+Luego, dentro del paréntesis, hay una expresión con un “lado izquierdo” y un “lado derecho”, que están separados por una tilde (~).
+
+**EL LADO IZQUIERDO ES UNA CONDICIÓN**
+Dentro del paréntesis de `case_when`, el lado izquierdo es una declaración condicional que debe evaluarse como VERDADERO o FALSO.
+
+Esta condición es la condición que estamos buscando que indica membresía en un caso particular.
+
+Esto casi siempre será un:
+
+- Operación de comparación (es decir, `>=`)
+- Expresión lógica compuesta que combina varias operaciones de comparación con los operadores y/o/no (`&`, `|`, `!`)
+
+Básicamente, el lado izquierdo de la expresión debe ser una expresión lógica que se evalúe como VERDADERO o FALSO.
+
+Esta es la "condición de coincidencia" que estamos buscando para que coincida con un "caso" particular.
+
+EL LADO DERECHO PROPORCIONA UN VALOR DE REEMPLAZO
+El lado derecho de la expresión proporciona el valor de reemplazo.
+
+Entonces, si el lado izquierdo está buscando los valores que coinciden con un caso particular, el lado derecho de la expresión proporciona la salida de `case_when()` para ese caso.
+
+Así funciona `case_when()` si tenemos una sola condición y caso que estamos buscando. Pero el verdadero poder de `case_when()` aparece cuando lo usa para implementar la lógica if/else, o la lógica if/elif/else con múltiples casos.
+
+
+## `case_when()` como if-else
+Aquí, veremos la sintaxis que busca una condición y asigna una salida si esa condición es VERDADERA. Pero si la condición es FALSA, genera un valor diferente. 
+
+Así, podríamos haber abreviado la operación anterior...
+
+```{r}
+df <- df %>%
+  mutate(nivel_ed_agg = case_when(
+    nivel_ed == 'Menores de 5 años' | nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
+      nivel_ed == 'Primaria/EGB incompleto' | nivel_ed == 'Primaria/EGB completo' ~ 'Bajo',
+    nivel_ed == 'Secundario/Polimodal incompleto' | nivel_ed == 'Secundario/Polimodal completo' ~ 'Medio',
+    TRUE ~ 'Alto' ### TODOS LOS CASOS QUE NO CUMPLEN LAS DOS CONDICIONES ANTERIORES...
+  )
+  )
+```
+
+En esta sintaxis para if-else usando case_when, es posible que haya notado la sintaxis VERDADERA en la tercera línea. ¿Por qué necesitamos esto?
+
+Recuerde de la sección anterior que cuando usamos case_when, usamos expresiones de dos lados para evaluar una condición y luego generamos un valor si esa condición es VERDADERA. Si el lado izquierdo es VERDADERO, case_when() genera el valor del lado derecho.
+
+En este ejemplo de sintaxis aquí, la segunda línea codifica el valor VERDADERO en esa expresión final de dos lados. Esto obliga a case_when a generar el "else-output-value" si ninguna de las condiciones anteriores era VERDADERA.
+
+## `case_when()` con varias variables
+
+Ahora que hemos visto dos ejemplos con una condición, veamos cómo funciona case_when() cuando tenemos varios casos.
+
+La sintaxis case_when que prueba diferentes casos es similar a la sintaxis de un caso.
+
+Cuando tenemos múltiples casos, tenemos “una secuencia de fórmulas”. Dicho de otra manera, la sintaxis tendrá una secuencia de múltiples fórmulas para una "condición de prueba" y "salida".
+
+```
+case_when(
+      condicion1 ~ valor1,
+      condicion2 ~ valor2,
+      condicion3 ~ valor3,
+      ...)
+```
+
+A su vez, cada una de las condiciones pueden ser tan complejas como querramos. Veamos un ejemplo más, antes de empezar con el esquema de clases.
+
+Supongamos que queremos categorizar a hombres y mujeres según sean ocupados, desocupados o inactivos. Podríamos generar algo como lo que sigue:
+
+```{r}
+df <- df %>%
+  mutate(sexo_cond = case_when(
+    v109 == 'Varón' & estado == 'Ocupado' ~ 'Hombre-Ocupado',
+    v109 == 'Varón' & estado == 'Desocupado' ~ 'Hombre-Desocupado',
+    v109 == 'Varón' & estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Hombre-Inact',
+    v109 == 'Mujer' & estado == 'Ocupado' ~ 'Mujer-Ocupada',
+    v109 == 'Mujer' & estado == 'Desocupado' ~ 'Mujer-Desocupada',
+    v109 == 'Mujer' & estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Mujer-Inact',
+     v109 == 'Otro' & estado == 'Ocupado' ~ 'Otro-Ocupada',
+    v109 == 'Otro' & estado == 'Desocupado' ~ 'Otro-Desocupada',
+    v109 == 'Otro' & estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Otro-Inact'
+    
+    
+  ))
+```
+
+De esta forma,
+
+```{r}
+df %>%
+  group_by(sexo_cond) %>%
+  summarise(n=n())
+```
+
+## Práctica
+Generen una variable que cree cuatro grupos de edad (a partir de la variable `v108`): 
+- 0 a 13
+- 14 a 35
+- 35 - 64
+- más de 65
+
+```{r}
+###
+```
+
+# Introducción al esquema de clases
+El objetivo de este notebook es poder realizar una primera operacionalización del concepto abstracto de "clase social". Para ello vamos a trabajar sobre uno de los esquemas mencionados antes: el de Erik Olin Wright. En realidad, vamos a trabajar sobre una versión inicial que el autor elaboró hacia fines de los años '70: el enfoque de las posiciones contradictorias de clase.
+
+Un punto muy interesante de este autor es que ha sido sumamente explícito en el proceso de operacionalización: permite observar cómo se va recorriendo el complejo camino de la construcción de las variables, estableciendo un nexo entre lo empírico y lo heurístico. 
+
+En este sentido, su perspectiva neomarxista conserva la noción marxista de explotación en las categorías analíticas que elabora y busca definir los indicadores que le permitan interpretar  más adecuadamente las variantes empíricas que encuentra en su abordaje a la realidad. 
+
+En una apretada síntesis trataremos de referirnos a las premisas conceptuales, a partir de las cuales Wright construye lo que llama “Tipología de las posiciones de clase en la sociedad capitalista”. En primer lugar, establece una distinción entre clase y ocupación. Las ocupaciones deben  entenderse como posiciones definidas dentro de las relaciones técnicas de producción, mientras que las clases se definen por las relaciones sociales de producción. ¿Cómo lleva a la práctica ese esquema? ¿Cómo logra construir mediciones de cada uno de los grupos sociales que identifica?
+
+Estableció tres posiciones básicas en las relaciones de clase del capitalismo: 
+
+- la burguesía (posee propiedad económica y ejercer control sobre los medios físicos de producción y la fuerza de trabajo de otros) 
+- la pequeña burguesía posee y controla sus medios de producción pero no controla la fuerza de trabajo de otros, 
+- el proletariado que no tiene la propiedad ni el control de su fuerza de trabajo. 
+
+Dado que el contexto en que escribe este primer trabajo, una de las principales preocupaciones había sido la emergencia en el capitalismo contemporáneo de las (mal) llamadas "nuevas clases medias". Trabajaremos este proceso más adelante, pero lo fundamental aquí es que como resultado de esta preocupación incluyó dos nuevas posiciones: 
+
+- directivos y supervisores quienes no son poseedores de los medios de producción en términos de la concepción clásica marxista, sin embargo, ejercen de hecho diferentes tipos de control sobre los medios materiales de producción y la fuerza de trabajo, muchas veces a gran escala, 
+
+Tabla 1. Criterios para posiciones de clase en el Estudio de Panel sobre Dinámica de Ingresos
+
+| ****                  | **Cuenta propia** | **Emplea a otros** | **Supervisa a otros** | **Influencia sobre pagos de otros** | **Empleado por otro** |
+|-----------------------|-------------------|--------------------|-----------------------|-------------------------------------|-----------------------|
+| **Empleadores**       | Sí                | Sí                 | Sí                    | Sí                                  | No                    |
+| **Managers**          | No                | No                 | Sí                    | Sí                                  | Sí                    |
+| **Supervisores**      | No                | No                 | Sí                    | No                                  | Sí                    |
+| **Trabajadores**      | No                | No                 | No                    | No                                  | Sí                    |
+| **Pequeña burguesía** | Sí                | No                 | No                    | No                                  | No                    |
+
+Vemos como los diferentes grupos presentan características que en su mayoría son operacionalizables con la información disponible en gran parte de las encuestas a hogares que se realizan en Argentina. 
+
+Así, podríamos mapear la primera dimensión (*es cuanta propia*) con las categorías ocupacionales "Patrón", "Trabajador por cuenta propia" y "Trabajador familiar".
+
+La segunda dimensión, *emplea a otros*, podría ser aproximada mediante la categoría de patrones. No obstante, dado que se hace una pregunta en la ENES, `v196` ("Ese negocio/empresa/actividad, ¿emplea/ba personas asalariadas?") se utilizará esta variable también.
+
+La tercera dimensión (*supervisa a otros*) será aproximada por la pregunta `v186` ("¿Forma/ba (…) parte de su empleo supervisar el trabajo de otros o decirles qué hacer?")
+
+La quinta dimensión (*empleado por otros*), será aproximada por la categoría ocupacional (asalariados) que no supervisen a otras personas.
+
+La única excepción es la característica (*tiene influencia sobre pagos de otros)*. Esta variable no está operacionalizada en la ENES por lo cual quedará fuera de nuestro análisis. 
+
+## Replicación del esquema de clases de Wright (1974)
+Uno de los objetivos del ejercicio es replicar algunos análisis del texto de Erik Olin Wright sobre la relación entre la estructura social y la determinación de ingresos.
+
+Para ello, era necesario reproducir el esquema de clases del autor de la forma más aproximada posible. Veamos, primero, la sintaxis general...
+
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+df <- df %>%
+  mutate(class_eow = case_when(
+    (cat_ocup == 'Patrón' | cat_ocup == 'Cuenta propia' | cat_ocup == 'Trabajador familiar sin remuneración')
+    & (v196 == 'Sí, siempre' | v196 == 'Sólo a veces, por temporadas')
+    & (v186 == 'Sí' | v186 == 'No') ~ 'Empleadores',
+    
+    cat_ocup == 'Obrero o empleado' 
+    & v186 == 'Sí' 
+    & v187 >= 5 ~ 'Managers',
+    
+    cat_ocup == 'Obrero o empleado' 
+    & (v186 == 'Sí' | v186 == 'NS/NR') 
+    & (v187 < 5 | is.na(v187)) ~ 'Supervisores',
+    
+    cat_ocup == 'Obrero o empleado'
+    & df$v186 == 'No' ~ 'Trabajadores',
+    
+    (cat_ocup == 'Cuenta propia' | cat_ocup=='Trabajador familiar sin remuneración') 
+    & (v196 == 'No contrata' | is.na(v196)) ~ 'Pequeña burguesía',
+    
+    TRUE ~ 'Inactivo, desocupado o menor'
+    )
+) 
+```
+
+
+
+### Empleadores
+Para la construcción de la categoría **empleadores** (ver esquena de Wright 1974 pp. 242-247) se siguieron los siguientes criterios
+
+```
+    (cat_ocup == 'Patrón' | cat_ocup == 'Cuenta propia' | cat_ocup == 'Trabajador familiar sin remuneración')
+    & (v196 == 'Sí, siempre' | v196 == 'Sólo a veces, por temporadas')
+    & (v186 == 'Sí' | v186 == 'No') ~ 'Empleadores`
+```
+  
+* Se consideró a los patrones, cuenta propia y trabajadores familiares como autónomos (*self employed*)
+* Para "limpiar" la variable categoría ocupacional (`cat_ocup`) se decidió tomar como criterio definitorio si contrataban asalariados (`v196`) de forma permanente o eventual, independientemente de si estaban clasificados como patrones, TCP o familiares.
+* Como aproximación al criterio de supervisión y control, se tomó la pregunta `v186` de la ENES y se consideró que si se trataban de empleadores -y, por ende, patrones-, entonces, sí realizaban tareas de supervisión, independiente de que hubieran contestado que no.
+
+### Managers
+Para la aproximación a la categoría de **managers**, 
+
+``` 
+ cat_ocup == 'Obrero o empleado' 
+    & v186 == 'Sí' 
+    & v187 >= 5 ~ 'Managers',
+``` 
+
+se consideró a los asalariados que 
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre 5 o más trabajadores (`v187`), que constituye la mediana de esta variable. Este criterio se toma en reemplazo de la pregunta original de Wright acerca de si los entrevistados tenían voz sobre la definición de remuneraciones o promociones de las personas que supervisaban.
+
+### Supervisores
+Los **supervisores** fueron aproximados 
+
+``` 
+cat_ocup == 'Obrero o empleado' 
+    & (v186 == 'Sí' | v186 == 'NS/NR') 
+    & (v187 < 5 | is.na(v187)) ~ 'Supervisores',
+```
+
+tomando a los asalariados que
+* declararan que realizaban tareas de control y supervisión -`v186`- 
+* que lo hicieran sobre menos de 5 trabajadores (`v187`)
+
+### Trabajadores
+Los **trabajadores** 
+
+``` 
+    cat_ocup == 'Obrero o empleado'
+    & df$v186 == 'No' ~ 'Trabajadores',
+```
+
+están constituidos por todos los asalariados que no son ni **managers** ni **supervisores**: aquellos que no realizan tareas de supervisión ni control sobre otros -`v196`.
+
+### Pequeña burguesía
+La **pequeña burguesía** 
+
+```
+ (cat_ocup == 'Cuenta propia' | cat_ocup=='Trabajador familiar sin remuneración') 
+    & (v196 == 'No contrata' | is.na(v196)) ~ 'Pequeña burguesía',
+```
+
+está constituida por todos aquellos autónomos que no contratan asalariados en ningún momento.
+
+
+### Pregunta
+¿Qué significa esta línea en el código?
+```
+    TRUE ~ 'Inactivo, desocupado o menor'
+```
+
+De esta forma, podemos tener una primera aproximación a la distribución de clases sociales según el esquema de Erik Olin Wright:
+
+```{r}
+
+df %>%
+  group_by(class_eow) %>%
+  summarise(n=n()) %>%
+  mutate(prop = n/sum(n)) %>%
+  ggplot() +
+    geom_col(aes(x=reorder(class_eow, prop), y=prop)) + 
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45,hjust=1)) +
+    labs(y='%',
+         x='Clase EOW')
+
+```
+
