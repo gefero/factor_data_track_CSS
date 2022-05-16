@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Laia Domenech Burin y Germán Rosati" />
+<meta name="author" content="Germán Rosati y Laia Domenech Burin" />
 
 
 <title>Clase 5. Construyendo un esquema de clases. Tipologías en R</title>
@@ -1510,8 +1510,8 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Clase 5. Construyendo un esquema de clases. Tipologías en R</h1>
-<h4 class="author">Laia Domenech Burin y Germán Rosati</h4>
-<h4 class="date">09 mayo, 2022</h4>
+<h4 class="author">Germán Rosati y Laia Domenech Burin</h4>
+<h4 class="date">16 mayo, 2022</h4>
 
 </div>
 
@@ -1645,14 +1645,13 @@ div.tocify {
 +   mutate(sexo_cond = case_when(
 +     v109 == 'Varón' &amp; estado == 'Ocupado' ~ 'Hombre-Ocupado',
 +     v109 == 'Varón' &amp; estado == 'Desocupado' ~ 'Hombre-Desocupado',
-+     v109 == 'Varón' &amp; estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Hombre-Inact',
++     v109 == 'Varón' &amp; (estado == 'Inactivo'| estado == 'Menor de 10 años') ~ 'Hombre-Inact',
 +     v109 == 'Mujer' &amp; estado == 'Ocupado' ~ 'Mujer-Ocupada',
 +     v109 == 'Mujer' &amp; estado == 'Desocupado' ~ 'Mujer-Desocupada',
-+     v109 == 'Mujer' &amp; estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Mujer-Inact',
-+      v109 == 'Otro' &amp; estado == 'Ocupado' ~ 'Otro-Ocupada',
++     v109 == 'Mujer' &amp; (estado == 'Inactivo'| estado == 'Menor de 10 años') ~ 'Mujer-Inact',
++     v109 == 'Otro' &amp; estado == 'Ocupado' ~ 'Otro-Ocupada',
 +     v109 == 'Otro' &amp; estado == 'Desocupado' ~ 'Otro-Desocupada',
-+     v109 == 'Otro' &amp; estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Otro-Inact'
-+     
++     v109 == 'Otro' &amp; (estado == 'Inactivo'| estado == 'Menor de 10 años') ~ 'Otro-Inact'
 +     
 +   ))</code></pre>
 <p>De esta forma,</p>
@@ -1663,10 +1662,10 @@ div.tocify {
 ##   sexo_cond             n
 ##   &lt;chr&gt;             &lt;int&gt;
 ## 1 Hombre-Desocupado   426
-## 2 Hombre-Inact       7987
+## 2 Hombre-Inact       5778
 ## 3 Hombre-Ocupado     7054
 ## 4 Mujer-Desocupada    615
-## 5 Mujer-Inact        6445
+## 5 Mujer-Inact        8654
 ## 6 Mujer-Ocupada      5077
 ## 7 Otro-Desocupada       1
 ## 8 Otro-Inact            1
@@ -1680,7 +1679,7 @@ div.tocify {
 </div>
 <div id="introducción-al-esquema-de-clases" class="section level1">
 <h1>Introducción al esquema de clases</h1>
-<p>El objetivo de este notebook es poder realizar una primera operacionalización del concepto abstracto de “clase social”. Para ello vamos a trabajar sobre uno de los esquemas mencionados antes: el de Erik Olin Wright. En realidad, vamos a trabajar sobre una versión inicial que el autor elaboró hacia fines de los años ’70: el enfoque de las posiciones contradictorias de clase.</p>
+<p>El objetivo de este notebook es poder realizar una primera operacionalización del concepto abstracto de “clase social”. Para ello vamos a trabajar sobre uno de los esquemas mencionados antes: el de Erik Olin Wright. En realidad, vamos a trabajar sobre una versión inicial que el autor elaboró hacia fines de los años ’70: el enfoque de las posiciones contradictorias de clase. El texto pueden encontrarlo <a href="https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing">acá</a>.</p>
 <p>Un punto muy interesante de este autor es que ha sido sumamente explícito en el proceso de operacionalización: permite observar cómo se va recorriendo el complejo camino de la construcción de las variables, estableciendo un nexo entre lo empírico y lo heurístico.</p>
 <p>En este sentido, su perspectiva neomarxista conserva la noción marxista de explotación en las categorías analíticas que elabora y busca definir los indicadores que le permitan interpretar más adecuadamente las variantes empíricas que encuentra en su abordaje a la realidad.</p>
 <p>En una apretada síntesis trataremos de referirnos a las premisas conceptuales, a partir de las cuales Wright construye lo que llama “Tipología de las posiciones de clase en la sociedad capitalista”. En primer lugar, establece una distinción entre clase y ocupación. Las ocupaciones deben entenderse como posiciones definidas dentro de las relaciones técnicas de producción, mientras que las clases se definen por las relaciones sociales de producción. ¿Cómo lleva a la práctica ese esquema? ¿Cómo logra construir mediciones de cada uno de los grupos sociales que identifica?</p>

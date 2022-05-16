@@ -4,7 +4,7 @@ output:
   html_document:
     toc: TRUE
     toc_float: TRUE
-author: "Laia Domenech Burin y Germán Rosati"
+author: "Germán Rosati y Laia Domenech Burin"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
@@ -15,7 +15,6 @@ knitr::opts_chunk$set(echo=FALSE)
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
 ```
-
 
 # Introducción
 Hoy vamos a centrarnos en la generación de tipologías. Si bien no entraremos en detalles epistemológicos, diremos que la construcción de tipologías es una herramienta fundamental para la investigación social. Si bien tienen utilidad como herramienta puramente conceptual, aqui nos centraremos en la construcción de tipologías de carácter empírico, es decir, en estrecha relación con los datos. Pueden encontrar discusiones sumamente interesantes al respecto [aquí](https://dialnet.unirioja.es/descarga/articulo/5275947.pdf) y [aquí](https://consejopsuntref.files.wordpress.com/2017/08/cap-iii-el-concepto-de-espacio-de-propiedades.pdf).
@@ -150,14 +149,13 @@ df <- df %>%
   mutate(sexo_cond = case_when(
     v109 == 'Varón' & estado == 'Ocupado' ~ 'Hombre-Ocupado',
     v109 == 'Varón' & estado == 'Desocupado' ~ 'Hombre-Desocupado',
-    v109 == 'Varón' & estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Hombre-Inact',
+    v109 == 'Varón' & (estado == 'Inactivo'| estado == 'Menor de 10 años') ~ 'Hombre-Inact',
     v109 == 'Mujer' & estado == 'Ocupado' ~ 'Mujer-Ocupada',
     v109 == 'Mujer' & estado == 'Desocupado' ~ 'Mujer-Desocupada',
-    v109 == 'Mujer' & estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Mujer-Inact',
-     v109 == 'Otro' & estado == 'Ocupado' ~ 'Otro-Ocupada',
+    v109 == 'Mujer' & (estado == 'Inactivo'| estado == 'Menor de 10 años') ~ 'Mujer-Inact',
+    v109 == 'Otro' & estado == 'Ocupado' ~ 'Otro-Ocupada',
     v109 == 'Otro' & estado == 'Desocupado' ~ 'Otro-Desocupada',
-    v109 == 'Otro' & estado == 'Inactivo'| estado == 'Menor de 10 años' ~ 'Otro-Inact'
-    
+    v109 == 'Otro' & (estado == 'Inactivo'| estado == 'Menor de 10 años') ~ 'Otro-Inact'
     
   ))
 ```
@@ -182,7 +180,7 @@ Generen una variable que cree cuatro grupos de edad (a partir de la variable `v1
 ```
 
 # Introducción al esquema de clases
-El objetivo de este notebook es poder realizar una primera operacionalización del concepto abstracto de "clase social". Para ello vamos a trabajar sobre uno de los esquemas mencionados antes: el de Erik Olin Wright. En realidad, vamos a trabajar sobre una versión inicial que el autor elaboró hacia fines de los años '70: el enfoque de las posiciones contradictorias de clase.
+El objetivo de este notebook es poder realizar una primera operacionalización del concepto abstracto de "clase social". Para ello vamos a trabajar sobre uno de los esquemas mencionados antes: el de Erik Olin Wright. En realidad, vamos a trabajar sobre una versión inicial que el autor elaboró hacia fines de los años '70: el enfoque de las posiciones contradictorias de clase. El texto pueden encontrarlo [acá](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing).
 
 Un punto muy interesante de este autor es que ha sido sumamente explícito en el proceso de operacionalización: permite observar cómo se va recorriendo el complejo camino de la construcción de las variables, estableciendo un nexo entre lo empírico y lo heurístico. 
 
@@ -253,7 +251,6 @@ df <- df %>%
     )
 ) 
 ```
-
 
 
 ### Empleadores

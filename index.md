@@ -83,6 +83,7 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 - [Slides - Notebook](./M1/clase6/M1_Clase_6.pdf)
 - [Explicación y práctica - Notebook](./M1/clase6/Clase_6_Esquema_EOW.html)
 - [Explicación y práctica - RMarkdown](./M1/clase6/Clase_6_Esquema_EOW.Rmd)
+- [Olin Wright, E. (1979), _Class structure and income determination_, New York: Academic Press](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing)
 - [Cuestionario - ENES](./M1/clase6/material_pisac/formulario_enes.pdf)
 - [Diseño de registro - personas - ENES](./M1/clase6/material_pisac/manual_codigos_base_personas.odf)
 - [Marco conceptual - ENES](./M1/clase6/material_pisac/marco_teorico_metodologico_enes_pisac.pdf)
