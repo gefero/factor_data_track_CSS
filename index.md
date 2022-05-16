@@ -89,5 +89,4 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 - [Marco conceptual - ENES](./M1/clase6/material_pisac/marco_teorico_metodologico_enes_pisac.pdf)
 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
-1
 [![](./imgs/Download.png)](./M1/clase6/clase6.zip)
