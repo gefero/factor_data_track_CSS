@@ -93,7 +93,6 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 
 
 ## Clase 7. Ocupación y ejercicio integrador
-
 - [Slides - Notebook](./M1/clase7/M1_Clase_7.pdf)
 - [Práctica - R script](./M1/clase7/Clase_7_ejercicio.R)
 - [Práctica con soluciones - R script](./M1/clase7/Clase_7_ejercicio_SOLUCIONES.R)
