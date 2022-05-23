@@ -1673,8 +1673,14 @@ div.tocify {
 </div>
 <div id="práctica" class="section level2">
 <h2>Práctica</h2>
-<p>Generen una variable que cree cuatro grupos de edad (a partir de la variable <code>v108</code>): - 0 a 13 - 14 a 35 - 35 - 64 - más de 65</p>
-<pre class="r"><code>&gt; ###</code></pre>
+<p>Generen una variable que cree cuatro grupos de edad (a partir de la variable <code>v108</code>): - 0 a 13 - 14 a 35 - 36 - 64 - más de 65</p>
+<pre class="r"><code>&gt; df &lt;- df %&gt;%
++         mutate(edad = case_when(
++           v108 &lt;= 13 ~ '0-13',
++           v108 &gt; 13 &amp; v108 &lt; 36 ~ '13-35',
++           v108 &gt;= 36 &amp; v108 &lt; 65 ~ '36-65',
++           v108 &gt;= 65 ~ '65 y +')
++         )</code></pre>
 </div>
 </div>
 <div id="introducción-al-esquema-de-clases" class="section level1">

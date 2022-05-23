@@ -172,11 +172,17 @@ df %>%
 Generen una variable que cree cuatro grupos de edad (a partir de la variable `v108`): 
 - 0 a 13
 - 14 a 35
-- 35 - 64
+- 36 - 64
 - más de 65
 
 ```{r}
-###
+df <- df %>%
+        mutate(edad = case_when(
+          v108 <= 13 ~ '0-13',
+          v108 > 13 & v108 < 36 ~ '13-35',
+          v108 >= 36 & v108 < 65 ~ '36-65',
+          v108 >= 65 ~ '65 y +')
+        )
 ```
 
 # Introducción al esquema de clases
@@ -334,5 +340,9 @@ df %>%
     labs(y='%',
          x='Clase EOW')
 
+```
+
+```{r}
+write_rds(df, './data/ENES_Personas_M1_EOW.rds')
 ```
 
