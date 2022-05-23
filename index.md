@@ -90,3 +90,14 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 [![](./imgs/Download.png)](./M1/clase6/clase6.zip)
+
+
+## Clase 7. Ocupación y ejercicio integrador
+
+- [Slides - Notebook](./M1/clase7/M1_Clase_7.pdf)
+- [Práctica - R script](./M1/clase7/Clase_7_ejercicio.R)
+- [Práctica con soluciones - R script](./M1/clase7/Clase_7_ejercicio_SOLUCIONES.R)
+
+Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
+[![](./imgs/Download.png)](./M1/clase7/clase7.zip)
+
