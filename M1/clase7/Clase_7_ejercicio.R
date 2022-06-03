@@ -9,6 +9,7 @@ df <- read_rds('./clase7/data/ENES_Personas_M1_EOW.rds')
 ### Para ello, construir una variable que dicotomize la categoría ocupacional en asalariados 
 ## y no asalariados
 
+
 ## 3. Caracterizar la clase social según el esquema de EOW según las siguientes variables. 
 ### (en todos los casos, generar una tabla y un gráfico)
 # a. Sexo
