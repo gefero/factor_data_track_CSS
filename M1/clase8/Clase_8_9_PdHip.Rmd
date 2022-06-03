@@ -4,7 +4,7 @@ output:
   html_document:
     toc: TRUE
     toc_float: TRUE
-author: "Germán Rosati y Laia Domenech Burin"
+author: "Germán Rosati"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 bibliography: ./metadata/references.bib
 ---
@@ -446,5 +446,5 @@ props_region_pb %>%
 
 - Podemos tratar de estimar esos intervalos de confianza (de casi cualquier estimador) usando técnicas de remuestreo, particularmente **bootstrap**.
 
-# References
+# Referencias
 <div id="refs"></div>
