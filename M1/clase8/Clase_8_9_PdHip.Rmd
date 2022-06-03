@@ -445,3 +445,6 @@ props_region_pb %>%
 - Es rango plausible de valores para el parámetro de población se llama **intervalo de confianza**. Usar una única estimación puntual es como pescar en un lago turbio con una lanza, y usar un intervalo de confianza es como pescar con una red. Podemos lanzar una lanza donde vimos un pez, pero probablemente fallaremos. En cambio, si tiramos una red en esa zona, tenemos muchas posibilidades de atrapar el pez.
 
 - Podemos tratar de estimar esos intervalos de confianza (de casi cualquier estimador) usando técnicas de remuestreo, particularmente **bootstrap**.
+
+# References
+<div id="refs"></div>
