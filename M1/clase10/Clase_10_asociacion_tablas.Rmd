@@ -227,7 +227,7 @@ En una prueba estadística, se rechaza la hipótesis nula $H_{0}$ si el valor p 
 ### Actividad
 Calculen el chi cuadrado de la misma tabla pero ponderada con los valores expandidos a la población. ¿Qué observan con el valor de $\chi^2$?
 ```{r}
-###
+### 
 ```
 
 ## Fuerza de la asociación entre dos variables
