@@ -1,0 +1,341 @@
+---
+title: "Clases 8 y 9. Introducción a la estadística inferencial mediante boostrap"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati y Laia Domenech Burin"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+options(dplyr.summarise.inform = FALSE)
+
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+
+```{r}
+sample_wei <- function(df, wei){
+        n <- nrow(df)
+        index <- sample(1:n, prob=wei, replace=TRUE)
+        df_boot <- df[index, ]
+        return(df_boot)
+}
+
+bootstrap_wei <- function(df,
+                          wei, 
+                          reps=1000){
+        
+        samples <- list()
+        
+        for (r in 1:reps){
+                s <- sample_wei(df, wei)
+                samples[[r]] <- s
+        }
+        
+        samples <- enframe(samples, name='boot_id', value='splits')
+        return(samples)
+}
+```
+
+# Introducción
+Hasta aquí habíamos venido trabajando no haciendo demasiadas diferencias entre censos y muestras. Estábamos en el terreno de la estadística descriptiva. No obstante, como hemos discutido, la diferencia entre censo y muestra no es nada trivial.
+
+Al trabajar con muestras de una población (como por ejemplo, la ENES) debemos introducir el problema del llamado "error muestral". El error mue
+
+
+# Estimación de intervalos de confianza mediante boostrap
+## Una proporción simple
+
+Vamos a empezar con un caso simple. Queremos estimar el peso de los trabajadores (según la clasficación de Erik Olin Wright). Y queremos construir un intervalo de confianza: un rango de valores posibles dentro del cual esperaríamos, con cierta probabilidad, encontrar el valor del parámetro. El intervalo de confianza se basa, como vimos, en la llamada "distribución muestral del estimador", es decir, una distribución que nos indica cómo un estadístic (en nuestro caso, una proporción en la muestra) varía alrededor del parámetro (en este caso, la proporción de la población) cuando se extraen muestras diferentes de esa población y se calculan el estadístico para cada una de esas muestras.
+
+La idea es medir la variabilidad del estadístico (proporción, aquí) extrayendo un muestra de la población y calculándolo; luego, otra; luego, otra y así sucesviamente. Luego, tendríamos una idea de la varabilidad de nuestra estimación original. En términos generales, diremos que si la variación entre estas diferentes muestras es grande, entonces es pobabile que nuestra estimación original esté lejos dl valor real y, por ende, el rango de variación (el intervalo) será más grande.
+
+Ahora bien, en el mundo real los datos muestrales (las muestras) son caras y difíciles de extrear. Por ello, tomar muestras repetidas de una población suele ser imposible. Por ello, en lugar de extraer muchas muestras de la población podemos plantear otro enfoque: muchas muestras de la muestra. 
+
+El gran problema es que realizar esa cuantificación es difícil. Pero para ciertos estadísticos (medias, proporciones, varianzas, etc.) conocemos la forma que las distribuciones muestrales tiene. Sin embargo, en muchos casos este problema no es simple. En ciertos estadísticos, por ejemplo. O en el caso de diseños muestrales más complejos que el muestreo aleatorio simple, este problema no es nada trivial.
+
+El procedimiento bootstrap va a intentar resolver este problema -¿cómo es que cada muestra varía respecto de la población?- a partir de un enfoque computacional. De hecho, es un enfoque los suficientemente flexible para ser aplicado a casi cualquier estadístico. Por ende, proporciona un método claramente eficaz para construir intervalos de confianza para casi cualquier parámetro de una población. 
+
+En este apartado, nos centraremos en el bootstrapping para estimar una sola proporción. Nuestro objetivo con bootstrapping será producir una estimación de intervalo (un rango de valores plausibles) para el parámetro de población.
+
+Hoy vamos a trabajar con la Encuesta Nacional sobre Estructura Social, llevada adelante por el PISAC. Pueden encontrar más información [aquí](https://www.argentina.gob.ar/ciencia/pisac/bases-de-datos).
+
+Carguemos los datos:
+
+```{r message=FALSE}
+library(tidyverse)
+df <- read_rds('./data/ENES_Personas_M1_EOW.rds')
+
+```
+
+Veamos el peso de los trabajadores (ocupados y desocupados) sobre la población total en el GBA:
+
+```{r}
+gba <- df %>%
+  filter(region == 'Gran Buenos Aires (CABA y 24 partidos de Buenos Aires)')
+
+gba %>%
+  group_by(class_eow) %>%
+  summarise(n=sum(f_calib3)) %>%
+  mutate(prop = n/sum(n))
+```
+
+## Ponderación
+
+¿Hay algo que llama la atención en este código?
+
+`summarise(n=sum(f_calib3))` 
+
+Puede verse que no utilizamos el `n=n()`. Es decir, no estamos haciendo un conteo de filas. Estamos haciendo una suma de una variable: `f_calib3`. Esto es una variable de ponderación. Estamos PONDERANDO los datos.
+
+¿Qué es PONDERAR? Es asignarle a cada unidad de muestreo su peso muestral, es decir, el valor que indica el número de unidades de la población que representa cada individuo o caso de la base de datos. 
+
+El peso muestral es calculado por el/la muestrista en base a las características de la población, al tipo de diseño de la muestra y a las limitaciones que puedan surgir en la etapa de recolección de datos (situaciones de no respuesta total o parcial) que puedan afectar el diseño muestral original. Por ello, cuando se trabaja con datos secundarios el peso muestral ya se encuentra definido y sólo hay que tener la variable de ponderación en cuenta para el procesamiento de los mismos.
+
+```{r}
+gba %>%
+  filter(region == 'Gran Buenos Aires (CABA y 24 partidos de Buenos Aires)') %>%
+  summarise(n=sum(f_calib3))
+```
+
+Esto trae como resultado el segundo punto: el total ya no es 4.843 personas; sino de 12.158.534 . Esto se debe a que se trata de una expansión: cada caso representa un número dado de personas. Si sumamos todas, deberíamos llegar a la población total (urbana, en este caso).
+
+```{r}
+gba %>%
+  group_by(class_eow) %>%
+  summarise(n=sum(f_calib3)) %>%
+  mutate(prop = n/sum(n)) %>%
+  filter(class_eow == 'Trabajadores')
+```
+
+Ahora bien, solo nos interesa por ahora la proporción de trabajadores en nuestra muestra. Vamos a llamarla $\hat p_{t}$. Pero lo que a nosotros nos interesa es poder decir algo de la proporción de los trabajadores en la población, vamos a llamarla $p_{t}$. Vamos, entonces, a intentar estimar $p_{t}$ a partir de $\hat p_{t}$.
+
+Aquí $\hat p_{t} = 0.3981$
+
+Tenemos, ahora, que lograr construir información sobre la variabilidad del estimador. No hay ninguna razón para creer que $p_{t}$ es exactamente 0.3712 pero tampoco para creer que está demasiado lejos. Vamos a remuestrear con reemplazo sobre nuestro dataset original (esto es el bootstraping) para aproximar la variabilidad de los posibles valores de $\hat p_{t}$.
+
+DESARROLLAR 
+
+
+```{r}
+reps <- 2000
+props <- tibble()
+set.seed(123)
+
+for (i in 1:reps){
+  p <- gba %>%
+  select(nocues, f_calib3, class_eow) %>%
+  slice_sample(n=nrow(gba), 
+               weight_by = f_calib3, 
+               replace = TRUE) %>%
+    group_by(class_eow) %>%
+    summarise(n=sum(f_calib3)) %>%
+    mutate(prop=n/sum(n)) %>%
+    filter(class_eow=='Trabajadores')
+  
+  props  <- props %>% bind_rows(p)
+}
+```
+
+```{r}
+props %>%
+  summarise(`Lim. sup (0.05)` = quantile(prop, probs=0.05),
+            `Lim inf (0.95)` = quantile(prop, probs=0.95))
+```
+
+
+
+```{r}
+props %>%
+  ggplot(aes(x=prop)) +
+    geom_histogram() +
+    geom_vline(xintercept = 0.377917 , color='red') +
+    geom_vline(xintercept = 0.406292 , color='red') +
+    theme_minimal()
+```
+
+DESARROLLAR
+
+
+
+
+LUEGO VER EL TEMA DE LA ESTRATIFICACION
+
+
+```{r}
+library(tictoc)
+tic()
+reps <- 1000
+set.seed(758)
+
+calc_props <- function(df, x, y=NULL, filt=NULL){
+
+  if (is.null(y)){
+    df %>%
+      group_by(!!sym(x)) %>%
+      summarise(n=sum(f_calib3)) %>%
+      mutate(prop = n / sum(n))
+  } else {
+    df %>%
+      group_by(!!sym(x), !!sym(y)) %>%
+      summarise(n=sum(f_calib3)) %>%
+      mutate(prop = n / sum(n))
+    }
+}
+
+varx <- "region"
+vary <- "class_eow"
+
+df_boots <- tibble()
+
+for (s in unique(df$region)){
+  reg <- df %>%
+         filter(region == s) %>%
+         select(f_calib3, region, !!sym(varx), !!sym(vary))
+
+  p <- reg %>%
+        bootstrap_wei(., wei=reg$f_calib3, reps=reps)
+    
+  df_boots <- df_boots %>% bind_rows(p)
+
+}
+toc()
+```
+
+```{r}
+tic()
+props_region <- df_boots %>% 
+  pull() %>% 
+  map_df(., ~calc_props(., varx, vary)) %>%
+  group_by(region, class_eow) %>%
+  summarise(lim_inf = quantile(prop, probs=0.05),
+            prop = quantile(prop, probs=0.5),
+            lim_sup = quantile(prop, probs=0.95)
+  )
+toc()
+```
+
+
+
+```{r}
+props_region %>%
+  filter(class_eow!='Inactivo, desocupado o menor') %>%
+  ggplot(aes(x=region, y=prop, color=class_eow)) + 
+    #geom_point() + 
+    geom_pointrange(aes(ymin=lim_inf, ymax=lim_sup)) +
+    theme_minimal() +
+    coord_flip()
+```
+
+
+
+
+
+```{r}
+tic()
+props_ <- df_boots %>% 
+  pull() %>% 
+  map_df(., ~calc_props(., "class_eow")) %>%
+  ungroup() %>%
+  group_by(class_eow) %>%
+  summarise(lim_inf = quantile(prop, probs=0.05),
+            prop = mean(prop),
+            lim_sup = quantile(prop, probs=0.95)
+  )
+toc()
+```
+
+```{r}
+props_ %>%
+  filter(class_eow!='Inactivo, desocupado o menor') %>%
+  ggplot(aes(x=class_eow, y=prop, color=class_eow)) + 
+    geom_line() + 
+    geom_linerange(aes(ymin=lim_inf, ymax=lim_sup)) +
+    theme_minimal() +
+    coord_flip()
+```
+
+
+```{r}
+library(rsample)
+```
+
+
+```{r}
+library(rsample)
+```
+
+```{r}
+calc_props_ <- function(split, x, y=NULL){
+  d <-analysis(split)
+  if (is.null(y)){
+    d %>%
+      group_by(!!sym(x)) %>%
+      summarise(n=sum(f_calib3)) %>%
+      mutate(prop = n / sum(n))
+  } else {
+    d %>%
+      group_by(!!sym(x), !!sym(y)) %>%
+      summarise(n=sum(f_calib3)) %>%
+      mutate(prop = n / sum(n))
+    }
+}
+```
+
+
+
+```{r}
+df_boot <- df %>% bootstraps(times=1000, strata = region)
+```
+
+```{r}
+df_boot <- df_boot %>%
+  mutate(props = map(splits, ~calc_props_(.x, x='region',y='class_eow')))
+```
+
+```{r}
+props <- df_boot %>%
+  select(-splits) %>%
+  unnest(cols=c(props)) 
+
+
+props %>%
+  filter(class_eow!='Inactivo, desocupado o menor') %>%  
+  group_by(class_eow) %>%
+  summarise(lim_inf = quantile(prop, probs=0.05),
+            estimate = quantile(prop, probs=0.5),
+            lim_sup = quantile(prop, probs=0.95))
+
+
+
+  ggplot(aes(x=class_eow, y=estimate, color=class_eow)) +
+    geom_point() + 
+    geom_linerange(aes(ymin=lim_inf, ymax=lim_sup)) + 
+    theme_minimal()
+```
+
+```{r}
+props %>%
+  filter(class_eow!='Inactivo, desocupado o menor') %>%  
+  group_by(region, class_eow) %>%
+  summarise(lim_inf = quantile(prop, probs=0.05),
+            estimate = quantile(prop, probs=0.5),
+            lim_sup = quantile(prop, probs=0.95)) %>%
+  filter(class_eow=='Trabajadores') %>%
+  select(-class_eow)
+
+
+
+  ggplot(aes(x=region, y=estimate, color=class_eow)) +
+    geom_point() + 
+    geom_linerange(aes(ymin=lim_inf, ymax=lim_sup)) + 
+    theme_minimal() +
+    coord_flip()
+
+```

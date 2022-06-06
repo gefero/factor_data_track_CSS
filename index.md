@@ -102,10 +102,18 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 
 
 ## Clases 8 y 9. Introducción a Bootstrap
-- [Slides - Notebook](./M1/clase8/M1_Clase_8.pdf)
+- [Slides - Notebook](./M1/clase8_9/M1_Clase_8.pdf)
 - [Script - Ejercicio de construcción de distribución muestral](./M1/clase8/Distribuciones_muestrales.R) 
-- [Explicación y práctica - Notebook](./M1/clase8/Clase_8_9_PdHip.html)
-- [Explicación y práctica - RMarkdown](./M1/clase8/Clase_8_9_PdHip.Rmd)
+- [Explicación y práctica - Notebook](./M1/clase8_9/Clase_8_9_PdHip.html)
+- [Explicación y práctica - RMarkdown](./M1/clase8_9/Clase_8_9_PdHip.Rmd)
 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
-[![](./imgs/Download.png)](./M1/clase8/clase8.zip)
+[![](./imgs/Download.png)](./M1/clase8_9/clase8_9.zip)
+
+
+## Clases 10. Asociación en tablas de contingencia
+- [Explicación y práctica - Notebook](./M1/clase10/Clase_10_asociacion_tablas.html)
+- [Explicación y práctica - RMarkdown](./M1/clase10/Clase_10_asociacion_tablas.Rmd)
+
+Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
+[![](./imgs/Download.png)](./M1/clase10/clase10.zip)
