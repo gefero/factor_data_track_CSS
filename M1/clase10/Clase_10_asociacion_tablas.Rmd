@@ -225,7 +225,7 @@ En una prueba estadística, se rechaza la hipótesis nula $H_{0}$ si el valor p 
 - Se trata de una medida  muy dependiente del tamaño muestral (n).  Si se duplica el tamaño en cada una de las celdas, también lo hace el valor de Ji-cuadrado. Por ello, reescalamos los pesos en la variable `
 
 ### Actividad
-Calculen el chi cuadrado de la misma tabla pero ponderada con los valores expandidos a la población. ¿Qué ocurre con el valor de $\chi^2$?
+Calculen el chi cuadrado de la misma tabla pero ponderada con los valores expandidos a la población. ¿Qué observan con el valor de $\chi^2$?
 ```{r}
 ###
 ```
