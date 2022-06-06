@@ -15,6 +15,15 @@ El curso está centrado en brindar insumos que sirvan para que les estudiantes l
 
 Tanto los contenidos de los ejercicios prácticos como las lecturas más conceptuales giran en torno de una misma temática, que para el primer semestre de 2022 será la estructura social. Esta focalización en un único tema pretende facilitar la comprensión de métodos y técnicas y, al mismo tiempo, aportar a la formación sustantiva de les estudiantes. Para el procesamiento y análisis estadístico se utilizará el lenguaje R y datos de la Encuesta Permanente de Hogares del INDEC y de la Encuesta Nacional sobre la Estructura Social (ENES) realizada por el PISAC.
 
+## Materiales para el TP final (la entrega se realizará por Google Classroom)
+- 
+- [Cuestionario - ENES](./M1/clase6/material_pisac/formulario_enes.pdf)
+- [Diseño de registro - personas - ENES](./M1/clase6/material_pisac/manual_codigos_base_personas.odf)
+- [Marco conceptual - ENES](./M1/clase6/material_pisac/marco_teorico_metodologico_enes_pisac.pdf)
+- [Datos - ENES](./M1/tp_final/EBES_Personas_M1_EOW.rds)
+- [Consignas](https://docs.google.com/document/d/16N3dNuAa5tgU1LhGq-m88OUNORRd_7NJCPK-FrNd5xE/edit?usp=sharing)
+
+
 # Contenidos y materiales
 ## Clase 1. Presentación - Introducción a R
 
@@ -117,3 +126,5 @@ Pueden descargarse la totalidad de los materiales del repositorio para trabajar 
 
 Pueden descargarse la totalidad de los materiales del repositorio para trabajar en un único archivo .zip
 [![](./imgs/Download.png)](./M1/clase10/clase10.zip)
+
+
