@@ -17,9 +17,9 @@ Tanto los contenidos de los ejercicios prácticos como las lecturas más concept
 
 ## Materiales para el TP final (la entrega se realizará por Google Classroom)
 - [Cuestionario - ENES](./M1/clase6/material_pisac/formulario_enes.pdf)
-- [Diseño de registro - personas - ENES](./M1/clase6/material_pisac/manual_codigos_base_personas.odf)
+- [Diseño de registro - personas - ENES](./M1/clase6/material_pisac/manual_codigos_base_personas.pdf)
 - [Marco conceptual - ENES](./M1/clase6/material_pisac/marco_teorico_metodologico_enes_pisac.pdf)
-- [Datos - ENES](./M1/tp_final/EBES_Personas_M1_EOW.rds)
+- [Datos - ENES](./M1/tp_final/ENES_Personas_M1_EOW.rds)
 - [Consignas](https://docs.google.com/document/d/16N3dNuAa5tgU1LhGq-m88OUNORRd_7NJCPK-FrNd5xE/edit?usp=sharing)
 
 
