@@ -24,6 +24,9 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Explicación y práctica - RMarkdown](./M2/clase1/Clase_1.Rmd)
 
 
+
+---
+
 # Módulo anterior: Procesamiento de datos en R y estadística para Ciencias Sociales
 ## Contenidos y materiales
 ### Clase 1. Presentación - Introducción a R
