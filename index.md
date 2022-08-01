@@ -1,4 +1,4 @@
-![](./M1/imgs/logo-factor-data-solo.jpg)
+![](./M1/imgs/LOGO-FactorData-Color.jpg)
 
 
 ## Docentes
