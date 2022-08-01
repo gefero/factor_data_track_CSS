@@ -1,33 +1,34 @@
-![](./imgs/LOGO-FactorData-Color.jpg)
+![](./M1/imgs/LOGO-FactorData-Color.jpg)
 
 
-## Docente
+## Docentes
+
 - [Germán Rosati](https://gefero.github.io/)
+- [Laia Domenech]()
 
 
 
 # Presentación
 Esta materia se constituye como la primera de un trayecto de materias optativas orientado a incorporar a las carreras de la EIDAES un conjunto de materias que permitan realizar a les estudiantes un primer acercamiento al campo disciplinar conocido como "Ciencias Sociales Computacionales". Por ello, se plantean como una continuación y profundización de la materia Metodologías Cuantitativas. En este sentido, la orientación es correlativa a las materias “Metodología de la Investigación” y “Metodologías Cuantitativas”.
 
-El objetivo general de este segundo módulo es brindar un acercamiento  a algunas técnicas básicas de modelado de datos para la investigación empírica desde un enfoque conceptual (fundamentos teórico-metodológicos, casos y problemas de aplicación, etc.) y técnico (análisis de algoritmos, herramientas con interfaces gráficas, etc.).
+El objetivo general de este primer módulo es brindar un acercamiento desde un enfoque conceptual (fundamentos teórico-metodológicos, casos y problemas de aplicación, etc.) como técnico (análisis de algoritmos, herramientas con interfaces gráficas, etc.) para la investigación empírica.
 
-El curso está centrado en brindar insumos que sirvan para que les estudiantes logren comprender los fundamentos conceptuales y metodológicos de tres técnicas básicas de modelado de datos: regresión lineal, logística y clustering.
+El curso está centrado en brindar insumos que sirvan para que les estudiantes logren realizar procesamientos básicos de información (recodificación de variables, construcción de tipologías, generación de distribuciones de frecuencias, tablas de contingencia, visualización) y un primer análisis de la misma (correlaciones bivariadas, estadística descriptiva e inferencial).
 
-Tanto los contenidos de los ejercicios prácticos como las lecturas más conceptuales giran en torno de una misma temática, que para el segundo semestre de 2022 será el análisis de la estructura social. Esta focalización en un único tema pretende facilitar la comprensión de métodos y técnicas y, al mismo tiempo, aportar a la formación sustantiva de les estudiantes. 
+Tanto los contenidos de los ejercicios prácticos como las lecturas más conceptuales giran en torno de una misma temática, que para el primer semestre de 2022 será la estructura social. Esta focalización en un único tema pretende facilitar la comprensión de métodos y técnicas y, al mismo tiempo, aportar a la formación sustantiva de les estudiantes. Para el procesamiento y análisis estadístico se utilizará el lenguaje R y datos de la Encuesta Permanente de Hogares del INDEC y de la Encuesta Nacional sobre la Estructura Social (ENES) realizada por el PISAC.
 
-Para el procesamiento y análisis estadístico se utilizará el lenguaje R y datos de la Encuesta Permanente de Hogares del INDEC y de la Encuesta Nacional sobre la Estructura Social (ENES) realizada por el PISAC.
+## Materiales para el TP final (la entrega se realizará por Google Classroom)
+- [Cuestionario - ENES](./M1/clase6/material_pisac/formulario_enes.pdf)
+- [Diseño de registro - personas - ENES](./M1/clase6/material_pisac/manual_codigos_base_personas.pdf)
+- [Marco conceptual - ENES](./M1/clase6/material_pisac/marco_teorico_metodologico_enes_pisac.pdf)
+- [Datos - ENES](./M1/tp_final/ENES_Personas_M1_EOW.rds)
+- [Consignas](https://docs.google.com/document/d/16N3dNuAa5tgU1LhGq-m88OUNORRd_7NJCPK-FrNd5xE/edit?usp=sharing)
 
 
-## Contenidos y materiales
-### Clase 1. Presentación - Regresión lineal simple
-- [Explicación y práctica - Notebook](./M2/clase1/Clase_1.html)
-- [Explicación y práctica - RMarkdown](./M2/clase1/Clase_1.Rmd)
+# Contenidos y materiales
+## Clase 1. Presentación - Introducción a R
 
-
-# Módulo anterior: Procesamiento de datos en R y estadística para Ciencias Sociales
-## Contenidos y materiales
-### Clase 1. Presentación - Introducción a R
-
+- [Slides - pdf](./M1/clase1/M1_Clase_1.pdf)
 - [Explicación y práctica - Notebook](./M1/clase1/Clase_1.html)
 - [Explicación y práctica - RMarkdown](./M1/clase1/Clase_1.Rmd)
 - [Práctica Independiente - RMarkdown](./M1/clase1/Clase_1_practica.R)
