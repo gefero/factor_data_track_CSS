@@ -414,7 +414,7 @@ Esto nos devuelve la matriz de correlaciones. Es una matriz cuadrada (tiene la m
 ```
 
 
-- ¿Qué puede decir de los residuos?
+- ¿Qué pueden decir de los residuos?
 
 
 
