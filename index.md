@@ -17,6 +17,8 @@ Tanto los contenidos de los ejercicios prácticos como las lecturas más concept
 
 Para el procesamiento y análisis estadístico se utilizará el lenguaje R y datos de la Encuesta Permanente de Hogares del INDEC y de la Encuesta Nacional sobre la Estructura Social (ENES) realizada por el PISAC.
 
+## Programa
+- [Programa de la materia - 2do. cuatrimestre 2022](https://docs.google.com/document/d/1gPVwRZETVF07Rg7veu0UAUMKmdobLCtR6mDHq16vnoM/edit?usp=sharing)
 
 ## Contenidos y materiales
 ### Clase 1. Presentación - Regresión lineal simple
