@@ -146,12 +146,12 @@ df_mayores %>%
 
 La ecuación para esta línea es:
 
-$$\hat{wei} =  52.3162 + 0.6294 \times height$$
+$$\hat{wei} =  -52.3162 + 0.6294 \times height$$
 
 El sombrerito arriba de $wei$ significa que es una estimación y no el valor observado. Podemos usar la ecuación de esta recta para hacer predicciones. Por ejemplo, una persona que mide 1.80 mts (180 cm) va a pesar...
 
 ```{r include=FALSE}
-lm1 <- lm(weight~height, data=df_mayores)
+lm_1 <- lm(weight~height, data=df_mayores)
 ```
 
 
@@ -196,8 +196,8 @@ Vamos a poder calcular para cada observación un residuo. En el gráfico siguien
 
 
 ```{r include=FALSE}
-df_mayores$predicted <- predict(lm1)
-df_mayores$resid <- residuals(lm1)
+df_mayores$predicted <- predict(lm_1)
+df_mayores$resid <- residuals(lm_1)
 ```
 
 
@@ -356,6 +356,8 @@ De esta forma, podemos generar una columna en el dataframe orignal:
 ```{r}
 df_mayores <- df_mayores %>%
   mutate(predicted = predict(lm_1, df_mayores))
+
+head(df_mayores)
 ```
 
 Por último, podemos calcular los coeficientes de correlación de Pearson $r$ de la siguiente forma:
@@ -387,9 +389,12 @@ Esto nos devuelve la matriz de correlaciones. Es una matriz cuadrada (tiene la m
 - Los dos diagramas de dispersión a continuación muestran la relación entre el promedio general del curso y dos exámenes parciales (Examen 1 y Examen 2) registrados para 233 estudiantes durante varios años para un curso de estadística en una universidad.
 
 ![](./img/ej5.png)
+- ¿Cuál de los dos exámenes tiene una mayor correlación con la nota final?
+- ¿Se te ocurre una explicación de por qué se produce esta relación?
+
 
 #### Prácticos
-- Calcular los residuos de la regresión anterior
+- Calcular los residuos de la regresión anterior. Agregar
 
 ```{r}
 ###
@@ -415,7 +420,5 @@ Esto nos devuelve la matriz de correlaciones. Es una matriz cuadrada (tiene la m
 
 
 - ¿Qué pueden decir de los residuos?
-
-
 
 ***
