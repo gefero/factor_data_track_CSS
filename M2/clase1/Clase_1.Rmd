@@ -1,5 +1,6 @@
 ---
-title: "Introducción a la regresión lineal simple"
+title: "Introducción a la regresión lineal simple (I)"
+subtitle: "Primera aproximación a los modelos lineales"
 output: 
   html_document:
     toc: TRUE

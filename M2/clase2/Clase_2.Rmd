@@ -1,0 +1,57 @@
+---
+title: "Introducción a la regresión lineal simple (II)"
+subtitle: "Estimación por MCO y outliers"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+library(tidyverse)
+library(quantreg)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+***
+Este texto se basa en los siguientes materiales:
+
+- Capítulo 7 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
+- Capítulo 4 del libro [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) de Richard McElreath
+- Capitulo 3 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
+
+
+***
+
+## Introducción
+Hasta acá hemos venido trabajando ajustando "a ojo" líneas de regresión y tratando de interpretar algunas propiedades. Pero dado que por una nube de puntos pueden pasar infinitas líneas ¿cómo elegimos (o más preciamente, estimamos) los parámetros de esa recta ($(\beta_{0}, \beta_{1})$? En esta clase vamos a trabajar sobre el método Mínimos Cuadrados Ordinarios (MCO) como un enfoque para este problema.
+
+## ACA PRESENTAR UN DATASET
+
+## Una medida objetiva para encontrar la mejor línea
+Comenzamos pensando en lo que queremos decir con la línea "mejor". En términos matemáticos, queremos una línea que tenga residuos pequeños. Pero, más allá de las razones matemáticas, quisiéramos que también tenga sentido en términos intuitivos: que los residuos sean pequeños quiere decir que los puntos estén lo más cerca posible de la recta. Otra manera de pensarlo es que queremos elegir la línea que pasa lo más cerca de todos los puntos. Una primera opción es minimizar la suma de las magnitudes residuales (de sus valores absolutos sin signos):
+
+$$|\epsilon_{1}| + |\epsilon_{2}| + ... + |\epsilon_{n}|$$
+que podríamos realizar sin problemas con un poco de código en R.
+
+Sin embargo, una elección más habitual es minimizar la suma de los cuadrados de los residuos:
+
+$$\epsilon_{1}^2 + \epsilon_{2}^2 + ... + \epsilon_{n}^2$$
+
+
+La línea que minimiza este criterio de mínimos cuadrados se representa como la línea continua en la figura anterior y comúnmente se denomina línea de mínimos cuadrados. Podemos pensar en cuatro posibles razones para elegir la opción de mínimos cuadrados en lugar de tratar de minimizar la suma de las magnitudes residuales sin elevar al cuadrado:
+
+- Es el método más utilizado.
+- El cálculo de la línea de mínimos cuadrados es ampliamente compatible con el software estadístico.
+- En muchas aplicaciones, un residual dos veces más grande que otro residual es más del doble de malo. Por ejemplo, estar equivocado en 4 suele ser más del doble de malo que estar equivocado en 2. Elevar al cuadrado los residuos da cuenta de esta discrepancia.
+- Los análisis que vinculan el modelo con la inferencia sobre una población son más directos cuando la línea se ajusta por mínimos cuadrados.
+
+Las dos primeras razones son en gran parte por tradición y conveniencia; las razones tercera y cuarta explican por qué el criterio de mínimos cuadrados suele ser más útil cuando se trabaja con datos reales. Obviamente, existen situaciones (que no vamos a cubrir por ahora) en las que la suma de los absolutos de los desvíos pueden ser bastante más útiles.
+
