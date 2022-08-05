@@ -33,7 +33,25 @@ Este texto se basa en los siguientes materiales:
 ## Introducción
 Hasta acá hemos venido trabajando ajustando "a ojo" líneas de regresión y tratando de interpretar algunas propiedades. Pero dado que por una nube de puntos pueden pasar infinitas líneas ¿cómo elegimos (o más preciamente, estimamos) los parámetros de esa recta ($(\beta_{0}, \beta_{1})$? En esta clase vamos a trabajar sobre el método Mínimos Cuadrados Ordinarios (MCO) como un enfoque para este problema.
 
-## ACA PRESENTAR UN DATASET
+```{r message=FALSE, warning=FALSE}
+df <- read_delim('https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/Howell1.csv', delim=";")
+
+df <- df %>%
+  mutate(male = as.factor(case_when(
+          male == 0 ~ 'No',
+          TRUE ~ 'Yes'
+  )))
+
+df_mayores <- df %>%
+                filter(age >= 18)
+
+df_mayores %>%
+        ggplot(aes(x=height, y=weight)) +
+                geom_point() +
+                geom_smooth(method='lm', se=FALSE) +
+                theme_minimal()
+```
+Volvemos a nuestros datos sobre la etnia !Kung San.
 
 ## Una medida objetiva para encontrar la mejor línea
 Comenzamos pensando en lo que queremos decir con la línea "mejor". En términos matemáticos, queremos una línea que tenga residuos pequeños. Pero, más allá de las razones matemáticas, quisiéramos que también tenga sentido en términos intuitivos: que los residuos sean pequeños quiere decir que los puntos estén lo más cerca posible de la recta. Otra manera de pensarlo es que queremos elegir la línea que pasa lo más cerca de todos los puntos. Una primera opción es minimizar la suma de las magnitudes residuales (de sus valores absolutos sin signos):
@@ -54,4 +72,62 @@ La línea que minimiza este criterio de mínimos cuadrados se representa como la
 - Los análisis que vinculan el modelo con la inferencia sobre una población son más directos cuando la línea se ajusta por mínimos cuadrados.
 
 Las dos primeras razones son en gran parte por tradición y conveniencia; las razones tercera y cuarta explican por qué el criterio de mínimos cuadrados suele ser más útil cuando se trabaja con datos reales. Obviamente, existen situaciones (que no vamos a cubrir por ahora) en las que la suma de los absolutos de los desvíos pueden ser bastante más útiles.
+
+
+### La recta de mínimos cuadrados
+
+Para los datos de Botswana podemos escribir ahora la ecuacion de regresión:
+
+$$\hat{wei} =  -52.3162 + 0.6294 \times height$$
+
+La idea, entonces, es poder "predecir" el peso utilizando la altura. Los parámetros de la recta ($\beta_{0}, \beta_{1}$) son estimados mediante los datos ($wei, height$). En la práctica, esta estimación se hace usando una computadora de la misma manera que otras estimaciones, como la media de una muestra, se pueden estimar usando una computadora o una calculadora.
+
+El software estadístico generalmente se usa para calcular la línea de mínimos cuadrados y el resultado típico generado como resultado del ajuste de los modelos de regresión se parece al que se muestra en la tabla siguiente. Por ahora nos centraremos en la primera columna de la salida, que enumera $\beta_{0}$ y  $\beta_{1}$. 
+
+Más adelante vamos a profundizar en las columnas restantes que nos brindan información sobre qué tan exactos y precisos son estos valores de intersección y pendiente que se calculan a partir de una muestra de 352 personas al estimar los parámetros de intersección y pendiente para la población.
+
+```{r}
+lm <- lm(weight ~ height, data=df_mayores)
+
+broom::tidy(lm)
+```
+
+
+
+El resultado del modelo nos dice que el intercepto es aproximadamente -52.32 y la pendiente es aproximadamente 0.629.
+
+Pero, ¿qué significan estos valores? La interpretación de los parámetros en un modelo de regresión suele ser uno de los pasos más importantes del análisis.
+
+Interpretar el parámetro de pendiente es útil en casi cualquier aplicación. Por cada cm. (es importante prestar atención a la escala de la variable) adicionales altura (`height`), esperaríamos que una persona de esta etnia tenga 0.629 kg. más. Nótese que a mayor altura corresponde mayor peso porque el coeficiente es positivo en el modelo. Debemos ser cautelosos en esta interpretación: si bien existe una asociación real, no podemos interpretar una conexión causal entre las variables porque estos datos son observacionales. 
+
+El intercepto estimado es negativo. En este caso, no tiene demasiado valor de interpretación, en tanto, no podemos afirmar que existe un peso negativo. Pero existen situaciones en las que es posible interpretar este parámetro como el promedio de la variable dependiente si la independiente fuese cero.
+
+---
+**Interpretación de parámetros estimados por mínimos cuadrados.**
+La pendiente describe la diferencia estimada en el resultado promedio pronosticado de $y$
+ si la variable predictora $X$  pasó a ser una unidad más grande. El intercepto describe el resultado promedio de $y$ si $X=0$ y el modelo lineal es válido hasta el cero. En muchas situaciones (como en este caso) la variable $X$ no puede tener valor cero.
+---
+
+Una forma alternativa de calcular los valores de la intersección y la pendiente de una línea de mínimos cuadrados es haciendo cuentas a mano mediante fórmulas. Si bien los estadísticos en ejercicio y los científicos de datos no suelen utilizar los cálculos manuales, es útil trabajar de esta forma una primera vez sobre la línea de mínimos cuadrados y el modelado en general. 
+
+Estas fórmulas se basan en el método de mínimos cuadrados. Si les interesa alguna nota histórica al respecto pueden consultar este [link en Wikipedia](https://es.wikipedia.org/wiki/M%C3%ADnimos_cuadrados). La historia del método es interesante y está en el centro de una pelea entre Gauss y Legendre (dos matemáticos) respecto de la autoría del mismo.
+
+
+$$\sum_{i=1}^n e_{i} = \sum_{i=1}^ny_{i} - \hat{y}_{i}$$
+
+$$\sum_{i=1}^n e^2_{i} = \sum_{i=1}^n (y_{i} - \hat{y}_{i})^2$$
+
+
+
+
+
+$$\sum_{i=1}^n e^2_{i} = \sum_{i=1}^n (y_{i} - \hat{y}_{i})^2 = \sum_{i=1}^n (y_{i} - \beta_{0} + \beta_{1} X_{i})^2 $$
+
+$$\beta_{1} = \frac{s_{xy}}{S^2_{x}}$$
+
+
+$$\beta_{0} = \overline{y} - \beta_{1} \overline{X}$$
+
+
+
 
