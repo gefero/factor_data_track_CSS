@@ -5,7 +5,6 @@
 - [Germán Rosati](https://gefero.github.io/)
 
 
-
 # Presentación
 Esta materia se constituye como la primera de un trayecto de materias optativas orientado a incorporar a las carreras de la EIDAES un conjunto de materias que permitan realizar a les estudiantes un primer acercamiento al campo disciplinar conocido como "Ciencias Sociales Computacionales". Por ello, se plantean como una continuación y profundización de la materia Metodologías Cuantitativas. En este sentido, la orientación es correlativa a las materias “Metodología de la Investigación” y “Metodologías Cuantitativas”.
 
@@ -21,10 +20,13 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Programa de la materia - 2do. cuatrimestre 2022](https://docs.google.com/document/d/1gPVwRZETVF07Rg7veu0UAUMKmdobLCtR6mDHq16vnoM/edit?usp=sharing)
 
 ## Contenidos y materiales
-### Clase 1. Presentación - Regresión lineal simple
+### Clase 1. Presentación - Regresión lineal simple E1
 - [Explicación y práctica - Notebook](./M2/clase1/Clase_1.html)
 - [Explicación y práctica - RMarkdown](./M2/clase1/Clase_1.Rmd)
 
+### Clase 2. Presentación - Regresión lineal simple E2 
+- [Explicación y práctica - Notebook](./M2/clase2/Clase_2.html)
+- [Explicación y práctica - RMarkdown](./M2/clase2/Clase_2.Rmd)
 
 
 ---
