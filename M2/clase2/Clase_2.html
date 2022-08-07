@@ -1565,7 +1565,7 @@ div.tocify {
 <p>Más adelante vamos a profundizar en las columnas restantes que nos brindan información sobre qué tan exactos y precisos son estos valores de intersección y pendiente que se calculan a partir de una muestra de 352 personas al estimar los parámetros de intersección y pendiente para la población.</p>
 <pre class="r"><code>&gt; lm &lt;- lm(weight ~ height, data = df_mayores)
 &gt; 
-&gt; broom::tidy(lm)
+&gt; tidy(lm)
 ## # A tibble: 2 x 5
 ##   term        estimate std.error statistic  p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
@@ -1610,12 +1610,6 @@ div.tocify {
 <div id="describir-la-fuerza-de-un-ajuste" class="section level3">
 <h3>Describir la fuerza de un ajuste</h3>
 <p>Evaluamos la fuerza de la relación lineal entre dos variables anteriormente usando la correlación, <span class="math inline">\(r\)</span>. Sin embargo, es más común explicar la fuerza de un ajuste lineal usando <span class="math inline">\(R2\)</span>, llamado R-cuadrado. Si estams trabajando con un modelo lineal, va a ser sumamente útil poder describir qué tan cerca se agrupan los datos alrededor del ajuste lineal.</p>
-<p>El <span class="math inline">\(R2\)</span> de un modelo lineal describe cuánto de la variación en la variable de resultado se explica por la el modelo lineal (es decir por la recta de mínimos cuadrados). Por ejemplo, considere los datos de Elmhurst, que se muestran en la Figura 7.14. La varianza de la variable de resultado, la ayuda recibida, es de aproximadamente s 2 a i d ≈ 29.8 millones (calculado a partir de los datos, algunos de los cuales se muestran en la Tabla 7.1). Sin embargo, si aplicamos nuestra línea de mínimos cuadrados, entonces este modelo reduce nuestra incertidumbre al predecir la ayuda usando el ingreso familiar de un estudiante. La variabilidad en los residuos describe cuánta variación permanece después de usar el modelo: s 2 R mi S ≈ 22.4 millón. En resumen, hubo una reducción de s 2 a i d − s 2 R mi S s 2 a i d = 29800 − 22400 29800 = 7500 29800 ≈ 0.25 , o alrededor del 25%, de la variación de la variable de resultado al usar información sobre el ingreso familiar para predecir la ayuda usando un modelo lineal. Resulta que R 2 corresponde exactamente al valor al cuadrado de la correlación:</p>
-</div>
-</div>
-<div id="r" class="section level1">
-<h1>r</h1>
-<p>− 0.499 → R 2 = 0.25</p>
 <p>A <span class="math inline">\(R2\)</span> también se le llama <strong>coeficiente de determinación</strong>.</p>
 <hr />
 <p><strong>Coeficiente de determinación: proporción de la variabilidad en la variable resultado explicada por el modelo.</strong></p>
@@ -1634,6 +1628,7 @@ div.tocify {
 <p>El coeficiente de determinación puede ser calculado como:</p>
 <p><span class="math display">\[R2 = \frac{SST - SSE}{SST} = 1 - \frac{SSE}{SST} \]</span></p>
 <hr />
+</div>
 <div id="predictores-categóricos-con-dos-niveles" class="section level3">
 <h3>Predictores categóricos con dos niveles</h3>
 <p>Las variables categóricas también son útiles para predecir resultados. Aquí consideramos un predictor categórico con dos niveles (recuerde que un nivel es lo mismo que una categoría). Tenemos un predictor cualitativo en este dataset: la variable <code>male</code>.</p>
@@ -1647,7 +1642,7 @@ div.tocify {
 <p>Si estimamos los parámetros de la recta…</p>
 <pre class="r"><code>&gt; lm_2 &lt;- lm(weight ~ male, data = df_mayores)
 &gt; 
-&gt; broom::tidy(lm_2)
+&gt; tidy(lm_2)
 ## # A tibble: 2 x 5
 ##   term        estimate std.error statistic   p.value
 ##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -1658,6 +1653,7 @@ div.tocify {
 <p>El intercepto estimado es el valor de la variable de resultado para la primera categoría (es decir, la categoría correspondiente a un valor de indicador de 0). La pendiente estimada es el cambio promedio en la variable de resultado entre las dos categorías.</p>
 <hr />
 <p>Es importante entender que las interpretaciones de la intersección y la pendiente no cambian cuando se modelan variables categóricas con dos niveles.</p>
+</div>
 </div>
 <div id="valores-atípicos-en-regresión-lineal" class="section level2">
 <h2>Valores atípicos en regresión lineal</h2>
@@ -1672,7 +1668,6 @@ div.tocify {
 <p>D: Hay una nube primaria y luego una pequeña nube secundaria de cuatro valores atípicos. La nube secundaria parece estar influyendo en la línea con cierta fuerza, lo que hace que la línea de mínimos cuadrados encaje mal en casi todas partes. Puede haber una explicación interesante para las nubes duales, que es algo que podría investigarse.</p>
 <p>E: No hay una tendencia obvia en la nube principal de puntos y el valor atípico de la derecha parece controlar en gran medida (y de manera problemática) la pendiente de la línea de mínimos cuadrados.</p>
 <p>F: Hay un valor atípico lejos de la nube. Sin embargo, cae bastante cerca de la línea de mínimos cuadrados y no parece ser muy influyente.</p>
-</div>
 </div>
 
 

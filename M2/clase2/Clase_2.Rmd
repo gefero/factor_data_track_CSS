@@ -14,6 +14,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 knitr::opts_chunk$set(echo=FALSE)
 library(tidyverse)
 library(quantreg)
+library(broom)
 ```
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
@@ -89,7 +90,7 @@ Más adelante vamos a profundizar en las columnas restantes que nos brindan info
 ```{r}
 lm <- lm(weight ~ height, data=df_mayores)
 
-broom::tidy(lm)
+tidy(lm)
 ```
 
 El resultado del modelo nos dice que el intercepto es aproximadamente -52.32 y la pendiente es aproximadamente 0.629.
@@ -171,6 +172,9 @@ Pueden tomar 5 minutos para calcularlo.
 
 Evaluamos la fuerza de la relación lineal entre dos variables anteriormente usando la correlación, $r$. Sin embargo, es más común explicar la fuerza de un ajuste lineal usando $R2$, llamado R-cuadrado. Si estams trabajando con un modelo lineal, va a ser sumamente útil poder describir qué tan cerca se agrupan los datos alrededor del ajuste lineal.
 
+
+--- 
+**REVISAR** 
 El $R2$ de un modelo lineal describe cuánto de la variación en la variable de resultado se explica por la el modelo lineal (es decir por la recta de mínimos cuadrados). Por ejemplo, considere los datos de Elmhurst, que se muestran en la Figura 7.14. La varianza de la variable de resultado, la ayuda recibida, es de aproximadamente
 s
 2
@@ -230,7 +234,7 @@ R
 = 
 0.25
 
-
+---
 
 
 
@@ -295,7 +299,7 @@ Si estimamos los parámetros de la recta...
 ```{r}
 lm_2 <- lm(weight~male, data=df_mayores)
 
-broom::tidy(lm_2)
+tidy(lm_2)
 ```
 
 
