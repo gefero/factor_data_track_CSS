@@ -292,11 +292,9 @@ Hay tres gráficos que se muestran en la figura siguiente junto con la línea de
 
 ![](./img/outlier-plots-1-1.png)
 
-R: Hay un valor atípico lejos de los otros puntos, aunque solo parece influir ligeramente en la línea.
-
-B: Hay un valor atípico a la derecha, aunque está bastante cerca de la línea de mínimos cuadrados, lo que sugiere que no fue muy influyente.
-
-C: Hay un punto lejos de la nube, y este valor atípico parece atraer la línea de mínimos cuadrados a la derecha; examine cómo la línea alrededor de la nube primaria no parece encajar muy bien.
+- A: Hay un valor atípico lejos de los otros puntos, aunque solo parece influir ligeramente en la línea.
+- B: Hay un valor atípico a la derecha, aunque está bastante cerca de la línea de mínimos cuadrados, lo que sugiere que no fue muy influyente.
+- C: Hay un punto lejos de la nube, y este valor atípico parece atraer la línea de mínimos cuadrados a la derecha; examine cómo la línea alrededor de la nube primaria no parece encajar muy bien.
 
 
 **Ejemplo 2**
@@ -304,8 +302,6 @@ Hay tres gráficos más abajo junto con la línea de mínimos cuadrados y gráfi
 
 ![](./img/outlier-plots-2-1.png)
 
-D: Hay una nube primaria y luego una pequeña nube secundaria de cuatro valores atípicos. La nube secundaria parece estar influyendo en la línea con cierta fuerza, lo que hace que la línea de mínimos cuadrados encaje mal en casi todas partes. Puede haber una explicación interesante para las nubes duales, que es algo que podría investigarse.
-
-E: No hay una tendencia obvia en la nube principal de puntos y el valor atípico de la derecha parece controlar en gran medida (y de manera problemática) la pendiente de la línea de mínimos cuadrados.
-
-F: Hay un valor atípico lejos de la nube. Sin embargo, cae bastante cerca de la línea de mínimos cuadrados y no parece ser muy influyente.
+- D: Hay una nube primaria y luego una pequeña nube secundaria de cuatro valores atípicos. La nube secundaria parece estar influyendo en la línea con cierta fuerza, lo que hace que la línea de mínimos cuadrados encaje mal en casi todas partes. Puede haber una explicación interesante para las nubes duales, que es algo que podría investigarse.
+- E: No hay una tendencia obvia en la nube principal de puntos y el valor atípico de la derecha parece controlar en gran medida (y de manera problemática) la pendiente de la línea de mínimos cuadrados.
+- F: Hay un valor atípico lejos de la nube. Sin embargo, cae bastante cerca de la línea de mínimos cuadrados y no parece ser muy influyente.
