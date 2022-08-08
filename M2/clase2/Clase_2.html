@@ -1512,7 +1512,7 @@ div.tocify {
 <h1 class="title toc-ignore">Introducción a la regresión lineal simple (II)</h1>
 <h3 class="subtitle">Estimación por MCO y outliers</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">07 agosto, 2022</h4>
+<h4 class="date">08 agosto, 2022</h4>
 
 </div>
 
@@ -1610,6 +1610,19 @@ div.tocify {
 <div id="describir-la-fuerza-de-un-ajuste" class="section level3">
 <h3>Describir la fuerza de un ajuste</h3>
 <p>Evaluamos la fuerza de la relación lineal entre dos variables anteriormente usando la correlación, <span class="math inline">\(r\)</span>. Sin embargo, es más común explicar la fuerza de un ajuste lineal usando <span class="math inline">\(R2\)</span>, llamado R-cuadrado. Si estams trabajando con un modelo lineal, va a ser sumamente útil poder describir qué tan cerca se agrupan los datos alrededor del ajuste lineal.</p>
+<p>Por ejemplo, volvamos a nuestros datos de altura y peso. La varianza de la variable dependiente (<code>weight</code>) es aproximadamente <span class="math inline">\(s^2_{weight} = 41.68908\)</span>. Sin embargo, si aplicamos la recta de regresión por mínimos cuadrados, entonces, el modelo reduce la incerteza (podemos pensar a las medidas de dispersión como una aproximación a la incerteza) que tenemos en predecir el peso de una persona (porque ya conocemos su altura). La variabilidad en los residuos describe qué parte de la incerteza (de la variabilidad) total seguimos teniendo una vez que entrenamos el modelo.</p>
+<p>Podemos calcular ese valor de la siguiente forma, calculando la varianza de los residuos:</p>
+<pre class="r"><code>&gt; var(residuals(lm))
+## [1] 17.94113</code></pre>
+<p>Es decir, elevamos los residuos al cuadrado y calculamos su media: <span class="math inline">\(S^2_{res} = 17.89016\)</span></p>
+<p>En resumen, hubo una reducción de</p>
+<p><span class="math display">\[\frac{41.68908 - 17.94113}{41.68908} = 0.56964 \approx 0.57\]</span></p>
+<p>aproximadmante el 57% de la variación de la variable de resultado al usar información sobre el ingreso familiar para predecir la ayuda usando un modelo lineal. Resulta que <span class="math inline">\(R2\)</span> corresponde exactamente al valor al cuadrado de la correlación:</p>
+<pre class="r"><code>&gt; cor(df_mayores$height, df_mayores$weight)
+## [1] 0.7547479</code></pre>
+<pre class="r"><code>&gt; cor(df_mayores$height, df_mayores$weight)^2
+## [1] 0.5696444</code></pre>
+<p><span class="math display">\[ r = 0.7547479 → R2 = 0.5696444\]</span></p>
 <p>A <span class="math inline">\(R2\)</span> también se le llama <strong>coeficiente de determinación</strong>.</p>
 <hr />
 <p><strong>Coeficiente de determinación: proporción de la variabilidad en la variable resultado explicada por el modelo.</strong></p>
@@ -1628,9 +1641,33 @@ div.tocify {
 <p>El coeficiente de determinación puede ser calculado como:</p>
 <p><span class="math display">\[R2 = \frac{SST - SSE}{SST} = 1 - \frac{SSE}{SST} \]</span></p>
 <hr />
+<hr />
+<p><strong>Encontrando al <span class="math inline">\(R2\)</span></strong></p>
+<p>Esta es una salida típica de regresión. ¿Dónde está el <span class="math inline">\(R2\)</span>?</p>
+<pre class="r"><code>&gt; summary(lm)
+## 
+## Call:
+## lm(formula = weight ~ height, data = df_mayores)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -11.8022  -3.0183  -0.2293   2.8117  14.7348 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -52.31618    4.52650  -11.56   &lt;2e-16 ***
+## height        0.62942    0.02924   21.52   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.242 on 350 degrees of freedom
+## Multiple R-squared:  0.5696, Adjusted R-squared:  0.5684 
+## F-statistic: 463.3 on 1 and 350 DF,  p-value: &lt; 2.2e-16</code></pre>
+<hr />
 </div>
-<div id="predictores-categóricos-con-dos-niveles" class="section level3">
-<h3>Predictores categóricos con dos niveles</h3>
+</div>
+<div id="predictores-categóricos-con-dos-niveles" class="section level2">
+<h2>Predictores categóricos con dos niveles</h2>
 <p>Las variables categóricas también son útiles para predecir resultados. Aquí consideramos un predictor categórico con dos niveles (recuerde que un nivel es lo mismo que una categoría). Tenemos un predictor cualitativo en este dataset: la variable <code>male</code>.</p>
 <p>El gráfico siguiente muestra la distribución de los pesos según <code>male</code>, junto con la recta de regresión.</p>
 <pre class="r"><code>&gt; df_mayores %&gt;%
@@ -1653,7 +1690,6 @@ div.tocify {
 <p>El intercepto estimado es el valor de la variable de resultado para la primera categoría (es decir, la categoría correspondiente a un valor de indicador de 0). La pendiente estimada es el cambio promedio en la variable de resultado entre las dos categorías.</p>
 <hr />
 <p>Es importante entender que las interpretaciones de la intersección y la pendiente no cambian cuando se modelan variables categóricas con dos niveles.</p>
-</div>
 </div>
 <div id="valores-atípicos-en-regresión-lineal" class="section level2">
 <h2>Valores atípicos en regresión lineal</h2>

@@ -142,7 +142,6 @@ df_mayores %>%
       summarise(Cov = cov(height, weight))
   )
 
-
 ```
 
 Entonces, podemos reemplazar los valores en las ecuaciones anteriores:
@@ -172,72 +171,31 @@ Pueden tomar 5 minutos para calcularlo.
 
 Evaluamos la fuerza de la relación lineal entre dos variables anteriormente usando la correlación, $r$. Sin embargo, es más común explicar la fuerza de un ajuste lineal usando $R2$, llamado R-cuadrado. Si estams trabajando con un modelo lineal, va a ser sumamente útil poder describir qué tan cerca se agrupan los datos alrededor del ajuste lineal.
 
+Por ejemplo, volvamos a nuestros datos de altura y peso. La varianza de la variable dependiente (`weight`) es aproximadamente $s^2_{weight} = 41.68908$. Sin embargo, si aplicamos la recta de regresión por mínimos cuadrados, entonces, el modelo reduce la incerteza (podemos pensar a las medidas de dispersión como una aproximación a la incerteza) que tenemos en predecir el peso de una persona (porque ya conocemos su altura). La variabilidad en los residuos describe qué parte de la incerteza (de la variabilidad) total seguimos teniendo una vez que entrenamos el modelo. 
 
---- 
-**REVISAR** 
-El $R2$ de un modelo lineal describe cuánto de la variación en la variable de resultado se explica por la el modelo lineal (es decir por la recta de mínimos cuadrados). Por ejemplo, considere los datos de Elmhurst, que se muestran en la Figura 7.14. La varianza de la variable de resultado, la ayuda recibida, es de aproximadamente
-s
-2
-a
-i
-d
-≈
-29.8
- millones (calculado a partir de los datos, algunos de los cuales se muestran en la Tabla 7.1). Sin embargo, si aplicamos nuestra línea de mínimos cuadrados, entonces este modelo reduce nuestra incertidumbre al predecir la ayuda usando el ingreso familiar de un estudiante. La variabilidad en los residuos describe cuánta variación permanece después de usar el modelo:
-s
-2
-R
-mi
-S
-≈
-22.4
- millón. En resumen, hubo una reducción de
-s
-2
-a
-i
-d
-−
-s
-2
-R
-mi
-S
-s
-2
-a
-i
-d
-=
-29800
-−
-22400
-29800
-=
-7500
-29800
-≈
-0.25
-,
-o alrededor del 25%, de la variación de la variable de resultado al usar información sobre el ingreso familiar para predecir la ayuda usando un modelo lineal. Resulta que
-R
-2
- corresponde exactamente al valor al cuadrado de la correlación:
+Podemos calcular ese valor de la siguiente forma, calculando la varianza de los residuos:
 
-r
-=
-−
-0.499
-→
-R
-2
-= 
-0.25
+```{r}
+var(residuals(lm))
+```
 
----
+Es decir, elevamos los residuos al cuadrado y calculamos su media: $S^2_{res} = 17.89016$
 
+En resumen, hubo una reducción de
 
+$$\frac{41.68908 - 17.94113}{41.68908} = 0.56964 \approx 0.57$$
 
+aproximadmante el 57% de la variación de la variable de resultado al usar información sobre el ingreso familiar para predecir la ayuda usando un modelo lineal. Resulta que $R2$ corresponde exactamente al valor al cuadrado de la correlación:
+
+```{r}
+cor(df_mayores$height, df_mayores$weight)
+```
+
+```{r}
+cor(df_mayores$height, df_mayores$weight)**2
+```
+
+$$ r = 0.7547479 → R2 = 0.5696444$$
 
 A $R2$ también se le llama **coeficiente de determinación**.
 
@@ -276,7 +234,18 @@ $$R2 = \frac{SST - SSE}{SST} = 1 - \frac{SSE}{SST} $$
 ---
 
 
-### Predictores categóricos con dos niveles
+---
+
+**Encontrando al $R2$**
+
+Esta es una salida típica de regresión. ¿Dónde está el $R2$?
+```{r}
+summary(lm)
+```
+
+---
+
+## Predictores categóricos con dos niveles
 
 Las variables categóricas también son útiles para predecir resultados. Aquí consideramos un predictor categórico con dos niveles (recuerde que un nivel es lo mismo que una categoría). Tenemos un predictor cualitativo en este dataset: la variable `male`.
 
