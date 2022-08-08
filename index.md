@@ -32,6 +32,9 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Ejericio solución - Notebook](./M2/clase2/Clase_2_ejercicio_solucion.html)
 - [Ejericio solución - RMarkdown](./M2/clase2/Clase_2_ejercicio_solucion.Rmd)
 
+[![](./imgs/Download.png)](./M2/clase2/clase2.zip)
+
+
 ---
 
 # Módulo anterior: Procesamiento de datos en R y estadística para Ciencias Sociales
