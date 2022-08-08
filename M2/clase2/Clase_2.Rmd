@@ -81,7 +81,7 @@ Para los datos de Botswana podemos escribir ahora la ecuacion de regresión:
 
 $$\hat{wei} =  -52.3162 + 0.6294 \times height$$
 
-La idea, entonces, es poder "predecir" el peso utilizando la altura. Los parámetros de la recta ($\beta_{0}, \beta_{1}$) son estimados mediante los datos ($wei, height$). En la práctica, esta estimación se hace usando una computadora de la misma manera que otras estimaciones, como la media de una muestra, se pueden estimar usando una computadora o una calculadora.
+La idea, entonces, es poder "predecir" el peso utilizando la altura. Los parámetros de la recta ($\beta_{0}, \beta_{1}$) son estimados mediante los datos ($wei, height$). En la práctica, esta estimación se hace usando una computadora. Pero también podría hacerse (de la misma manera que otras estimaciones, como la media de una muestra), usando una computadora o una calculadora.
 
 El software estadístico generalmente se usa para calcular la línea de mínimos cuadrados y el resultado típico generado como resultado del ajuste de los modelos de regresión se parece al que se muestra en la tabla siguiente. Por ahora nos centraremos en la primera columna de la salida, que enumera $\beta_{0}$ y  $\beta_{1}$. 
 
@@ -149,6 +149,19 @@ Entonces, podemos reemplazar los valores en las ecuaciones anteriores:
 $$\beta_{1} = \frac{s_{xy}}{s^2_{x}} = \frac{37.72983}{7.74232^2} = \frac{37.72983}{59.94371} = 0.629421$$
 
 $$\beta_{0} = \overline{y} - \beta_{1} \overline{X} = 44.99049 - 0.629421  \times 154.5971 = -52.31617$$
+
+Si quisiéramos hacer las cuentas en código...
+
+$\beta_{1}$:
+```{r}
+b1 <- cov(df_mayores$height, df_mayores$weight) / var(df_mayores$height)
+b1
+```
+
+$\beta_{0}$:
+```{r}
+mean(df_mayores$weight) - mean(df_mayores$height) * b1
+```
 
 
 ### Las extrapolaciones pueden ser engañosas
@@ -260,7 +273,7 @@ df_mayores %>%
 
 Para incorporar la variable de condición del juego en una ecuación de regresión, debemos convertir las categorías en una forma numérica. Lo haremos usando una variable indicadora llamada male_int, que toma valor 1 cuando el registro es varón y 0 cuando es mujer Usando esta variable indicadora, el modelo lineal se puede escribir como
 
-$$$$
+$$\hat{wei}_{i} = \beta_{0} + \beta_{1} \times male_{i}$$
 
 
 Si estimamos los parámetros de la recta...
@@ -271,9 +284,14 @@ lm_2 <- lm(weight~male, data=df_mayores)
 tidy(lm_2)
 ```
 
+La ecuación quedaría escrita
+
+$$\hat{wei}_{i} = 41.81 + 6.778 \times male_{i}$$
+El intercepto ($\beta_{0}$) en este caso es el peso promedio cuando `male==0`; es decir, el peso promedio cuando el caso NO es varón. La pendiente ($\beta_{1}$) significa que si el caso es varón entonces, debo sumarle al promedio 6.778 kg. Es decir, que los varones son en promedio 6.77kg. más pasados que les no varones.
+
 
 ---
-
+  
 **Interpretación de las estimaciones del modelo para predictores categóricos**
 
 El intercepto estimado es el valor de la variable de resultado para la primera categoría (es decir, la categoría correspondiente a un valor de indicador de 0). La pendiente estimada es el cambio promedio en la variable de resultado entre las dos categorías.
@@ -305,3 +323,33 @@ Hay tres gráficos más abajo junto con la línea de mínimos cuadrados y gráfi
 - D: Hay una nube primaria y luego una pequeña nube secundaria de cuatro valores atípicos. La nube secundaria parece estar influyendo en la línea con cierta fuerza, lo que hace que la línea de mínimos cuadrados encaje mal en casi todas partes. Puede haber una explicación interesante para las nubes duales, que es algo que podría investigarse.
 - E: No hay una tendencia obvia en la nube principal de puntos y el valor atípico de la derecha parece controlar en gran medida (y de manera problemática) la pendiente de la línea de mínimos cuadrados.
 - F: Hay un valor atípico lejos de la nube. Sin embargo, cae bastante cerca de la línea de mínimos cuadrados y no parece ser muy influyente.
+
+Si miran las gráficas de residuos en las dos figuras anteriores probablemente encuentren en los paneles C, D y E, que hay algunas observaciones que están alejadas de los puntos restantes a lo largo del eje $X$ y tampoco caen en la trayectoria de la tendencia en el resto de los datos. En estos casos, los valores atípicos influyeron en la pendiente de las líneas de mínimos cuadrados. En el gráfico E, la mayor parte de los datos no muestran una tendencia clara, pero si ajustamos una línea a estos datos, imponemos una tendencia donde en realidad no la hay.
+
+---
+
+**Leverage ("palanca")**
+
+Los puntos que caen horizontalmente alejándose del centro de la nube tienden a tirar más fuerte de la línea, por lo que los llamamos puntos con alto apalancamiento o puntos de apalancamiento.
+
+---
+
+Los puntos que caen horizontalmente lejos de la recta de regresión son puntos de **alto apalancamiento**; estos puntos pueden influir fuertemente en la pendiente de la línea de mínimos cuadrados. Si alguno de estos puntos de alto apalancamiento parece efectivamente tener mucha influencia en la pendiente (como en los paneles C, D y E), entonces lo llamamos un **punto influyente**. Por lo general, podemos decir que un punto es influyente si, si hubiéramos ajustado la línea sin él, el punto influyente habría estado inusualmente lejos de la línea de mínimos cuadrados.
+
+---
+
+**Tipos de outliers (valores atípico)**
+
+Un punto (o un grupo de puntos) que sobresale del resto de los datos se denomina valor atípico. Los valores atípicos que se alejan horizontalmente del centro de la nube de puntos se denominan puntos de apalancamiento. Los valores atípicos que influyen en la pendiente de la línea se denominan puntos influyentes.
+
+---
+
+Es tentador proceder a eliminar los valores atípicos sin demasiada más reflexión que mirar un boxplot. En general, no es una buena idea haerlo sin una buena razón. Los modelos que ignoran casos excepcionales (e interesantes) a menudo funcionan mal. Por ejemplo, si una empresa financiera ignorara las oscilaciones más grandes del mercado, los "valores atípicos", pronto quebraría debido a inversiones mal pensadas.
+
+
+## Resumen 
+
+Hemos descrito los matices del modelo lineal. Hemos aprendido a crear un modelo lineal con variables explicativas que son numéricas y categóricas. 
+
+Los residuos en un modelo lineal son una métrica importante que se utiliza para comprender qué tan bien se ajusta un modelo; los puntos de alto apalancamiento, los puntos influyentes y otros tipos de valores atípicos pueden afectar el ajuste de un modelo. La correlación de Pearson es una medida de la fuerza y la dirección de la relación lineal de dos variables, sin especificar qué variable es la explicativa y cuál es el resultado. 
+
