@@ -1,7 +1,0 @@
-## Ejericicos
-### Conceptuales
-
-
-### Prácticos
-
-

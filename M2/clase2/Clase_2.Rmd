@@ -346,6 +346,9 @@ Un punto (o un grupo de puntos) que sobresale del resto de los datos se denomina
 
 Es tentador proceder a eliminar los valores atípicos sin demasiada más reflexión que mirar un boxplot. En general, no es una buena idea haerlo sin una buena razón. Los modelos que ignoran casos excepcionales (e interesantes) a menudo funcionan mal. Por ejemplo, si una empresa financiera ignorara las oscilaciones más grandes del mercado, los "valores atípicos", pronto quebraría debido a inversiones mal pensadas.
 
+## Ejercicios
+
+
 
 ## Resumen 
 

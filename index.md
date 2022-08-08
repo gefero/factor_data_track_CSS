@@ -27,7 +27,10 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 ### Clase 2. Presentación - Regresión lineal simple E2 
 - [Explicación y práctica - Notebook](./M2/clase2/Clase_2.html)
 - [Explicación y práctica - RMarkdown](./M2/clase2/Clase_2.Rmd)
-
+- [Ejericio - Notebook](./M2/clase2/Clase_2_ejercicio.html)
+- [Ejericio - RMarkdown](./M2/clase2/Clase_2_ejercicio.Rmd)
+- [Ejericio solución - Notebook](./M2/clase2/Clase_2_ejercicio_solucion.html)
+- [Ejericio solución - RMarkdown](./M2/clase2/Clase_2_ejercicio_solucion.Rmd)
 
 ---
 

@@ -1,0 +1,101 @@
+---
+title: "Introducción a la regresión lineal simple (II)"
+subtitle: "Ejericio integrador"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+library(tidyverse)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+## Introducción
+En el dataset './data/wb_bank_data_2019.csv' tienen información construida por el Banco Mundial acerca de la distribución de la población ocupada según grandes sectores de actividad y categoría ocupacional:
+
+- `SL.AGR.EMPL.ZS`: % total el empleo en agricultura: consistente en las actividades de agricultura, silvicultura, caza y pesca  
+- `SL.IND.EMPL.ZS`: % total de empleo en industria:  en actividades de minas y canteras, manufacturas, construcción y energía, gas y agua.
+- `SL.SERV.EMPL.ZS` % total de empleo el servicios comprende comercio al por mayor y menor y restaurantes y hoteles, transporte, almacenamiento y comunicaciones, finanzas, seguros, servicios inmobiliarios y a las empresas y servicios personales, sociales y comunales.
+- `SL.FAM.WORK.ZS`: % total de trabajadores familiares
+- `SL.EMP.MPYR.ZS`: % total de empleadores  
+- `SL.EMP.SELF.ZS`: % total de independientes (cuenta propias)
+- `SL.EMP.WORK.ZS`: % total de trabajadores asalariados
+
+## 1. Carguen los paquetes a utilizar
+```{r}
+###
+```
+
+## 2. Carguen el dataset
+```{r}
+###
+```
+
+## 3. ¿Qué formato tiene el dataset?
+
+```{r}
+###
+```
+
+
+## División del trabajo y desarrollo capitalista
+
+Marx y Engels escribieron en "La ideología alemana":
+
+> La división del trabajo dentro de una nación se traduce, ante todo, en la separación del trabajo industrial y comercial con respecto al trabajo agrícola y, con ello, en la separación de la ciudad y el campo y en la contradicción de los intereses entre una y otro. Su desarrollo ulterior conduce a la separación del trabajo comercial del industrial. (...) Las diferentes fases de desarrollo de la división del trahajo son otras tantas formas distintas de la propiedad; o, dicho en otros términos, cada etapa de la división del trabajo determina también las relaciones de los individuos entre sí, en lo tocante al material, el instrumento y el producto del trabajo...
+
+Entonces, existe una relación entre el desarrollo capitalista y la división del trabajo. Podemos intentar una primera medición de esta relación a partir de la información del dataset. Para ello, vamos a analziar la relación entre la proporción de población ocupada en la rama agro (`SL.AGR.EMPL.ZL`) y la proporción de asalariados (`SL.EMP.WORK.ZS`).
+
+**Importante:** notar el formato de la tabla y pensar cómo debería formatearla para poder trabajarla de forma correcta.
+
+```{r}
+###
+```
+
+
+## 4. ¿Existe una correlación entre ambas variables? ¿Cómo lo podrían evaluar? Describa la relación
+
+```{r}
+###
+```
+
+
+## 5. Si consideran que tiene sentido, corran una regresión entre ambas variables
+
+```{r}
+###
+```
+
+
+## 5. Impriman una tabla resumen de la regresión
+
+```{r}
+###
+```
+
+## 6. Interpreten los coeficientes
+
+```{r}
+###
+```
+
+## 7. ¿Qué ajuste tiene la regresión?
+
+```{r}
+###
+```
+
+## 8. Generen e interpreten un residual plot
+
+```{r}
+###
+```
