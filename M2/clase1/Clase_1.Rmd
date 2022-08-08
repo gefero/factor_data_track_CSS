@@ -395,7 +395,7 @@ Esto nos devuelve la matriz de correlaciones. Es una matriz cuadrada (tiene la m
 
 
 #### Prácticos
-- Calcular los residuos de la regresión anterior. Agregar
+- Calcular los residuos de la regresión anterior. Agregarlos como columna en el dataset original.
 
 ```{r}
 ###
