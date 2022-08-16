@@ -1,0 +1,198 @@
+---
+title: "Introducción a la regresión lineal múltiple (I)"
+subtitle: "Interpretación general"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+library(tidyverse)
+library(broom)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+***
+Este texto se basa en los siguientes materiales:
+
+- Capítulo 7 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
+- Capítulos 5 del libro [Class Structure and Income Determination]() de Erik Olin Wright.
+- Capitulo 3 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
+
+
+***
+
+## Introducción
+Sobre lo que estuvimos viendo acerca de una regresión lineal simple, ahora vamos a trabajar con una familia de modelos que se llaman "regresión lineal múltiple"; es decir que vamos a tener dos o más variables predictoras. Al considerar cómo interactúan las diferentes variables explicativas, podemos descubrir relaciones complicadas entre las variables predictoras y la variable de respuesta. Un desafío para trabajar con varias variables es que a veces es difícil saber cuáles variables son las más importantes para incluir en el modelo. La construcción de modelos es un tema extenso y complicado. Aquí vamos a dar una breve introducción al tema a partir del uso del R2.
+ 
+La regresión múltiple extiende la idea de la regresión variable de predictor único al caso que todavía tiene una respuesta pero muchos predictores (denotados $X_{1}, X_{2}, ..., X_{p}$). El método está motivado por escenarios en los que muchas variables pueden conectarse simultáneamente a una misma variable resultado.
+
+
+```{r}
+df <- read_rds('./data/ENES_Personas_M1_EOW.rds')
+```
+
+
+## Variables dummies y predictores categóricos
+
+Vamos a empezar entrenando una regresión lineal simple con una variable dummie dicotómica respecto al género. Como sabemos la ENES indaga sobre dos categorías de género (masculino y femenino) y una tercera categoría (otros). Dado que esta última presenta valores de frecuencias muy bajos, la vamos a dicotomizar.
+
+```{r}
+df <- df %>% 
+   mutate(v109 = case_when(
+                  v109=='Varón' ~ 'Masculino',
+                  TRUE ~ 'No masculino'))
+```
+
+
+Hagamos la regresión:
+
+```{r}
+lm1 <- df %>% filter(estado=='Ocupado') %>% lm(v213b ~ v109, data=.)
+tidy(lm1)
+```
+
+La ecuación de esta regresión sería:
+
+$$\hat{ingr\_ocup\_ppal} = 6873.1 + -1787.8 \times genero $$
+
+¿Cómo interpretamos esta regresión? La variable `v109` toma dos valores:
+
+$$
+ genero_{i} =
+  \begin{cases}
+    0       & \quad \text{si } _{i} \text{ es masculino}\\
+    1       & \quad \text{si } _{i} \text{ es no masculino}
+  \end{cases}
+$$
+
+Una pendiente de -1787.8 significa que las personas "no masculinas" ganan (en promedio) $1788 menos que las personas masculinas. ¿Por qué?
+
+Ahora queremos usar otra variable categórica pero que tiene más categorías. Probemos, entonces, hacer una regresión entre  el ingreso total de la ocupación principal (`v213b`) y el nivel educativo (`nivel_ed`). Aquí estaríamos poniendo a prueba, de alguna manera,  lo que la economía neoclásica (y particularmente, la teoría del "capital humano") consideran el "retorno" a la educación.
+
+Primero, y recordemos que la variable `nivel_ed` en la ENES tiene demasiadas categorías, vamos a agruparla en tres niveles:
+
+- bajo: hasta primario completo
+- medio hasta secundario completo
+- alto: mayor a secundario completo
+
+```{r}
+df <- df %>%
+   mutate(nivel_ed_agg = case_when(
+     nivel_ed == 'Menores de 5 años' | 
+       nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
+       nivel_ed == 'Primaria/EGB incompleto' | nivel_ed == 'Primaria/EGB completo' | 
+       nivel_ed == 'Educación especial' | nivel_ed == 'NS/NR'~ '0_Bajo',
+     
+     nivel_ed == 'Secundario/Polimodal incompleto' | 
+       nivel_ed == 'Secundario/Polimodal completo' ~ '1_Medio',
+     
+     nivel_ed == 'Terciario incompleto' | nivel_ed == 'Terciario completo' | nivel_ed == 'Universitario incompleto' | nivel_ed == 'Universitario completo' ~ '2_Alto'
+   )
+   )
+```
+
+
+Corramos, ahora, la regresión (solamente para los ocupados):
+
+```{r}
+lm <- df %>% filter(estado=='Ocupado') %>% lm(v213bi~nivel_ed_agg, data=.)
+tidy(lm)
+```
+
+Como podemos ver el output de la regresión anterior muestra dos filas para dos categorías de la variable `nivel_ed_agg`. Cada fila representa la diferencia relativa para cada una de esas categorías. Sin embargo, falta una categoría: `nivel_ed_agg0_Bajo`. A esa categoría se llama "categoría de referencia" y representa el nivel por defecto contra el cual todos los otros niveles son comparados.
+
+Podemos escribir la ecuación como si fuera un modelo de regresión (de hecho, lo es) con dos predictores
+
+$$\hat{ingr\_ocup\_ppal} = 4535.8 + 1425.5 \times educ\_medio + 3827.8 \times nivel\_ed\_agg\_alto$$
+
+Usamos la notación $variable_{\ nivel}$ para representar variables dummies cuando la variable categórica toma un valor particular. Por ejemplo, $nivel\_ed\_agg_{alto}$ va a tomar un valor 1 cuando el nivel educativo sea alto y cero en caso contrario. Igualmente, $nivel\_ed\_agg_{medio}$ va a tomar valor 1 cuando el registro presente un nivel educativo medio y cero si tomara cualquier otro valor.
+
+Ahora bien, ¿cómo usamos e interpretamos este esquema de codificación? Veamos un ejemplo: vamos a calcular el ingreso promedio (usando nuestro modelo) para personas de nivel educativo bajo. Cuando el $nivel\_ed\_agg$ toma un valor "bajo", las dos variables indicadoras o dummies del modelo lineal, se setean en cero.
+
+$$\hat{ingr\_ocup\_ppal} = 4535.8 + 1425.5 \times 0 + 3827.8 \times 0 \\
+ \hat{ingr\_ocup\_ppal} = 4535.8$$
+
+El ingreso promedio de las personas con nivel educativo bajo es de $4535.8. Esta categoría no tiene un coeficiente propio (porque no entra como variable dummy) y es la categoría de referencia, entonces, los coeficientes del resto de las categorías se "borran".
+
+Ahora, computemos el ingreso de una persona con nivel educativo medio. Se aplica la misma lógica; solamente que ahora, el coeficente que se va a cero es el de $nivel\_ed\_agg_{alto}$
+
+$$\hat{ingr\_ocup\_ppal} = 4535.8 + 1425.5 \times 1 + 3827.8 \times 0 \\
+ \hat{ingr\_ocup\_ppal} = 5961.3$$
+ 
+ El ingreso medio de la ocupación principal de las personas con nivel educativo medio es de $5961.3.
+ 
+
+---
+
+**Actividad**
+
+Calculen el ingreso medio de las personas con nivel educativo alto
+
+---
+
+
+### Predictores con varias categorías.
+
+Al ajustar un modelo de regresión con una variable categórica que tiene $k$ niveles o categorías donde
+$k > 2$, el software proporcionará $k - 1$ de esos coeficientes. El último nivel (el que no tiene un coeficiente=) es el nivel de referencia. Los coeficientes de los demás niveles se consideran relativos a este nivel de referencia.
+
+En este modelo, no parece haber nada demasiado contraintuitivo. Los coeficientes de los dos niveles $alto$ y $medio$ son positivos. Lo cual implica que ambos ganan más que el nivel educativo $bajo$. Y, de hecho, el coeficiente de $nivel\_ed\_agg_{alto}$ es casi 2.5 veces mayor que el de $nivel\_ed\_agg_{medio}$. Ahora bien, ¿qué otras variables podrían estar influyendo en esta relación?
+
+## Muchos predictores en un modelo
+El mundo es complejo (lo cual no quiere decir que sea ininteligible). Y los procesos de determinación del ingreso, lo son en gran medida. Pueden leer el capítulo 3 del [libro de E.O. Wright](https://drive.google.com/drive/u/0/my-drive) para un panorama de las diferentes teorías vinculadas al proceso de determinación de ingresos. Teniendo en cuenta este hecho, parece útil poder considerar varias variables en un modelo estadístico.
+
+
+
+Esta es la estrategia utilizada en la regresión múltiple. Si bien nos mantenemos cautelosos a la hora de hacer interpretaciones causales utilizando regresión múltiple en datos observacionales, dichos modelos son un primer paso común para obtener información o proporcionar alguna evidencia de una conexión causal.
+
+
+
+
+
+## R2 ajustado
+Ya hemos usamos R2 en el contexto de una regresión simple para determinar la cantidad de variabilidad en la respuesta explicada por el modelo:
+
+$$R^2 = 1 - \frac{variabilidad\ en\ residuos}{variabilidad\ en\ variable\ dependiente} = 1 - \frac{Var(e_{i})}{Var(y_{i})}$$
+
+donde $e_{i}$ representa los residuos del modelo e $y_{i}$ los valores observados. Esta relación sigue siendo válida en el marco de regresión múltiple, pero una pequeña mejora puede hacerla aún más informativa al comparar modelos.
+
+Esta estrategia para estimar R2 es aceptable cuando hay una sola variable. Sin embargo, se vuelve menos útil cuando hay muchas variables. El R2 "común" es una estimación sesgada de la cantidad de variabilidad explicada por el modelo cuando se aplica a un modelo con más de un predictor. Para obtener una mejor estimación, usamos el R2 ajustado.
+
+
+---
+
+### Fórmula para R2 ajustado
+
+$$R^2 = 1 - \frac{s^2_{residuos} / (n-k-1)}{s^2_{var\_depend} / (n-1)} \\
+      = 1 - \frac{s^2_{residuos}}{s^2_{var\_depend}} \times \frac{n-1}{n-k-1}$$
+      
+      
+dónde $n$ es el número de observaciones utilizadas para ajustar el modelo y $k$ es el número de variables predictoras en el modelo. Recuerden que un predictor categórico con $p$ niveles o categorías va a agregar $p − 1$ varables al modelo.  
+
+---
+
+Dado que $k$ nunca es negativo, el R2 ajustado siempre será más pequeño, a menudo un poco más pequeño, que el R2 no ajustado. El razonamiento está en los grados de libertad asociados con cada varianza, que es igual a $n − k − 1$ en el contexto de la regresión múltiple. Si tuviéramos que hacer predicciones para nuevos datos usando nuestro modelo actual, encontraríamos que el R2 tendería a ser un poco demasiado optimista, mientras que el ajustado R2 fórmula ayuda a corregir este sesgo.
+
+
+---
+
+**Actividad**
+
+Supongamos que agregamos otro predictor al modelo, pero la varianza de los errores $Var(e_{i})$ no baja. ¿Qué pasaría con el R2 sin ajustar? ¿Qué pasaría con el R2 ajustado?
+
+
+---
+
+También podríamos haber usado el R2 ajustado cuando trabajamos con una regresión de un solo predictor. Sin embargo, cuando sólo hay $k = 1$ predictores, R2 ajustado suele estar muy cerca del R2 sin ajustar, por lo que este matiz no suele ser importante cuando el modelo solo tiene un predictor.
+
+
+## Selección de modelos
