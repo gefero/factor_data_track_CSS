@@ -34,6 +34,15 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 
 [![](./imgs/Download.png)](./M2/clase2/clase2.zip)
 
+### Clase 3. Presentación - Regresión lineal múltiple E1 
+- [Explicación y práctica - Notebook](./M2/clase3/Clase_3.html)
+- [Explicación y práctica - RMarkdown](./M2/clase3/Clase_3.Rmd)
+- [Olin Wright, E. (1974), _Class structure and income determination_, New York: Academic Press](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing)
+- [Cuestionario - ENES](./M1/clase6/material_pisac/formulario_enes.pdf)
+- [Diseño de registro - personas - ENES](./M1/clase6/material_pisac/manual_codigos_base_personas.odf)
+- [Marco conceptual - ENES](./M1/clase6/material_pisac/marco_teorico_metodologico_enes_pisac.pdf)
+
+
 
 ---
 
