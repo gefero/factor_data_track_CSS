@@ -24,17 +24,39 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 Este texto se basa en los siguientes materiales:
 
 - Capítulo 7 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
-- Capítulos 5 del libro [Class Structure and Income Determination]() de Erik Olin Wright.
+- Capítulos 5 del libro [Class Structure and Income Determination](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing) de Erik Olin Wright.
 - Capitulo 3 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
-
 
 ***
 
-## Introducción
+## Introducción: regresión múltiple para investigar la determinación de ingresos
 Sobre lo que estuvimos viendo acerca de una regresión lineal simple, ahora vamos a trabajar con una familia de modelos que se llaman "regresión lineal múltiple"; es decir que vamos a tener dos o más variables predictoras. Al considerar cómo interactúan las diferentes variables explicativas, podemos descubrir relaciones complicadas entre las variables predictoras y la variable de respuesta. Un desafío para trabajar con varias variables es que a veces es difícil saber cuáles variables son las más importantes para incluir en el modelo. La construcción de modelos es un tema extenso y complicado. Aquí vamos a dar una breve introducción al tema a partir del uso del R2.
  
 La regresión múltiple extiende la idea de la regresión variable de predictor único al caso que todavía tiene una respuesta pero muchos predictores (denotados $X_{1}, X_{2}, ..., X_{p}$). El método está motivado por escenarios en los que muchas variables pueden conectarse simultáneamente a una misma variable resultado.
 
+En este caso, vamos a trabajar con problema bien clásico en las ciencias sociales: el proceso de determinación de ingresos. ¿Cuáles son las variables y los procesos que gobiernan la determinación de las remuneraciones que perciben los distintos sectores de una sociedad?
+
+Van a poder encontrar un muy interesante resúmen teórico en el libro de E. O. Wright citado al principio. Aquí nos vamos a centrar en la cuestión de ciertas diferencias metodológicas entre tres grandes cuerpos teóricos:
+
+- el marxismo
+- la teoría del capital humano
+- la teoría del "logro"
+
+El cuadro siguiente resume las principales diferencias entre las tres posturas teóricas.
+
+![](./img/eow_income_theories.jpg)
+
+Aquí nos vamos a centrar en tres cuestiones. La primera tiene que ver con las diferencias entre las unidades de análisi: mientras que en la teoría marxista hay al menos tres -estructuras, clases e individuos-, las teorías del capital humano y del "logro" solamente cuentan a los individuos como unidades fundamentales. 
+
+Al mismo tiempo, si observamos un poco los mecanismos de "causalidad" (nótense las comillas que ponemos a propósito) puede verse que mientras que las teorías "liberales" solo trabajan con mecanismos de causación "temporales"; en el esquema marxista (en parte debido a las diferentes unidades de análisis que juegan) vemos diferentes mecanismos de causación estructural. 
+
+Por último, en el mecanismo de determinación de ingresos también hay diferentes campos de relaciones sociales en juego. En las teorías liberales consideran solamente cierto campo de las relaciones técnicas de producción (aquellas que determinan los procesos de trabajo calificados o no, la productividad del capital, etc.) y las relaciones de mercado (el mercado de trabajo, el "mercado" educativo, etc.). En cambio, las teorías marxistas consideran un campo más amplio de relaciones socialas: relaciones técnicas, de intercambio, relaciones de propiedad y producción, relaciones políticas, etc.
+
+Sobre esta base, E. O. Wright va a proponer unas cuantas hipótesis acerca de las diferentes formas de determinación de ingresos en las diferentes clases. No nos vamos a detener por ahora con eso...
+
+
+## Analizando de ingresos con la ENES
+Hoy vamos a trabajar nuevamente con la Encuesta Nacional sobre Estructura Social, llevada adelante por el PISAC. Pueden encontrar más información [aquí](https://www.argentina.gob.ar/ciencia/pisac/bases-de-datos).
 
 ```{r}
 df <- read_rds('./data/ENES_Personas_M1_EOW.rds')
@@ -50,6 +72,7 @@ df <- df %>%
    mutate(v109 = case_when(
                   v109=='Varón' ~ 'Masculino',
                   TRUE ~ 'No masculino'))
+
 ```
 
 
@@ -104,7 +127,7 @@ df <- df %>%
 Corramos, ahora, la regresión (solamente para los ocupados):
 
 ```{r}
-lm <- df %>% filter(estado=='Ocupado') %>% lm(v213bi~nivel_ed_agg, data=.)
+lm <- df %>% filter(estado=='Ocupado') %>% lm(v213b~nivel_ed_agg, data=.)
 tidy(lm)
 ```
 
@@ -112,21 +135,21 @@ Como podemos ver el output de la regresión anterior muestra dos filas para dos 
 
 Podemos escribir la ecuación como si fuera un modelo de regresión (de hecho, lo es) con dos predictores
 
-$$\hat{ingr\_ocup\_ppal} = 4535.8 + 1425.5 \times educ\_medio + 3827.8 \times nivel\_ed\_agg\_alto$$
+$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times educ\_medio + 3367.7 \times nivel\_ed\_agg\_alto$$
 
 Usamos la notación $variable_{\ nivel}$ para representar variables dummies cuando la variable categórica toma un valor particular. Por ejemplo, $nivel\_ed\_agg_{alto}$ va a tomar un valor 1 cuando el nivel educativo sea alto y cero en caso contrario. Igualmente, $nivel\_ed\_agg_{medio}$ va a tomar valor 1 cuando el registro presente un nivel educativo medio y cero si tomara cualquier otro valor.
 
 Ahora bien, ¿cómo usamos e interpretamos este esquema de codificación? Veamos un ejemplo: vamos a calcular el ingreso promedio (usando nuestro modelo) para personas de nivel educativo bajo. Cuando el $nivel\_ed\_agg$ toma un valor "bajo", las dos variables indicadoras o dummies del modelo lineal, se setean en cero.
 
-$$\hat{ingr\_ocup\_ppal} = 4535.8 + 1425.5 \times 0 + 3827.8 \times 0 \\
- \hat{ingr\_ocup\_ppal} = 4535.8$$
+$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times 0 + 3367.7 \times 0 \\
+ \hat{ingr\_ocup\_ppal} = 4535.3$$
 
-El ingreso promedio de las personas con nivel educativo bajo es de $4535.8. Esta categoría no tiene un coeficiente propio (porque no entra como variable dummy) y es la categoría de referencia, entonces, los coeficientes del resto de las categorías se "borran".
+El ingreso promedio de las personas con nivel educativo bajo es de $4535.3. Esta categoría no tiene un coeficiente propio (porque no entra como variable dummy) y es la categoría de referencia, entonces, los coeficientes del resto de las categorías se "borran".
 
 Ahora, computemos el ingreso de una persona con nivel educativo medio. Se aplica la misma lógica; solamente que ahora, el coeficente que se va a cero es el de $nivel\_ed\_agg_{alto}$
 
-$$\hat{ingr\_ocup\_ppal} = 4535.8 + 1425.5 \times 1 + 3827.8 \times 0 \\
- \hat{ingr\_ocup\_ppal} = 5961.3$$
+$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times 1 + 3367.7 \times 0 \\
+ \hat{ingr\_ocup\_ppal} = 5838$$
  
  El ingreso medio de la ocupación principal de las personas con nivel educativo medio es de $5961.3.
  
@@ -148,14 +171,82 @@ $k > 2$, el software proporcionará $k - 1$ de esos coeficientes. El último niv
 En este modelo, no parece haber nada demasiado contraintuitivo. Los coeficientes de los dos niveles $alto$ y $medio$ son positivos. Lo cual implica que ambos ganan más que el nivel educativo $bajo$. Y, de hecho, el coeficiente de $nivel\_ed\_agg_{alto}$ es casi 2.5 veces mayor que el de $nivel\_ed\_agg_{medio}$. Ahora bien, ¿qué otras variables podrían estar influyendo en esta relación?
 
 ## Muchos predictores en un modelo
-El mundo es complejo (lo cual no quiere decir que sea ininteligible). Y los procesos de determinación del ingreso, lo son en gran medida. Pueden leer el capítulo 3 del [libro de E.O. Wright](https://drive.google.com/drive/u/0/my-drive) para un panorama de las diferentes teorías vinculadas al proceso de determinación de ingresos. Teniendo en cuenta este hecho, parece útil poder considerar varias variables en un modelo estadístico.
+El mundo es complejo (lo cual no quiere decir que sea ininteligible). Y los procesos de determinación del ingreso, lo son en gran medida. Pueden leer los capítulos 3 y 5 del [libro de E.O. Wright](https://drive.google.com/drive/u/0/my-drive) para un panorama más preciso que el que hemos precisado antes acerca de las diferentes teorías vinculadas al proceso de determinación de ingresos. Teniendo en cuenta este hecho, parece útil poder considerar varias variables en un modelo estadístico. 
+
+Esta es la estrategia utilizada en la regresión múltiple. Si bien nos mantenemos cautelosos a la hora de hacer interpretaciones causales utilizando regresión múltiple en datos observacionales, dichos modelos son un primer paso común para obtener información o proporcionar alguna evidencia de una conexión causal. Por ejemplo, podemos pensar que el género, la edad, el nivel educativo y la clase social son variables que se encuentran asociadas al proceso de determinación de ingresos. A su vez, sabemos que los hogares de tamaño "grande" en general, están asociados a menores ingresos. Comencemos por estas, entonces. 
+
+En primer lugar, vamos a agrupar un poco la variable de clase social. Si recordamos, el criterio de E. O. Wright identificaba dos clases sociales fundamentales, una clase "intermedia" y varias posiciones contradictorias de clase. Vamos a agrupar en cuatro categorías: trabajadores, empleadores, pequeña burguesía y mangers/supervisores. Una vez más, vamos a trabajar solaente con las personas ocupadas.
+
+```{r}
+df <- df %>%
+  mutate(class_eow_agg = case_when(
+         class_eow == 'Managers' | class_eow == 'Supervisores' ~  'Managers/superv.',
+         class_eow == 'Trabajadores' ~ 'Trabajadores',
+         class_eow == 'Pequeña burguesía' ~ 'Pequeña burguesía',
+         class_eow == 'Inactivo, desocupado o menor' ~ 'Inactivo, desocupado o menor',
+         class_eow == 'Empleadores' ~ 'Empleadores'
+  ))
+```
 
 
+---
 
-Esta es la estrategia utilizada en la regresión múltiple. Si bien nos mantenemos cautelosos a la hora de hacer interpretaciones causales utilizando regresión múltiple en datos observacionales, dichos modelos son un primer paso común para obtener información o proporcionar alguna evidencia de una conexión causal.
+**Para discutir...**
+
+¿Qué variables podríamos estar dejando afuera de este modelo?
+
+---
 
 
+Suele ser útil, antes de estimar el modelo, escribir la ecuación correspondiente
 
+$$
+\hat{ingr\_ocup\_ppal} = \beta_{0}+ \\
+                         \beta_{1} \times t\_hogar + \\
+                         \beta_{2} \times edad + \\
+                         \beta_{3} \times genero_{no\_masc} + \\
+                         \beta_{4} \times niv\_ed\_agg_{medio} + \\
+                         \beta_{5} \times niv\_ed\_agg_{alto} + \\
+                         \beta_{6} \times clase\_eow\_agg_{manag\_superv} + \\
+                         \beta_{7} \times clase\_eow\_agg_{peq\_burg} + \\
+                         \beta_{8} \times clase\_eow\_agg_{trabaj}
+$$
+
+Esta ecuación representa un enfoque holístico para modelar todas las variables simultáneamente. Observen que hay dos coeficientes para `niv_ed_agg` y tres coeficientes para `class_eow_agg`, ya que ambas son variables categóricas de 2 y 3 niveles, respectivamente.
+
+Calculamos $\beta_{0}, \beta_{1}, ..., \beta_{8}$ de la misma manera que hicimos en el caso de un modelo con un solo predictor. Seleccionamos valores que minimizan la suma de los cuadrados de los residuos:
+
+$$SSE = e_{1}^2 + e_{2}^2 + ... + e_{12135}^2 = \sum_{i=1}^{12135} e_{i}^2 = \sum_{i=1}^{12135} (y_{i} -\hat{y_{i}})^2$$
+
+dónde $y_{i}$ y $\hat{y_{i}}$ representan los ingresos de la ocupación principal y sus valores predichos  según el modelo, respectivamente. Se calculan 12.135 residuales, uno para cada observación de personas ocupadas. Es importante tener en cuenta que estos valores son estadísticos muestrales y, en el caso de que los datos observados sean una muestra aleatoria de una población objetivo sobre la que estamos interesados en hacer inferencias, son estimaciones de los parámetros de la población.. Discutiremos la inferencia basada en modelos lineales más adelante, por ahora nos centraremos en calcular estadísticas de muestra.
+
+Por lo general, usamos una computadora para minimizar la suma de los cuadrados y calcular las estimaciones puntuales:
+
+```{r}
+lm2 <- df %>% filter(estado == 'Ocupado') %>% lm(v213b ~ t_hogar +  v108 + v109 + nivel_ed_agg + class_eow_agg, data=.)
+
+tidy(lm2)
+```
+
+---
+
+### Regresión lineal múltiple
+Un modelo de regresión lineal múltiple es un modelo lineal con muchos predictores. En general, podemos escribir el modelo como
+
+$$\hat{y_{i}} =  \beta_{0} + \beta_{1} X_{1} + \beta_{2} X_{2} + ... + \beta_{k} X_{k}$$
+
+donde hay $k$ predictores. Siempre vamos a calcular los $\beta_{i}$ mediante algún software.
+
+---
+
+---
+
+**Actividades**
+
+- Interprete el coeficiente asociado a la variable edad (`v108`) y a la variable tamaño del hogar (`t_hogar`).
+- Computar el residuo de la primera observación del dataset usando el modelo completo
+
+---
 
 
 ## R2 ajustado
@@ -196,3 +287,17 @@ También podríamos haber usado el R2 ajustado cuando trabajamos con una regresi
 
 
 ## Selección de modelos
+El mejor modelo no siempre es el más complicado. A veces, incluir variables que no son evidentemente importantes puede reducir la precisión de las predicciones. En esta sección, analizamos las estrategias de selección de modelos, que nos ayudarán a eliminar del modelo las variables que se consideren menos importantes. Es común (y moderno, al menos en el mundo estadístico) referirse a modelos que han sufrido una poda tan variable como parsimoniosos.
+
+En la práctica, el modelo que incluye todos los predictores disponibles suele denominarse modelo completo. El modelo completo puede no ser el mejor modelo, y si no lo es, queremos identificar un modelo más pequeño que sea preferible.
+
+### Selección paso a paso (Stepwise selection)
+Dos estrategias comunes para agregar o eliminar variables en un modelo de regresión múltiple se denominan eliminación hacia atrás y selección hacia adelante. Estas técnicas a menudo se conocen como estrategias de selección paso a paso, porque agregan o eliminan una variable a la vez a medida que avanzan a través de los predictores candidatos.
+
+La eliminación hacia atrás (backwards) comienza con el modelo completo (el modelo que incluye todas las posibles variables predictoras). Las variables se eliminan una a la vez del modelo hasta que no podamos mejorarlo más.
+
+La selección hacia adelante (forward) es lo contrario de la técnica de eliminación hacia atrás. En lugar de eliminar variables una a la vez, agregamos variables una a la vez hasta que no podamos encontrar ninguna variable que mejore más el modelo.
+
+Una consideración importante al implementar cualquiera de estas estrategias de selección paso a paso es el criterio utilizado para decidir si eliminar o agregar una variable. Un criterio de decisión de uso común se ajusta R2. Cuando se usa ajustado R2 como criterio de decisión se busca eliminar o agregar variables dependiendo de si conducen a la mayor mejora en la R2 y nos detenemos cuando la adición o eliminación de otra variable no conduce a una mejora adicional en la R2.
+
+El R2 ajustadodescribe la fuerza del ajuste de un modelo y es una herramienta útil para evaluar qué predictores agregan valor al modelo, donde agregar valor significa que (probablemente) mejoran la precisión en la predicción de resultados futuros.
