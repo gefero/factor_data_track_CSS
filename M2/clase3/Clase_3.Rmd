@@ -189,15 +189,6 @@ df <- df %>%
 ```
 
 
----
-
-**Para discutir...**
-
-¿Qué variables podríamos estar dejando afuera de este modelo?
-
----
-
-
 Suele ser útil, antes de estimar el modelo, escribir la ecuación correspondiente
 
 $$
@@ -227,6 +218,30 @@ lm2 <- df %>% filter(estado == 'Ocupado') %>% lm(v213b ~ t_hogar +  v108 + v109 
 
 tidy(lm2)
 ```
+
+
+Si contamos el número de coeficientes predictores, obtenemos el número efectivo de predictores en el modelo; hay 8 predictores "efectivos". Es importante notar que los predictores categóricos cuentan de forma diferente: la variable `v109` (género) supone introducir un predictor efectivo, dado que es dicotómica. En cambio, `nivel_ed_agg` y `clase_eow_agg` introducen dos y 3 predictores efectivos, respectivamente: uno  cada uno de los dos niveles que se muestran en el modelo. En general, un predictor categórico con $p$ diferentes niveles estarán representados por $p - 1$ términos en un modelo de regresión múltiple. Calculamos un coeficiente de pendiente de 0,74 para la quiebra en la Sección 8.1, mientras que aquí el coeficiente es de 0,39. ¿Por qué hay una diferencia entre los valores de los coeficientes entre los modelos con predictor único y múltiple?
+
+Si examináramos los datos cuidadosamente, veríamos algunas diferencias con el caso de la regresión lineal simple. Por ejemplo, cuando modelamos la relación del entre el ingreso laboral y el género (al principio de la clase) vimos que el $\beta_{1}$ (la pendiente) era de \$-1787.8. Ahora, en este nuevo modelo más completo pasó a ser \$-2181.8. ¿Por qué hay una diferencia entre los valores de los coeficientes entre los modelos con predictor único y múltiple?
+
+En nuestro primer modelo (simple) no pudimos controlar otras variables que pueden estar afectando el ingreso como por ejemplo, el nivel educativo o la clase social y muchas otras. Ese modelo original se construyó "en un vacío" y no consideró el contexto completo de todas las otras muchas variables y determinaciones que afectan el nivel de ingresos de una persona. Cuando incluimos otras variables, se reduce ese sesgo subyacente e involuntario. Por supuesto, el sesgo aún puede existir debido a otras variables de confusión.
+
+---
+
+**Para discutir...**
+
+¿Qué variables relevantes podríamos estar dejando afuera de este modelo?
+
+---
+
+**Actividad**
+- Cuántas variables conceptuales hay en este modelo?
+- Armar la ecuación completa del modelo
+- Interpretar el coeficiente de la variable `t_hogar` (tamaño del hogar) 
+- Calcular el residual de la primera observacion del dataset
+
+---
+
 
 ---
 
@@ -284,20 +299,3 @@ Supongamos que agregamos otro predictor al modelo, pero la varianza de los error
 ---
 
 También podríamos haber usado el R2 ajustado cuando trabajamos con una regresión de un solo predictor. Sin embargo, cuando sólo hay $k = 1$ predictores, R2 ajustado suele estar muy cerca del R2 sin ajustar, por lo que este matiz no suele ser importante cuando el modelo solo tiene un predictor.
-
-
-## Selección de modelos
-El mejor modelo no siempre es el más complicado. A veces, incluir variables que no son evidentemente importantes puede reducir la precisión de las predicciones. En esta sección, analizamos las estrategias de selección de modelos, que nos ayudarán a eliminar del modelo las variables que se consideren menos importantes. Es común (y moderno, al menos en el mundo estadístico) referirse a modelos que han sufrido una poda tan variable como parsimoniosos.
-
-En la práctica, el modelo que incluye todos los predictores disponibles suele denominarse modelo completo. El modelo completo puede no ser el mejor modelo, y si no lo es, queremos identificar un modelo más pequeño que sea preferible.
-
-### Selección paso a paso (Stepwise selection)
-Dos estrategias comunes para agregar o eliminar variables en un modelo de regresión múltiple se denominan eliminación hacia atrás y selección hacia adelante. Estas técnicas a menudo se conocen como estrategias de selección paso a paso, porque agregan o eliminan una variable a la vez a medida que avanzan a través de los predictores candidatos.
-
-La eliminación hacia atrás (backwards) comienza con el modelo completo (el modelo que incluye todas las posibles variables predictoras). Las variables se eliminan una a la vez del modelo hasta que no podamos mejorarlo más.
-
-La selección hacia adelante (forward) es lo contrario de la técnica de eliminación hacia atrás. En lugar de eliminar variables una a la vez, agregamos variables una a la vez hasta que no podamos encontrar ninguna variable que mejore más el modelo.
-
-Una consideración importante al implementar cualquiera de estas estrategias de selección paso a paso es el criterio utilizado para decidir si eliminar o agregar una variable. Un criterio de decisión de uso común se ajusta R2. Cuando se usa ajustado R2 como criterio de decisión se busca eliminar o agregar variables dependiendo de si conducen a la mayor mejora en la R2 y nos detenemos cuando la adición o eliminación de otra variable no conduce a una mejora adicional en la R2.
-
-El R2 ajustadodescribe la fuerza del ajuste de un modelo y es una herramienta útil para evaluar qué predictores agregan valor al modelo, donde agregar valor significa que (probablemente) mejoran la precisión en la predicción de resultados futuros.
