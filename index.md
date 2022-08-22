@@ -45,6 +45,7 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 [![](./imgs/Download.png)](./M2/clase3/clase3.zip)
 
 
+\\
 ---
 
 # Módulo anterior: Procesamiento de datos en R y estadística para Ciencias Sociales
