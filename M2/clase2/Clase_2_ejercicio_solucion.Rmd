@@ -64,9 +64,9 @@ df <- df %>%
 
 ```{r}
 df %>%
-  ggplot(aes(x=SL.EMP.WORK.ZS, y=SL.AGR.EMPL.ZS)) +
+  ggplot(aes(x=SL.AGR.EMPL.ZS, y=SL.EMP.WORK.ZS)) +
     geom_point() + 
-  xlim(0,100) +
+    xlim(0,100) +
     theme_minimal()
 ```
 
@@ -74,7 +74,7 @@ df %>%
 ## 5. Si consideran que tiene sentido, corran una regresión entre ambas variables
 
 ```{r}
-lm <- lm(SL.AGR.EMPL.ZS ~ SL.EMP.WORK.ZS, data=df)
+lm <- lm(SL.EMP.WORK.ZS ~ SL.AGR.EMPL.ZS, data=df)
 ```
 
 
@@ -100,14 +100,15 @@ summary(lm)
 
 ```{r}
 resid_plot <- tibble(
-  resid_agr = residuals(lm),
-  predict_agr = predict(lm, df),
-  agr_orig = df$SL.AGR.EMPL.ZS)
+  resid_asal = residuals(lm),
+  predict_asal = predict(lm, df),
+  asal_orig = df$SL.EMP.WORK.ZS)
 
 resid_plot %>%
-  ggplot(aes(x=predict_agr, y=resid_agr)) +
+  ggplot(aes(x=predict_asal, y=resid_asal)) +
     geom_point() +
     xlim(-10,100) +
     theme_minimal()
 
 ```
+

@@ -1512,7 +1512,7 @@ div.tocify {
 <h1 class="title toc-ignore">Introducción a la regresión lineal múltiple (I)</h1>
 <h3 class="subtitle">Interpretación general</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">22 agosto, 2022</h4>
+<h4 class="date">23 agosto, 2022</h4>
 
 </div>
 
@@ -1671,7 +1671,7 @@ div.tocify {
 ## 7 class_eow_aggManagers/superv.    1578.     330.        4.79 1.71e- 6
 ## 8 class_eow_aggPequeña burguesía  -3195.     322.       -9.93 4.01e-23
 ## 9 class_eow_aggTrabajadores       -1589.     299.       -5.32 1.09e- 7</code></pre>
-<p>Si contamos el número de coeficientes predictores, obtenemos el número efectivo de predictores en el modelo; hay 8 predictores “efectivos”. Es importante notar que los predictores categóricos cuentan de forma diferente: la variable <code>v109</code> (género) supone introducir un predictor efectivo, dado que es dicotómica. En cambio, <code>nivel_ed_agg</code> y <code>clase_eow_agg</code> introducen dos y 3 predictores efectivos, respectivamente: uno cada uno de los dos niveles que se muestran en el modelo. En general, un predictor categórico con <span class="math inline">\(p\)</span> diferentes niveles estarán representados por <span class="math inline">\(p - 1\)</span> términos en un modelo de regresión múltiple. Calculamos un coeficiente de pendiente de 0,74 para la quiebra en la Sección 8.1, mientras que aquí el coeficiente es de 0,39. ¿Por qué hay una diferencia entre los valores de los coeficientes entre los modelos con predictor único y múltiple?</p>
+<p>Si contamos el número de coeficientes predictores, obtenemos el número efectivo de predictores en el modelo; hay 8 predictores “efectivos”. Es importante notar que los predictores categóricos cuentan de forma diferente: la variable <code>v109</code> (género) supone introducir un predictor efectivo, dado que es dicotómica. En cambio, <code>nivel_ed_agg</code> y <code>clase_eow_agg</code> introducen dos y 3 predictores efectivos, respectivamente: uno cada uno de los dos niveles que se muestran en el modelo. En general, un predictor categórico con <span class="math inline">\(p\)</span> diferentes niveles estarán representados por <span class="math inline">\(p - 1\)</span> términos en un modelo de regresión múltiple.</p>
 <p>Si examináramos los datos cuidadosamente, veríamos algunas diferencias con el caso de la regresión lineal simple. Por ejemplo, cuando modelamos la relación del entre el ingreso laboral y el género (al principio de la clase) vimos que el <span class="math inline">\(\beta_{1}\)</span> (la pendiente) era de $-1787.8. Ahora, en este nuevo modelo más completo pasó a ser $-2181.8. ¿Por qué hay una diferencia entre los valores de los coeficientes entre los modelos con predictor único y múltiple?</p>
 <p>En nuestro primer modelo (simple) no pudimos controlar otras variables que pueden estar afectando el ingreso como por ejemplo, el nivel educativo o la clase social y muchas otras. Ese modelo original se construyó “en un vacío” y no consideró el contexto completo de todas las otras muchas variables y determinaciones que afectan el nivel de ingresos de una persona. Cuando incluimos otras variables, se reduce ese sesgo subyacente e involuntario. Por supuesto, el sesgo aún puede existir debido a otras variables de confusión.</p>
 <hr />
