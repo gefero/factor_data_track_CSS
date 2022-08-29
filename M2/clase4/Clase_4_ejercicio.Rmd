@@ -70,7 +70,7 @@ Con el dataset recortado, realice un join para tener todas las variables en una 
 
 ## Análisis descriptivo
 ### Consigna 4. Correlaciones
-¿Qué relacion existe (si es que existe) entre el HDI y la proporción de población asalariada? ¿Y entre el HDI y la proporción de población?
+¿Qué relacion existe (si es que existe) entre el HDI y la proporción de población asalariada? ¿Y entre el HDI y la proporción de población que trabaja en el sector agrario?
 ```{r}
 ###
 ```
