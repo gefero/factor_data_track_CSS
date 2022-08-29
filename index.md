@@ -45,7 +45,13 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 [![](./imgs/Download.png)](./M2/clase3/clase3.zip)
 
 
+### Clase 3. Presentación - Regresión lineal múltiple E2 
+- [Explicación y práctica - Notebook](./M2/clase4/Clase_4.html)
+- [Explicación y práctica - RMarkdown](./M2/clase4/Clase_4.Rmd)
+- [Ejericio integrador - Notebook](./M2/clase4/Clase_4_ejercicio.html)
+- [Ejericio integrador - RMarkdown](./M2/clase4/Clase_4_ejercicio.Rmd)
 
+[![](./imgs/Download.png)](./M2/clase4/clase4.zip)
 
 
 

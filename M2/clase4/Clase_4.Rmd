@@ -1,6 +1,6 @@
 ---
 title: "Introducción a la regresión lineal múltiple (II)"
-subtitle: "Multicolinealidad, selección de modelos y ejercicio integrador"
+subtitle: "Colinealidad"
 output: 
   html_document:
     toc: TRUE
@@ -11,9 +11,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE)
-library(tidyverse)
-library(broom)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
@@ -29,28 +27,136 @@ Este texto se basa en los siguientes materiales:
 
 ***
 
-## Multicolinealidad
+```{r}
+library(tidyverse)
+library(broom)
+library(car)
+```
+
+
+## Colinealidad entre regresores
 
 Pensemos brevemente en dos de las variables de nuestro modelo: `t_hogar` y `nivel_ed_agg`. ¿Hay correlación entre ambas?
 
+Esto expresa un  problema común en la regresión múltiple: la correlación entre las variables predictoras. Decimos que las dos variables predictoras son colineales (pronunciadas como colineales) cuando están correlacionadas, y esta multicolinealidad complica la estimación del modelo. Si bien es imposible evitar que surja la multicolinealidad en los datos de observación, los experimentos generalmente se diseñan para evitar que los predictores sean multicolineales.
+
+Volvamos brevemente a nuestro ejemplo antropométrico para ilustrar esta situación de forma más clara.
+
+```{r}
+df <- read_delim('https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/Howell1.csv', delim=";")
+
+df <- df %>%
+  mutate(male = as.factor(case_when(
+          male == 0 ~ 'No',
+          TRUE ~ 'Yes'
+  )))
+```
+
+Filtremos los menores de 18 años:
+
+```{r}
+df_menores <- df %>%
+                filter(age < 18)
+```
+
+Si recordamos bien, la altura y la edad (y el peso) estaban fuertemente correlacionadas
+```{r} 
+df_menores %>%
+        ggplot(aes(x=age, height)) + 
+                geom_point() + 
+                theme_minimal()
+```
+
+En estos casos, cuando dos regresores están altamente correlacionados, utilizamos el término _colinealidad_. La presencia de colinealidad puede plantear problemas en el contexto de regresión, ya que puede ser difícil separar los efectos individuales de las variables colineales en la respuesta. En otras palabras, dado que la edad y la altura  tienden a aumentar o disminuir juntas, puede ser difícil determinar cómo cada uno por separado se asocia con la variable dependiente (peso).
 
 
- un problema común en la regresión múltiple: la correlación entre las variables predictoras. Decimos que las dos variables predictoras son colineales (pronunciadas como colineales) cuando están correlacionadas, y esta multicolinealidad complica la estimación del modelo. Si bien es imposible evitar que surja la multicolinealidad en los datos de observación, los experimentos generalmente se diseñan para evitar que los predictores sean multicolineales.
+Corramos una regresión con todos los predictores. Es decir, vamos a tratar de modelar el peso en función de la edad, la altura y el sexo.
 
----
+Un problema de la existencia de colinealidad es que hace que las inferencias de los parámetros ($\beta$) sean menos precisas. Ante la presencia de la colinealidad, los errores estándar de las estimaciones se incrementan:
 
-## Selección de modelos
-El mejor modelo no siempre es el más complicado. A veces, incluir variables que no son evidentemente importantes puede reducir la precisión de las predicciones. En esta sección, analizamos las estrategias de selección de modelos, que nos ayudarán a eliminar del modelo las variables que se consideren menos importantes. Es común (y moderno, al menos en el mundo estadístico) referirse a modelos que han sufrido una poda tan variable como parsimoniosos.
+Entrenemos una regresión con las tres variables independientes:
 
-En la práctica, el modelo que incluye todos los predictores disponibles suele denominarse modelo completo. El modelo completo puede no ser el mejor modelo, y si no lo es, queremos identificar un modelo más pequeño que sea preferible.
+```{r}
+model1 <- df_menores %>% lm(weight ~ ., data=.)
+tidy(model1)
+```
 
-### Selección paso a paso (Stepwise selection)
-Dos estrategias comunes para agregar o eliminar variables en un modelo de regresión múltiple se denominan eliminación hacia atrás y selección hacia adelante. Estas técnicas a menudo se conocen como estrategias de selección paso a paso, porque agregan o eliminan una variable a la vez a medida que avanzan a través de los predictores candidatos.
+Ahora, eliminenos la edad:
+```{r}
+model2 <- df_menores %>% lm(weight ~ . -age, data=.)
+tidy(model2)
+```
 
-La eliminación hacia atrás (backwards) comienza con el modelo completo (el modelo que incluye todas las posibles variables predictoras). Las variables se eliminan una a la vez del modelo hasta que no podamos mejorarlo más.
+Noten como los errores estándar (que vamos a definri con precisión más adelante pero que por ahora podemos asociarlos a la incerteza muestral sobre los parámetros) de `height` cambian fuertemente en ambos modelos: en el primer modelo es de 0.025; en el segundo, es 0.001.
 
-La selección hacia adelante (forward) es lo contrario de la técnica de eliminación hacia atrás. En lugar de eliminar variables una a la vez, agregamos variables una a la vez hasta que no podamos encontrar ninguna variable que mejore más el modelo.
+Para evitar tal situación, es deseable identificar y abordar posibles
+problemas de colinealidad al ajustar el modelo. Una forma sencilla de detectar la colinealidad es observar la matriz de correlación de los predictores. Una celda de esta matriz con valores grandes indica un par de variables altamente correlacionadas. 
 
-Una consideración importante al implementar cualquiera de estas estrategias de selección paso a paso es el criterio utilizado para decidir si eliminar o agregar una variable. Un criterio de decisión de uso común se ajusta R2. Cuando se usa ajustado R2 como criterio de decisión se busca eliminar o agregar variables dependiendo de si conducen a la mayor mejora en la R2 y nos detenemos cuando la adición o eliminación de otra variable no conduce a una mejora adicional en la R2.
+Desafortunadamente, no todos los problemas de colinealidad pueden ser
+detectado por inspección de la matriz de correlación: es posible que exista colinealidad entre tres o más variables incluso si no hay un par de variables tiene una correlación particularmente alta. A esta situación la llamamos multicolinealidad. multicolinealidad En lugar de inspeccionar la matriz de correlación, una mejor manera de evaluar la multicolinealidad es calcular el factor de inflación de la varianza (VIF, por sus siglas en inglés).
 
-El R2 ajustadodescribe la fuerza del ajuste de un modelo y es una herramienta útil para evaluar qué predictores agregan valor al modelo, donde agregar valor significa que (probablemente) mejoran la precisión en la predicción de resultados futuros.
+El VIF es el cociente de la varianza de $\beta_{j}$ al ajustar el modelo completo dividido por el varianza de $\beta_{j}$ si se ajusta por sí solo. El valor más pequeño posible para VIF es 1, lo que indica la ausencia total de colinealidad. Típicamente en la práctica hay una pequeña cantidad de colinealidad entre los predictores. como regla aproximada, un valor VIF que excede 5 o 10 indica una cantidad problemática de colinealidad. 
+
+El VIF para cada variable se puede calcular usando la fórmula
+
+$$VIF(\beta_{j}) = \frac{1}{1-R^2_{X_{j}|X_{-j}}}$$
+
+donde $R^2_{X_{j}|X_{-j}}$ es el $R^2$ de una regresión de $X_{j}$ contra todos los otros predictores. Si  $R^2_{X_{j}|X_{-j}}$ es cercano a 1, entonces, hay colinealidad, por lo cual $VIF$ será elevado.
+
+```{r}
+vif(model1)
+```
+
+Vemos cómo `height` y `age` tienen valores bastante cercanos a nuestro límite.
+
+Ante el problema de la colinealidad, existen dos soluciones sencillas. La primera es eliminar una de las variables problemáticas de la regresión. Esto generalmente se puede hacer sin mucho compromiso con la regresión. ajuste, ya que la presencia de colinealidad implica que la información que este variable proporciona sobre la respuesta es redundante en presencia de la otras variables.
+
+La segunda solución puede ser combinar las varaibles colineales en un solo predictor.
+
+¿Qué pasa en nuestro modelo de determinación de ingresos? ¿Qué variables podrían tener algún grado de colinealidad?
+
+```{r}
+enes <- read_rds('./data/ENES_Personas_M1_EOW.rds')
+
+enes <- enes %>% 
+   mutate(v109 = case_when(
+                  v109=='Varón' ~ 'Masculino',
+                  TRUE ~ 'No masculino'),
+          nivel_ed_agg = case_when(
+                  nivel_ed == 'Menores de 5 años' | 
+                  nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
+                  nivel_ed == 'Primaria/EGB incompleto' | 
+                  nivel_ed == 'Primaria/EGB completo' |
+                  nivel_ed == 'Educación especial' | nivel_ed == 'NS/NR'~ '0_Bajo',
+     
+                nivel_ed == 'Secundario/Polimodal incompleto' | 
+                nivel_ed == 'Secundario/Polimodal completo' ~ '1_Medio',
+    
+                nivel_ed == 'Terciario incompleto' | 
+                nivel_ed == 'Terciario completo' |
+                nivel_ed == 'Universitario incompleto' | 
+                nivel_ed == 'Universitario completo' ~ '2_Alto'
+   ),
+   class_eow_agg = case_when(
+         class_eow == 'Managers' | class_eow == 'Supervisores' ~  'Managers/superv.',
+         class_eow == 'Trabajadores' ~ 'Trabajadores',
+         class_eow == 'Pequeña burguesía' ~ 'Pequeña burguesía',
+         class_eow == 'Inactivo, desocupado o menor' ~ 'Inactivo, desocupado o menor',
+         class_eow == 'Empleadores' ~ 'Empleadores'
+  )
+   )
+
+```
+
+Estimemos la regresión:
+
+```{r}
+lm_enes<- enes %>% filter(estado == 'Ocupado') %>% lm(v213b ~ t_hogar + v108 + v109 + nivel_ed_agg + class_eow_agg, data=.)
+```
+
+Y calculemos el VIF
+```{r}
+vif(lm_enes)
+```
+
+Pese a haber cierto grado de colinealidad (esperable, por cierto) ninguno supera el valor límite de 5.
