@@ -1,0 +1,177 @@
+---
+title: "Introducción a la regresión logística"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+***
+Este texto se basa en los siguientes materiales:
+
+- Capítulo 9 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
+- Capitulo 4 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
+
+***
+
+```{r}
+library(tidyverse)
+library(broom)
+library(car)
+```
+## Introducción 
+En este capítulo presentamos la regresión logística como herramienta de modelado en aquellas situaciones en las que hay una variable de respuesta categórica con dos niveles, por ejemplo, sí y no. La regresión logística es un tipo de modelo lineal generalizado (GLM) para variables de respuesta donde la regresión múltiple regular no funciona muy bien. Los GLM se pueden considerar como un enfoque de modelado de dos etapas. Primero modelamos la variable de respuesta utilizando una distribución de probabilidad, como la distribución binomial o de Poisson. Segundo, modelamos el parámetro de la distribución usando una colección de predictores y una forma especial de regresión múltiple. En última instancia, la aplicación de un GLM se sentirá muy similar a la regresión múltiple, incluso si algunos de los detalles son diferentes.
+
+## El problema: autopercepción de clase
+
+Vamos, como siempre, a trabajar con la ENES que contiene una pregunta sobre autoposicionamiento de clases. Sin embargo, la misma solamente se realizó a los PSH (principales sostenes económicos del hogar) y a les cónyuges de los mismos. Por ello, será necesario trabajar no con toda la población de personas sino solamente con estos últimos.
+
+```{r}
+psh_cony <- read_rds('./data/ENES_psh_cony.rds')
+```
+
+Pero primero, tenemos que recodificar las variables de percecpión de clase `MS_v260` y `MS_v261` a una sola variable que vamos a llamar `percep_clase` y luego a esta, dictomizarla.
+
+```{r}
+psh_cony <- psh_cony %>%
+  mutate(
+    v109 = if_else(v109 != 'Varón', 'Masculino', 'No masculino'),
+    percep_clase = case_when(
+           !is.na(MS_v260) ~ MS_v260,
+           is.na(MS_v260) ~ MS_v261)
+  )
+
+psh_cony <- psh_cony %>%
+  mutate(percep_obrera = (case_when(
+            MS_v260 == 'Clase baja' | MS_v260 == 'Clase obrera' ~ 1,
+            is.na(percep_clase) ~ NA_real_,
+            TRUE ~ 0))
+  )
+
+```
+
+
+## Modelando la probabilidad de un evento
+La regresión logística es un modelo lineal generalizado donde el resultado es una variable categórica de dos niveles. El resultado, $Y_{i}$, toma el valor 1 (en nuestra aplicación, esto representa percepción de clase obrera) con probabilidad $p_{i}$ y valor 0 con probabilidad $1-p_{i}$. Debido a que cada observación tiene un "contexto" ligeramente diferente, por ejemplo, posición objetiva de clase diferente, niveles educativos diferentes, etc., la probabilidad $p_{i}$ será diferente para cada observación. En última instancia, es esta probabilidad la que modelamos en relación con las variables predictoras: examinaremos qué características de la persona se asocian a una percepción obrera.
+
+
+---
+
+**Notación para un modelo de regresión logística**
+
+La variable de resultado para un GLM (acrónimo de "generalized linera model") se denota por $Y_{i}$, donde el índice $i$ se utiliza para representar la _i-ésima_ observación. En la ENES, $Y_{i}$ se utilizará para representar si la persona $i$ tiene percepción de clase obrera ($Y_{i} = 1$) o no ($Y_{i} = 0$).
+
+---
+
+Las variables predictoras son representadas de la siguiente manera: $X_{1,i}$ es el valor de la variable 1 en el caso $i$, $X_{2,i}$ es el valor de la variable 2 en el caso $i$, y así sucesivamente.
+
+$$transformacion(p_{i}) = \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + + \beta_{k}X_{k,i}$$
+
+Queremos elegir una transformación en la ecuación que tenga sentido práctico y matemático. Por ejemplo, queremos una transformación que haga que el rango de posibilidades del lado izquierdo de la ecuación sea igual al rango de posibilidades del lado derecho. Si no hubiera transformación para esta ecuación, el lado izquierdo solo podría tomar valores entre 0 y 1, pero el lado derecho podría tomar valores fuera de este rango. 
+
+Por ejemplo, en nuestro caso, sabemos que la variable `percep_obrera` asume solamente dos valores. La dist
+
+```{r message=FALSE, warning=FALSE}
+psh_cony %>%
+  drop_na(percep_obrera) %>%
+  ggplot(aes(y=as.integer(percep_obrera), x=ITI)) +  
+  geom_smooth(method='lm', se=FALSE) +
+    geom_point() +
+    ylim(0, 1) +
+    theme_minimal() +
+    labs(x='Ingreso total individual',
+         y='Percep. obrera')
+```
+
+
+Una transformación común para lograr ese objetivo es calcular el *logit* que puede ser escrito de la siguiente manera:
+
+$$logit(p_{i}) = log_e\left(\frac{p_{i}}{1-p_{i}}\right)$$
+Los valores de la transformación logit podemos verlos en el gráfico a continuación.
+
+```{r}
+logit <- function(x){log(x / (1- x))}
+
+
+logit(seq(0.01,0.99,0.01)) %>%
+        as_tibble() %>%
+        ggplot(aes(y=seq(0.01,0.99,0.01),x=value)) +
+                geom_line() +
+                geom_hline(yintercept = 1, linetype='dashed') +
+                geom_hline(yintercept = 0, linetype='dashed') +
+                ylim(-0.01, 1.01) +
+                theme_minimal() + 
+                labs(x='Logit',
+                     y='Prob')
+```
+
+En nuestro gráfico anterior...
+
+En nuestro ejemplo, vamos a usar unas 8 variables predictoras, por lo cual $k=8$. Si bien la elección precisa de una función logit no es intuitiva, se basa en la teoría que sustenta los modelos lineales generalizados, que está más allá del alcance de este curso. Afortunadamente, una vez que ajustamos un modelo usando software, empezaremos a sentir que estamos de vuelta en el contexto de la regresión múltiple, incluso si la interpretación de los coeficientes es un poco más compleja.
+
+A continuación escribimos nuevamente la ecuación que relaciona a los predictores con $Y_{i}$ usando la transformación logit sobre $p_{i}$:
+
+
+$$log_e\left(\frac{p_{i}}{1-p_{i}}\right) =  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + + \beta_{k}X_{k,i}$$
+
+Para convertir valores en la escala de regresión logística a la escala de probabilidad, necesitamos transformar hacia atrás y luego resolver para $p_{i}$:
+
+$$log_e\left(\frac{p_{i}}{1-p_{i}}\right) =  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + + \beta_{k}X_{k,i} \\
+\frac{p_{i}}{1-p_{i}} = e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + + \beta_{k}X_{k,i}} \\
+p_{i} = (1-p_{i})  e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + + \beta_{k}X_{k,i}} \\
+p_{i} = e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... +  \beta_{k}X_{k,i}} - p_{i} \times e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + + \beta_{k}X_{k,i}} \\
+p_{i} +  p_{i} \times e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + \beta_{k}X_{k,i}} = e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... +  \beta_{k}X_{k,i}} \\
+p_{i} (1 + e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + \beta_{k}X_{k,i}}) = e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + \beta_{k}X_{k,i}} \\
+p_{i} = \frac{e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + \beta_{k}X_{k,i}}}{ 1 + e^{  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + \beta_{k}X_{k,i}}}$$
+
+Al igual que con la mayoría de los problemas de datos aplicados, sustituimos los parámetros ($\beta_{k}$) por las estimaciones puntuales ($\hat{\beta_{k}}$).
+
+
+### Un ejemplo mínimo para empezar
+Empecemos con un ejemplo simple. Queremos ver si entre las diferentes posiciones en el hogar (cónyuge y PSH) existen diferentes percepciones de clase. Así, podemos entrenar nuestra regresión logística. Para eso, usamos la función `glm()` que, como verán, tiene la misma sintaxis que `lm()`.
+```{r}
+glm_1 <- psh_cony %>%
+  drop_na(percep_obrera) %>%
+  glm(percep_obrera ~ v111, data=.) 
+
+tidy(glm_1)
+```
+
+
+De esta forma, entrenamos una regresión logística para la autopercepción de clase obrera y, como variable regresora, la posicion en el hogar: `v111` toma valor 1 cuando la persona es cónyuge y 0 cuando la persona es el PSH. La ecuación del modelo es:
+
+$$log_e\left(\frac{P(obrera)_{i}}{1-P(obrera)_{i}}\right) =  0.249 - 0.016 \times v111_{cony, i}$$
+
+
+Si se considera una persona (de les cónyuges o PSH) elegida al azar y se trata del PSH, entonces `v111` toma valor 0 y el lado derecho de la ecuación del modelo es igual a -0.249. Resolviendo para $p(obrera)_{i}$:
+
+$$\frac{e^{0.249}}{1 + e^{0.249}} = 0.562$$
+
+Es decir que la probabilidad estimada de autopercepción obrera es de $\hat{p}(obrera)_{i}=0.562$. Así como etiquetamos un valor estimado de $y_{i}$ con un “sombrero” en regresión de una variable y múltiple, hacemos lo mismo para esta probabilidad
+
+En cambio, si se trata de una persona que es la cónyuge, `v111` toma valor 1. Así, 
+$$p(obrera)_{i} = \frac{e^{-0.249 - 0.016 \times 1}}{1 + e^{-0.249 - 0.016 \times 1}} = 0.558$$
+Si bien sabemos que existe cierta diferencia (aunque muy pequeña) en la percepción de clase,  nos gustaría tener en cuenta muchas variables diferentes a la vez para comprender cómo cada una de las diferentes características de la persona se vinculan a la percepción obrera.
+
+
+## Modelo logístico con muchas variables
+Ajustemos el modelo de regresión logística con los 8 predictores descritos en la Tabla 9.2. Al igual que la regresión múltiple, el resultado se puede presentar en una tabla de resumen, que se muestra en la Tabla 9.3.
+
+
+
+
+Al igual que con la regresión múltiple, podríamos recortar algunas variables del modelo. Aquí usaremos una estadística llamada criterio de información de Akaike (AIC), que es análoga al $R^2$ en regresión múltiple. AIC es un método popular de selección de modelos utilizado en muchas disciplinas y es elogiado por su énfasis en la incertidumbre y parsimonia del modelo. AIC selecciona un "mejor" modelo clasificando los modelos de mejor a peor según sus valores de AIC. En el cálculo del AIC de un modelo, se aplica una penalización por incluir variables adicionales. Esta penalización por la complejidad añadida del modelo intenta lograr un equilibrio entre el ajuste insuficiente (muy pocas variables en el modelo) y el ajuste excesivo (demasiadas variables en el modelo). Cuando se usa AIC para la selección de modelos, los modelos con un valor de AIC más bajo se consideran "mejores". Recuerde que al usar $R^2$ ajustado en su lugar, seleccionamos modelos con valores más altos. Es importante tener en cuenta que AIC proporciona información sobre la calidad de un modelo en relación con otros modelos, pero no proporciona información sobre la calidad general de un modelo.
+
+
+## Grupos de diferentes tamaño

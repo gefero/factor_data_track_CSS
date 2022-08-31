@@ -126,10 +126,9 @@ df <- read_csv('../clase4/data/wb_bank_data_2019.csv') %>%
      pivot_wider(id_cols = c(iso3c, iso2c, country), names_from = indicatorID, values_from = value)
 
 
-
-hdi <- hdi  %>%
-    left_join(df) %>%
-        drop_na() %>%
+ hdi <- hdi  %>%
+    left_join(df %>% select(-country)) %>%
+        drop_na(SL.SRV.EMPL.ZS) %>%
         mutate(rel_salariales = SL.EMP.WORK.ZS + SL.EMP.MPYR.ZS)
 
 hdi_model <- hdi %>%

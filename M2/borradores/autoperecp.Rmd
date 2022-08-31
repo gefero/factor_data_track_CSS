@@ -1,0 +1,85 @@
+---
+title: "Modelando la autopercepción de clase según la ENES-PISAC"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(foreign)
+```
+
+```{r}
+df <- read.spss('../data/ENES_psh_cony.sav', to.data.frame = TRUE)
+```
+
+Creamos una variable de clase social (junto con las respuestas forzadas)
+```{r}
+
+df <- df %>%
+        mutate(MS_autopercep = as.factor(
+                case_when(
+                MS_v259 == 'Sí' & MS_v260 == 'Clase baja' ~ 'Clases obreras',
+                MS_v259 == 'Sí' & MS_v260 == 'Clase obrera' ~ 'Clases obreras',
+                MS_v259 == 'Sí' & MS_v260 == 'Clase media baja' ~ 'Clases obreras',
+                MS_v259 == 'Sí' & MS_v260 == 'Clase media' ~ 'Clases no obreras',
+                MS_v259 == 'Sí' & MS_v260 == 'Clase media alta' ~ 'Clases no obreras',
+                MS_v259 == 'Sí' & MS_v260 == 'Clase alta' ~ 'Clases no obreras',
+                
+                MS_v259 == 'No' & MS_v261 == 'Clase baja' ~ 'Clases obreras',
+                MS_v259 == 'No' & MS_v261 == 'Clase obrera' ~ 'Clases obreras',
+                MS_v259 == 'No' & MS_v261 == 'Clase media baja' ~ 'Clases obreras',
+                MS_v259 == 'No' & MS_v261 == 'Clase media' ~ 'Clases no obreras',
+                MS_v259 == 'No' & MS_v261 == 'Clase media alta' ~ 'Clases no obreras',
+                MS_v259 == 'No' & MS_v261 == 'Clase alta' ~ 'Clases no obreras',
+                
+                is.na(MS_v259) & MS_v261 == 'Clase baja' ~ 'Clases obreras',
+                is.na(MS_v259) & MS_v261 == 'Clase obrera' ~ 'Clases obreras',
+                is.na(MS_v259) & MS_v261 == 'Clase media baja' ~ 'Clases obreras',
+                is.na(MS_v259) & MS_v261 == 'Clase media' ~ 'Clases no obreras',
+                is.na(MS_v259) & MS_v261 == 'Clase media alta' ~ 'Clases no obreras',
+                is.na(MS_v259) & MS_v261 == 'Clase alta' ~ 'Clases no obreras'
+        ))
+                
+                
+)
+```
+
+
+
+```{r}
+glm.fits=glm(MS_autopercep ~ EOW_class + v108, data=df ,family=binomial)
+```     
+```{r}
+y <- df %>% select(EOW_class) %>% drop_na
+
+preds <- predict(glm.fits, df, 'response') 
+
+mean(preds==df$EOW_class, na.rm=TRUE)
+
+```
+
+```{r}
+
+post_est <- tibble(
+                EOW_class = c('Empleadores','Managers', 'Supervisores', 'Pequeña burguesía', 'Trabajadores'),
+                v108 = rep(median(df[df$v109=='Varón',]$v108), 5), 
+                #v109 = rep('Mujer',5),
+                #years_educ = rep(median(df[df$v109=='Varón',]$years_educ),5)
+        )
+
+
+tibble(
+        EOW_class = c('0_Empleadores','1_Managers', '2_Supervisores', '3_Pequeña burguesía', '4_Trabajadores'),
+        probs = predict(glm.fits, post_est, type = 'response')
+) %>% 
+        ggplot() + 
+        geom_bar(aes(y=probs, x=EOW_class, fill=EOW_class), stat='identity', show.legend = FALSE) + 
+        scale_fill_viridis_d() +
+        theme_minimal() +
+        labs(title='Probabilidad de autopercibirse como perteneciente a la clase obrera)',
+             subtitle = 'Perfil: mujer, 48 años, 12 años de educación',  
+             x = 'Clase social (esquema Wright)',
+             y = 'Probabilidad',
+             caption = 'Fuente: elaboración sobre ENES-PISAC')
+```
+
