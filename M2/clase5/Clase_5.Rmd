@@ -80,7 +80,7 @@ $$transformacion(p_{i}) = \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... 
 
 Queremos elegir una transformación en la ecuación que tenga sentido práctico y matemático. Por ejemplo, queremos una transformación que haga que el rango de posibilidades del lado izquierdo de la ecuación sea igual al rango de posibilidades del lado derecho. Si no hubiera transformación para esta ecuación, el lado izquierdo solo podría tomar valores entre 0 y 1, pero el lado derecho podría tomar valores fuera de este rango. 
 
-Por ejemplo, en nuestro caso, sabemos que la variable `percep_obrera` asume solamente dos valores. La dist
+Por ejemplo, en nuestro caso, sabemos que la variable `percep_obrera` asume solamente dos valores. ¿Cómo se distribuyen los casos según los ingresos individuales?
 
 ```{r message=FALSE, warning=FALSE}
 psh_cony %>%
@@ -94,8 +94,9 @@ psh_cony %>%
          y='Percep. obrera')
 ```
 
+En azul vemos la recta de **regresión lineal** tomando como variable dependiente la autopercepción y como independiente los ingresos. ¿Qué problemas se podrían presentar?
 
-Una transformación común para lograr ese objetivo es calcular el *logit* que puede ser escrito de la siguiente manera:
+Una transformación común para evitar que los valores estimados caigan fuera del rango 0-1 (rango admimitdo por una probabilidad) es calcular el *logit* que puede ser escrito de la siguiente manera:
 
 $$logit(p_{i}) = log_e\left(\frac{p_{i}}{1-p_{i}}\right)$$
 Los valores de la transformación logit podemos verlos en el gráfico a continuación.
@@ -116,12 +117,9 @@ logit(seq(0.01,0.99,0.01)) %>%
                      y='Prob')
 ```
 
-En nuestro gráfico anterior...
-
 En nuestro ejemplo, vamos a usar unas 8 variables predictoras, por lo cual $k=8$. Si bien la elección precisa de una función logit no es intuitiva, se basa en la teoría que sustenta los modelos lineales generalizados, que está más allá del alcance de este curso. Afortunadamente, una vez que ajustamos un modelo usando software, empezaremos a sentir que estamos de vuelta en el contexto de la regresión múltiple, incluso si la interpretación de los coeficientes es un poco más compleja.
 
 A continuación escribimos nuevamente la ecuación que relaciona a los predictores con $Y_{i}$ usando la transformación logit sobre $p_{i}$:
-
 
 $$log_e\left(\frac{p_{i}}{1-p_{i}}\right) =  \beta_{0} + \beta_{1}X_{1,i} + \beta_{2}X_{2,i} + ... + + \beta_{k}X_{k,i}$$
 
