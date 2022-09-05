@@ -41,23 +41,66 @@ Vamos, como siempre, a trabajar con la ENES que contiene una pregunta sobre auto
 psh_cony <- read_rds('./data/ENES_psh_cony.rds')
 ```
 
-Pero primero, tenemos que recodificar las variables de percecpión de clase `MS_v260` y `MS_v261` a una sola variable que vamos a llamar `percep_clase` y luego a esta, dictomizarla.
+Pero primero, tenemos que recodificar las variables de percecpión de clase `MS_v260` y `MS_v261` a una sola variable que vamos a llamar `percep_clase` y luego a esta, dictomizarla. A su vez, vamos a tratar de replicar el esquema que utilizó Rodolfo Elbert en este artículo. Allí, realizó una desagregación de los trabajadores por cuenta propia en dos categorías: 
+
+- informales: aquellos TCP que trabajan en tareas no calificadas y operativas
+- pequeña burguesía formal: aquellos TCP que trabajan en tareas profesionales y técnicas
+
+Dado que de esta forma, quedan muy pocos casos en la cateogría "Pequeña burguesía", la vamos a unificar con la categoría de "Empleadores" bajo el rótulo: "Clases propietarias".
 
 ```{r}
 psh_cony <- psh_cony %>%
   mutate(
-    v109 = if_else(v109 != 'Varón', 'Masculino', 'No masculino'),
+    v109 = if_else(v109 == 'Varón', 'Masculino', 'No masculino'),
     percep_clase = case_when(
            !is.na(MS_v260) ~ MS_v260,
-           is.na(MS_v260) ~ MS_v261)
-  )
+           is.na(MS_v260) ~ MS_v261
+           )
+    )
 
 psh_cony <- psh_cony %>%
-  mutate(percep_obrera = (case_when(
-            MS_v260 == 'Clase baja' | MS_v260 == 'Clase obrera' ~ 1,
-            is.na(percep_clase) ~ NA_real_,
-            TRUE ~ 0))
-  )
+  mutate(
+    salud = case_when(
+      v134a %in% c("Obra social", "Prepaga", "Prepaga a través de Obra Social") ~ 'Tiene cobertura',
+      TRUE ~  'No tiene cobertura'
+      ),
+    
+    percep_obrera = as.factor(case_when(
+            percep_clase == 'Clase baja' | percep_clase == 'Clase obrera' ~ 'Obrera',
+            is.na(percep_clase) ~ NA_character_,
+            TRUE ~ 'No obrera')),
+    
+    percep_obrera_orig = as.factor(case_when(
+            MS_v260 == 'Clase baja' | MS_v260 == 'Clase obrera' ~ 'Obrera',
+            is.na(MS_v260) ~ NA_character_,
+            TRUE ~ 'No obrera')),
+    CNO_calif_agg = case_when(
+           CNO_calif == 'Profesional' | CNO_calif == 'Técnica' ~ 'Prof./técn',
+           CNO_calif == 'Operativa' | CNO_calif == 'No calificada' ~ 'Op./no calif.',
+         ),
+    nivel_ed_agg = case_when(
+                  nivel_ed == 'Menores de 5 años' | 
+                  nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
+                  nivel_ed == 'Primaria/EGB incompleto' | 
+                  nivel_ed == 'Primaria/EGB completo' |
+                  nivel_ed == 'Educación especial' | nivel_ed == 'NS/NR'~ '0_Bajo',
+     
+                nivel_ed == 'Secundario/Polimodal incompleto' | 
+                nivel_ed == 'Secundario/Polimodal completo' ~ '1_Medio',
+    
+                nivel_ed == 'Terciario incompleto' | 
+                nivel_ed == 'Terciario completo' |
+                nivel_ed == 'Universitario incompleto' | 
+                nivel_ed == 'Universitario completo' ~ '2_Alto'),
+         
+         class_eow_agg = case_when(
+         EOW_class == 'Managers' | EOW_class == 'Supervisores' ~ 'Manag./superv.',
+         EOW_class == 'Trabajadores' ~ 'Trabajadores',
+         EOW_class == 'Pequeña burguesía' & CNO_calif_agg == 'Prof./técn' ~ 'Propietarias',
+         EOW_class == 'Pequeña burguesía' & CNO_calif_agg == 'Op./no calif.' ~ 'TCP informales',
+         
+         EOW_class == 'Empleadores' ~ 'Propietarias'),
+   )
 
 ```
 
@@ -85,7 +128,8 @@ Por ejemplo, en nuestro caso, sabemos que la variable `percep_obrera` asume sola
 ```{r message=FALSE, warning=FALSE}
 psh_cony %>%
   drop_na(percep_obrera) %>%
-  ggplot(aes(y=as.integer(percep_obrera), x=ITI)) +  
+  mutate(percep_obrera = if_else(percep_obrera == 'Obrera', 1, 0)) %>%
+  ggplot(aes(y=percep_obrera, x=ITI)) +  
   geom_smooth(method='lm', se=FALSE) +
     geom_point() +
     ylim(0, 1) +
@@ -141,7 +185,7 @@ Empecemos con un ejemplo simple. Queremos ver si entre las diferentes posiciones
 ```{r}
 glm_1 <- psh_cony %>%
   drop_na(percep_obrera) %>%
-  glm(percep_obrera ~ v111, data=.) 
+  glm(percep_obrera ~ v111, family='binomial', data=.) 
 
 tidy(glm_1)
 ```
@@ -149,27 +193,87 @@ tidy(glm_1)
 
 De esta forma, entrenamos una regresión logística para la autopercepción de clase obrera y, como variable regresora, la posicion en el hogar: `v111` toma valor 1 cuando la persona es cónyuge y 0 cuando la persona es el PSH. La ecuación del modelo es:
 
-$$log_e\left(\frac{P(obrera)_{i}}{1-P(obrera)_{i}}\right) =  0.249 - 0.016 \times v111_{cony, i}$$
+$$log_e\left(\frac{P(obrera)_{i}}{1-P(obrera)_{i}}\right) =  -0.656 - 0.084 \times v111_{cony, i}$$
 
 
 Si se considera una persona (de les cónyuges o PSH) elegida al azar y se trata del PSH, entonces `v111` toma valor 0 y el lado derecho de la ecuación del modelo es igual a -0.249. Resolviendo para $p(obrera)_{i}$:
 
-$$\frac{e^{0.249}}{1 + e^{0.249}} = 0.562$$
+$$\frac{e^{-0.656}}{1 + e^{-0.656}} = 0.3416$$
 
-Es decir que la probabilidad estimada de autopercepción obrera es de $\hat{p}(obrera)_{i}=0.562$. Así como etiquetamos un valor estimado de $y_{i}$ con un “sombrero” en regresión de una variable y múltiple, hacemos lo mismo para esta probabilidad
+Es decir que la probabilidad estimada de autopercepción obrera es de $\hat{p}(obrera)_{i}=0.3416$. Así como etiquetamos un valor estimado de $y_{i}$ con un “sombrero” en regresión de una variable y múltiple, hacemos lo mismo para esta probabilidad
 
 En cambio, si se trata de una persona que es la cónyuge, `v111` toma valor 1. Así, 
-$$p(obrera)_{i} = \frac{e^{-0.249 - 0.016 \times 1}}{1 + e^{-0.249 - 0.016 \times 1}} = 0.558$$
+$$p(obrera)_{i} = \frac{e^{- (-0.656 - 0.084 \times 1)}}{1 + e^{-(-0.656 - 0.084 \times 1)}} = 0.3230$$
 Si bien sabemos que existe cierta diferencia (aunque muy pequeña) en la percepción de clase,  nos gustaría tener en cuenta muchas variables diferentes a la vez para comprender cómo cada una de las diferentes características de la persona se vinculan a la percepción obrera.
 
 
 ## Modelo logístico con muchas variables
 Ajustemos el modelo de regresión logística con los 8 predictores descritos en la Tabla 9.2. Al igual que la regresión múltiple, el resultado se puede presentar en una tabla de resumen, que se muestra en la Tabla 9.3.
 
+```{r}
 
 
+glm_2 <- psh_cony %>%
+    filter(estado == 'Ocupado') %>%
+    glm(percep_obrera ~ class_eow_agg + v109 + v111 + v108 + nivel_ed_agg , data=., family='binomial')
+
+summary(glm_2)
+
+```
 
 Al igual que con la regresión múltiple, podríamos recortar algunas variables del modelo. Aquí usaremos una estadística llamada criterio de información de Akaike (AIC), que es análoga al $R^2$ en regresión múltiple. AIC es un método popular de selección de modelos utilizado en muchas disciplinas y es elogiado por su énfasis en la incertidumbre y parsimonia del modelo. AIC selecciona un "mejor" modelo clasificando los modelos de mejor a peor según sus valores de AIC. En el cálculo del AIC de un modelo, se aplica una penalización por incluir variables adicionales. Esta penalización por la complejidad añadida del modelo intenta lograr un equilibrio entre el ajuste insuficiente (muy pocas variables en el modelo) y el ajuste excesivo (demasiadas variables en el modelo). Cuando se usa AIC para la selección de modelos, los modelos con un valor de AIC más bajo se consideran "mejores". Recuerde que al usar $R^2$ ajustado en su lugar, seleccionamos modelos con valores más altos. Es importante tener en cuenta que AIC proporciona información sobre la calidad de un modelo en relación con otros modelos, pero no proporciona información sobre la calidad general de un modelo.
 
+En este caso, posiblemente una primera varible candidata a eliminar podría ser la variable asociada al género. No obstante, veremos cuestiones vinculadas a la selección de modelos dentro de algunas clases.
 
-## Grupos de diferentes tamaño
+---
+
+La variable `v109` tiene solamente dos valores (`masculino` y `no masculino`)... basándose en los resultados del modelo, ¿qué nos dice esa variable acerca de la autopercepción de clase?
+
+El coeficiente mostrado corresponde al nivel de `no masculino` y es negativo. El mismo refleja una pérdida negativa en la proporción de autopercepción obrera para aquellas personas que no son masculinas. El modelo sugiere que las personas no masculinas tienden a tener una percepción de clase obrera menor que las personas masculinas.
+
+---
+
+Si se fijan en el coeficiente asociado a la variable `v111` ha cambiado (aunque ha mantenido el signo). En la mayoría de los datos provenientes de estudios observacionales -como una encuesta- y no experimentales, es común que las estimaciones puntuales cambien un poco y, a veces, mucho, dependiendo de qué otras variables se incluyan en el modelo.
+
+
+---
+
+**Actividad 1**
+
+Use el modelo anterior para estimar la probabilidad de tener autopercepción de clase obrera que presenta una persona masculina, principal sostén del hogar, de 38 años de edad, de nivel educativo medio y cuya posición de clase objetiva es pequeña burguesía formal (clases propietarias).
+
+
+Podemos empezar escribiendo la ecuación completa del modelo:
+
+
+$$log_e\left(\frac{P(obrera)_{i}}{1-P(obrera)_{i}}\right) = \\
+0.064888 - 0.177762 \times class\_eow\_agg_{prop} + \\
+0.563875 \times class\_eow\_agg_{tcp\ informal} + \\
+0.419077 \times class\_eow\_agg_{trabajador} - \\
+0.255518 \times v111_{conyugye} - \\
+0.163277 \times v109{no\ masculino} - \\
+0.009968 \times v108 - \\
+0.608011 \times nivel\_ed\_agg_{medio} - \\
+1.507580 \times nivel\_ed\_agg_{alto}
+$$
+
+Ahora, podemos reemplazar los valores correspondentes a cada variable
+
+$$log_e\left(\frac{P(obrera)_{i}}{1-P(obrera)_{i}}\right) = \\
+0.064888 - 0.177762 \times 1 + \\
+0.563875 \times 0 + \\
+0.419077 \times 0 - \\
+0.255518 \times 0 - \\
+0.163277 \times 0 - \\
+0.009968 \times 38 - \\
+0.608011 \times 1 - \\
+1.507580 \times 0 = -1.099677
+$$
+Ahora podemos resolver para $\hat{p}$ para obtener las probabilidades de este perfil de presentar una autopercepción de clase obrera.
+
+$$\frac{e^{-1.099677}}{1 + e^{-1.099677}} = 0.2498$$
+
+Es decir, un 25% de chances de presentar autopercepción obrera.
+
+---
+
