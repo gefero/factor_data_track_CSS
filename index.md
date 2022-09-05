@@ -57,6 +57,8 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 ### Clase 5. Presentación - Regresión logística 
 - [Explicación y práctica - Notebook](./M2/clase5/Clase_5.html)
 - [Explicación y práctica - RMarkdown](./M2/clase5/Clase_5.Rmd)
+- [Diapositivas](./M2/clase5/Clase_5.pdf)
+
 
 [![](./imgs/Download.png)](./M2/clase5/clase5.zip)
 

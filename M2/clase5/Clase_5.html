@@ -1534,7 +1534,7 @@ div.tocify {
 <h2>El problema: autopercepción de clase</h2>
 <p>Vamos, como siempre, a trabajar con la ENES que contiene una pregunta sobre autoposicionamiento de clases. Sin embargo, la misma solamente se realizó a los PSH (principales sostenes económicos del hogar) y a les cónyuges de los mismos. Por ello, será necesario trabajar no con toda la población de personas sino solamente con estos últimos.</p>
 <pre class="r"><code>&gt; psh_cony &lt;- read_rds(&quot;./data/ENES_psh_cony.rds&quot;)</code></pre>
-<p>Pero primero, tenemos que recodificar las variables de percecpión de clase <code>MS_v260</code> y <code>MS_v261</code> a una sola variable que vamos a llamar <code>percep_clase</code> y luego a esta, dictomizarla. A su vez, vamos a tratar de replicar el esquema que utilizó Rodolfo Elbert en este artículo. Allí, realizó una desagregación de los trabajadores por cuenta propia en dos categorías:</p>
+<p>Pero primero, tenemos que recodificar las variables de percecpión de clase <code>MS_v260</code> y <code>MS_v261</code> a una sola variable que vamos a llamar <code>percep_clase</code> y luego a esta, dictomizarla. A su vez, vamos a tratar de replicar el esquema que utilizó Rodolfo Elbert en <a href="https://www.jstor.org/stable/j.ctv1gn3t2q.8#metadata_info_tab_contents">este artículo</a>. Allí, realizó una desagregación de los trabajadores por cuenta propia en dos categorías:</p>
 <ul>
 <li>informales: aquellos TCP que trabajan en tareas no calificadas y operativas</li>
 <li>pequeña burguesía formal: aquellos TCP que trabajan en tareas profesionales y técnicas</li>

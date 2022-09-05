@@ -41,7 +41,7 @@ Vamos, como siempre, a trabajar con la ENES que contiene una pregunta sobre auto
 psh_cony <- read_rds('./data/ENES_psh_cony.rds')
 ```
 
-Pero primero, tenemos que recodificar las variables de percecpión de clase `MS_v260` y `MS_v261` a una sola variable que vamos a llamar `percep_clase` y luego a esta, dictomizarla. A su vez, vamos a tratar de replicar el esquema que utilizó Rodolfo Elbert en este artículo. Allí, realizó una desagregación de los trabajadores por cuenta propia en dos categorías: 
+Pero primero, tenemos que recodificar las variables de percecpión de clase `MS_v260` y `MS_v261` a una sola variable que vamos a llamar `percep_clase` y luego a esta, dictomizarla. A su vez, vamos a tratar de replicar el esquema que utilizó Rodolfo Elbert en [este artículo](https://www.jstor.org/stable/j.ctv1gn3t2q.8#metadata_info_tab_contents). Allí, realizó una desagregación de los trabajadores por cuenta propia en dos categorías: 
 
 - informales: aquellos TCP que trabajan en tareas no calificadas y operativas
 - pequeña burguesía formal: aquellos TCP que trabajan en tareas profesionales y técnicas
