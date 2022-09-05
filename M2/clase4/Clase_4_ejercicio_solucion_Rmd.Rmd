@@ -52,13 +52,19 @@ En ambos datasets van a encontrar los códigos de país (`iso3c`) y las etiqueta
 Cargue los dos datasets. ¿Cuál es la estructura de los datos? ¿Qué formato tienen? ¿Cuál es la unidad de análisis y cuáles las variables? ¿Cuál es el alcance temporal y geográfico?
 
 ```{r}
-###
+df <- read_csv('./data/wb_bank_data_2019.csv')
+hdi <- read_csv('./data/HDI_HDR2020_040722.csv')
+
+df <- df %>%
+     pivot_wider(id_cols = c(iso3c, iso2c, country), names_from = indicatorID, values_from = value)
 ```
 
 ### Consigna 2.
 Seleccione del dataset del HDI solamente las columnas que corresponden al año 2019.
 ```{r}
-###
+hdi <- hdi %>%
+        select(iso3c, country, contains("_2019"))
+
 ```
 
 
@@ -66,19 +72,59 @@ Seleccione del dataset del HDI solamente las columnas que corresponden al año 2
 Con el dataset recortado, realice un join para tener todas las variables en una sola tabla. ¿Qué variable debería usar para vincular ambas tablas?
 
 ```{r}
-###
+final <- hdi %>%
+            left_join(
+              df %>% select(-country)
+              )
+
+final <- final %>% drop_na()
+
 ```
 
 
 ## Análisis descriptivo
 ### Consigna 4. 
-'¿Qué relacion existe (si es que existe) entre el HDI y la proporción de población asalariada? ¿Y entre el HDI y la proporción de población?
+'¿Qué relacion existe (si es que existe) entre el HDI y la proporción de población asalariada? ¿Y entre el HDI y la proporción de población en el sector agropecuario?
+
+```{r}
+final %>%
+  ggplot() + 
+    geom_point(aes(x=SL.EMP.WORK.ZS, y=hdi_2019)) + 
+    ylim(0,1) + 
+    xlim(0,100) +
+    theme_minimal()
+```
+
+```{r}
+final %>%
+  ggplot() + 
+    geom_point(aes(x=SL.AGR.EMPL.ZS, y=hdi_2019)) + 
+    ylim(0,1) + 
+    xlim(0,100) +
+    theme_minimal()
+```
+
+Correlación
+
+```{r}
+final %>%
+  select(SL.AGR.EMPL.ZS,hdi_2019) %>%
+  cor(., method='pearson')
+```
+
 
 ## Modelo de regresión lineal múltiple
 ### Consigna 5
 Queremos construir información sobre la relación entre el PBI per cápita (`gnipc_2019`) y variables relativas a la educación, a la salud y al grado de desarrollo capitalista del país. Entrenar una regresión lineal múltiple con las variables que considere relevantes. 
+
 ```{r}
-###
+lm_1 <- final %>%
+          lm(gnipc_2019 ~ le_2019 + mys_2019 + SL.AGR.EMPL.ZS + SL.SRV.EMPL.ZS + SL.EMP.WORK.ZS, data = .)
+
+lm_1 <- lm(gnipc_2019 ~ le_2019 + mys_2019 + SL.AGR.EMPL.ZS + SL.SRV.EMPL.ZS + SL.EMP.WORK.ZS, data = final)
+
+
+summary(lm_1)
 ```
 
 
@@ -86,17 +132,38 @@ Queremos construir información sobre la relación entre el PBI per cápita (`gn
 ### Consigna 6.
 Chequeen los residuos del modelo. ¿Qué herramienta gráfica pueden usar para eso? ¿Son aleatorios?
 ```{r}
-###
+resids <- tibble(
+  iso3c = final$iso3c,
+  gnipc = final$gnipc_2019,
+  gnipc_pred = predict(lm_1, final),
+  resid =  gnipc - gnipc_pred
+) 
+
+resids %>%
+  ggplot(aes(x=gnipc_pred, y=resid, color=resid)) + 
+    geom_point() +
+    scale_color_viridis_c() +
+    geom_hline(yintercept = 0, linetype='dashed') + 
+    theme_minimal()
+
 ```
 
 ### Consigna 7.
 Realicen un histograma de los residuos. ¿Qué forma tienen?
 ```{r}
-###
+resids %>%
+  ggplot() + 
+    geom_histogram(aes(x=resid)) +
+    theme_minimal()
 ```
 
+```{r}
+plot(lm_1)
+```
+
+
 ### Consigna 8.
-¿Parece que la condición de variabilidad constante del modelo es respectada? ¿Por qué?
+¿Parece que la condición de variabilidad constante del modelo es respetada? ¿Por qué?
 ```{r}
 ###
 ```
@@ -105,51 +172,19 @@ Realicen un histograma de los residuos. ¿Qué forma tienen?
 ### Consigna 9. 
 ¿Cuál es el ajuste del modelo?
 ```{r}
-###
+summary(lm_1)$adj.r.squared
 ```
 
 ### Consigna 10. 
 ¿Cómo interpreta los resultados del modelo? ¿Cuál es, en su opinion, la variable más importante? 
 ```{r}
-###
+lm_scaled <- final %>%
+        select(gnipc_2019, le_2019, mys_2019, SL.AGR.EMPL.ZS, SL.SRV.EMPL.ZS, SL.EMP.WORK.ZS) %>%
+        mutate(across(everything(), scale)) %>%
+        lm(gnipc_2019 ~ ., data=.)
 ```
 
-
-
 ```{r}
-hdi <- read_csv('../clase4/data/HDI_HDR2020_040722.csv')
-        
-hdi <- hdi %>%
-        select(iso3c, country, contains("_2019"))
-
-df <- read_csv('../clase4/data/wb_bank_data_2019.csv') %>%
-     pivot_wider(id_cols = c(iso3c, iso2c, country), names_from = indicatorID, values_from = value)
-
-
- hdi <- hdi  %>%
-    left_join(df %>% select(-country)) %>%
-        drop_na(SL.SRV.EMPL.ZS) %>%
-        mutate(rel_salariales = SL.EMP.WORK.ZS + SL.EMP.MPYR.ZS)
-
-hdi_model <- hdi %>%
-                select(iso3c, country, hdi_2019:gnipc_2019, SL.AGR.EMPL.ZS, SL.SRV.EMPL.ZS, rel_salariales)
-
-```
-
-
-```{r}
-model_scaled <- hdi_model %>% 
-        mutate(across(hdi_2019:rel_salariales, scale)) %>%
-        lm(gnipc_2019 ~ . -iso3c -country -hdi_2019, data=.)
-
-model_unscaled <- hdi_model %>% 
-        lm(gnipc_2019 ~ . -iso3c -country -hdi_2019, data=.)
-```
-
-
-
-
-```{r}
-summary(model_scaled)
+tidy(lm_scaled)
 ```
 
