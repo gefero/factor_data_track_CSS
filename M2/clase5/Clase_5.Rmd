@@ -203,22 +203,26 @@ $$\frac{e^{-0.656}}{1 + e^{-0.656}} = 0.3416$$
 Es decir que la probabilidad estimada de autopercepción obrera es de $\hat{p}(obrera)_{i}=0.3416$. Así como etiquetamos un valor estimado de $y_{i}$ con un “sombrero” en regresión de una variable y múltiple, hacemos lo mismo para esta probabilidad
 
 En cambio, si se trata de una persona que es la cónyuge, `v111` toma valor 1. Así, 
-$$p(obrera)_{i} = \frac{e^{- (-0.656 - 0.084 \times 1)}}{1 + e^{-(-0.656 - 0.084 \times 1)}} = 0.3230$$
+$$p(obrera)_{i} = \frac{e^{- 0.656 - 0.084 \times 1}}{1 + e^{-0.656 - 0.084 \times 1}} = 0.3230$$
 Si bien sabemos que existe cierta diferencia (aunque muy pequeña) en la percepción de clase,  nos gustaría tener en cuenta muchas variables diferentes a la vez para comprender cómo cada una de las diferentes características de la persona se vinculan a la percepción obrera.
+
+Ahora bien... podemos hacer esta cuenta volviendo a utilizar la función `predict`. Solamente tenemos que generar un dataframe o un tibble que contenga los predictores y sus valores:
+
+```{r}
+tibble(v111='Cónyuge') %>%
+  predict(glm_1, ., type='response')
+```
 
 
 ## Modelo logístico con muchas variables
-Ajustemos el modelo de regresión logística con los 8 predictores descritos en la Tabla 9.2. Al igual que la regresión múltiple, el resultado se puede presentar en una tabla de resumen, que se muestra en la Tabla 9.3.
+Ajustemos el modelo de regresión logística con 5 predictores. Al igual que la regresión múltiple, el resultado se puede presentar en una tabla de resumen, que se muestra en la tabla siguiente.
 
 ```{r}
-
-
 glm_2 <- psh_cony %>%
     filter(estado == 'Ocupado') %>%
     glm(percep_obrera ~ class_eow_agg + v109 + v111 + v108 + nivel_ed_agg , data=., family='binomial')
 
-summary(glm_2)
-
+tidy(glm_2)
 ```
 
 Al igual que con la regresión múltiple, podríamos recortar algunas variables del modelo. Aquí usaremos una estadística llamada criterio de información de Akaike (AIC), que es análoga al $R^2$ en regresión múltiple. AIC es un método popular de selección de modelos utilizado en muchas disciplinas y es elogiado por su énfasis en la incertidumbre y parsimonia del modelo. AIC selecciona un "mejor" modelo clasificando los modelos de mejor a peor según sus valores de AIC. En el cálculo del AIC de un modelo, se aplica una penalización por incluir variables adicionales. Esta penalización por la complejidad añadida del modelo intenta lograr un equilibrio entre el ajuste insuficiente (muy pocas variables en el modelo) y el ajuste excesivo (demasiadas variables en el modelo). Cuando se usa AIC para la selección de modelos, los modelos con un valor de AIC más bajo se consideran "mejores". Recuerde que al usar $R^2$ ajustado en su lugar, seleccionamos modelos con valores más altos. Es importante tener en cuenta que AIC proporciona información sobre la calidad de un modelo en relación con otros modelos, pero no proporciona información sobre la calidad general de un modelo.
@@ -274,6 +278,19 @@ Ahora podemos resolver para $\hat{p}$ para obtener las probabilidades de este pe
 $$\frac{e^{-1.099677}}{1 + e^{-1.099677}} = 0.2498$$
 
 Es decir, un 25% de chances de presentar autopercepción obrera.
+
+Hagámoslo con `predict()`. Es importante pasar el mismo nombre de las variables predictoras y escribir las categorías de la misma forma en que entraron al modelo. Si no va a arrojar un error:
+
+```{r}
+tibble(
+      v109 = 'Masculino',
+      v111 = 'PSH',
+      v108 = 38,
+      nivel_ed_agg = '1_Medio',
+      class_eow_agg = 'Propietarias'
+      ) %>%
+  predict(glm_2, ., type='response')
+```
 
 ---
 
