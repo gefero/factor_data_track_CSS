@@ -48,13 +48,14 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 ### Clase 4. Presentación - Regresión lineal múltiple E2 
 - [Explicación y práctica - Notebook](./M2/clase4/Clase_4.html)
 - [Explicación y práctica - RMarkdown](./M2/clase4/Clase_4.Rmd)
-- [Ejericio integrador - Notebook](./M2/clase4/Clase_4_ejercicio.html)
-- [Ejericio integrador - RMarkdown](./M2/clase4/Clase_4_ejercicio.Rmd)
 
 [![](./imgs/Download.png)](./M2/clase4/clase4.zip)
 
+### Clase 5. Ejercicio integrador 
+- [Ejericio integrador - Notebook](./M2/clase4/Clase_4_ejercicio.html)
+- [Ejericio integrador - RMarkdown](./M2/clase4/Clase_4_ejercicio.Rmd)
 
-### Clase 5. Presentación - Regresión logística 
+### Clase 6. Regresión logística 
 - [Explicación y práctica - Notebook](./M2/clase5/Clase_5.html)
 - [Explicación y práctica - RMarkdown](./M2/clase5/Clase_5.Rmd)
 - [Diapositivas](./M2/clase5/Clase_5.pdf)
