@@ -233,7 +233,7 @@ En este caso, posiblemente una primera varible candidata a eliminar podría ser 
 
 La variable `v109` tiene solamente dos valores (`masculino` y `no masculino`)... basándose en los resultados del modelo, ¿qué nos dice esa variable acerca de la autopercepción de clase?
 
-El coeficiente mostrado corresponde al nivel de `no masculino` y es negativo. El mismo refleja una pérdida negativa en la proporción de autopercepción obrera para aquellas personas que no son masculinas. El modelo sugiere que las personas no masculinas tienden a tener una percepción de clase obrera menor que las personas masculinas.
+El coeficiente mostrado corresponde al nivel de `no masculino` es positivo El mismo refleja una ganancia en la proporción de autopercepción obrera para aquellas personas que no son masculinas. El modelo sugiere que las personas no masculinas tienden a tener una percepción de clase obrera mayor que las personas masculinas.
 
 ---
 
