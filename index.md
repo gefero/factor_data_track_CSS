@@ -63,9 +63,11 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 
 [![](./imgs/Download.png)](./M2/clase5/clase5.zip)
 
-### Clase 7. Regresión logística 
-- [Explicación y práctica - Notebook](./M2/clase6/Clase_6.html)
-- [Explicación y práctica - RMarkdown](./M2/clase6/Clase_6.Rmd)
+### Clase 7. Regresión logística - Ejercicio integrador y evaluación de ajuste
+- [Explicación y práctica - Notebook](./M2/clase6/Clase_6_practico.html)
+- [Explicación y práctica - RMarkdown](./M2/clase6/Clase_6_practico.Rmd)
+- [Explicación y práctica (solución) - Notebook](./M2/clase6/Clase_6_practico_soluciones.html)
+- [Explicación y práctica (solución) - RMarkdown](./M2/clase6/Clase_6_practico_soluciones.Rmd)
 
 [![](./imgs/Download.png)](./M2/clase6/clase6.zip)
 
