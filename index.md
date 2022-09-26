@@ -24,6 +24,7 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Explicación y práctica - Notebook](./M2/clase1/Clase_1.html)
 - [Explicación y práctica - RMarkdown](./M2/clase1/Clase_1.Rmd)
 
+
 ### Clase 2. Presentación - Regresión lineal simple E2 
 - [Explicación y práctica - Notebook](./M2/clase2/Clase_2.html)
 - [Explicación y práctica - RMarkdown](./M2/clase2/Clase_2.Rmd)
@@ -33,6 +34,7 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Ejericio solución - RMarkdown](./M2/clase2/Clase_2_ejercicio_solucion.Rmd)
 
 [![](./imgs/Download.png)](./M2/clase2/clase2.zip)
+
 
 ### Clase 3. Presentación - Regresión lineal múltiple E1 
 - [Explicación y práctica - Notebook](./M2/clase3/Clase_3.html)
@@ -51,17 +53,19 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 
 [![](./imgs/Download.png)](./M2/clase4/clase4.zip)
 
+
 ### Clase 5. Ejercicio integrador 
 - [Ejericio integrador - Notebook](./M2/clase4/Clase_4_ejercicio.html)
 - [Ejericio integrador - RMarkdown](./M2/clase4/Clase_4_ejercicio.Rmd)
+
 
 ### Clase 6. Regresión logística 
 - [Explicación y práctica - Notebook](./M2/clase5/Clase_5.html)
 - [Explicación y práctica - RMarkdown](./M2/clase5/Clase_5.Rmd)
 - [Diapositivas](./M2/clase5/Clase_5.pdf)
 
-
 [![](./imgs/Download.png)](./M2/clase5/clase5.zip)
+
 
 ### Clase 7. Regresión logística - Ejercicio integrador y evaluación de ajuste
 - [Explicación y práctica - Notebook](./M2/clase6/Clase_6_practico.html)
@@ -70,6 +74,19 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Explicación y práctica (solución) - RMarkdown](./M2/clase6/Clase_6_practico_soluciones.Rmd)
 
 [![](./imgs/Download.png)](./M2/clase6/clase6.zip)
+
+
+### Clase 8. Inferencia en regresión lineal
+- [Explicación y práctica - Notebook](./M2/clase7/Clase_7.html)
+- [Explicación y práctica - RMarkdown](./M2/clase7/Clase_7.Rmd)
+- [Loops Explicación y práctica - Notebook](./M2/clase7/Clase_7_loops.html)
+- [Loops Explicación y práctica - RMarkdown](./M2/clase7/Clase_7_loops.Rmd)
+- [Práctica - Notebook](./M2/clase7/Clase_7_ejercicio.html)
+- [Práctica - RMarkdown](./M2/clase7/Clase_7_ejercicio.Rmd)
+
+[![](./imgs/Download.png)](./M2/clase7/clase7.zip)
+
+
 
 ---
 

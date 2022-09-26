@@ -1,0 +1,199 @@
+---
+title: "Intermedio: loops"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+***
+Este texto se basa en los siguientes materiales:
+
+- Capítulos 21 del libro [R para Ciencia de Datos](https://es.r4ds.hadley.nz/) de Hadley Wickham 
+***
+
+```{r}
+library(tidyverse)
+library(broom)
+library(car)
+library(patchwork)
+
+```
+## Introducción 
+En general, suele ser importante tratar de escribir código no redundante, en lugar de copiar y pegar. Reducir la duplicación de código tiene tres beneficios principales:
+
+- Es más fácil ver el objetivo de tu código; lo diferente llama más atención a la vista que aquello que permanece igual.
+- Es más sencillo responder a cambios en los requerimientos. A medida que tus necesidades cambian, solo necesitarás realizar cambios en un lugar, en vez de recordar cambiar en cada lugar donde copiaste y pegaste el código.
+
+- Es probable que tengas menos errores porque cada línea de código es utilizada en más lugares.
+
+Una herramienta para reducir la duplicación de código son las funciones, que reducen dicha duplicación al identificar patrones repetidos de código y extraerlos en piezas independientes que pueden reutilizarse y actualizarse fácilmente. Otra herramienta para reducir la duplicación es la iteración, que te ayuda cuando necesitas hacer la misma tarea con múltiples entradas: repetir la misma operación en diferentes columnas o en diferentes conjuntos de datos. Vamos a ver una forma de iterar: la programación imperativa. Tiene herramientas como for loops y while loops, que son un gran lugar para comenzar porque hacen que la iteración sea muy explícita, por lo que es obvio qué está pasando. Existe otro paradigma llamado "programación funcional" pero se nos escapa del objetivo de este intermezzo.
+
+## `for` loops
+
+Imagimemos que tenemos esta tabla:
+
+```{r}
+df <- tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+```
+
+y queremos calcular la mediana de cada columna. Podríamos hacerlo copiando y pegando:
+
+```{r}
+median(df$a)
+```
+
+```{r}
+median(df$b)
+```
+
+```{r}
+median(df$c)
+```
+
+```{r}
+median(df$c)
+```
+
+
+Pero es medio engorroso. También podríamos hacerlo con las herramientas `tidy`. Pero la idea hoy es hacerlo con un `for` loop.
+
+```{r}
+output <- vector("double", ncol(df))  # 1. output
+for (i in seq_along(df)) {            # 2. secuencia
+  output[[i]] <- median(df[[i]])      # 3. cuerpo
+}
+
+output
+```
+
+Cada bucle tiene tres componentes:
+
+1. output: `output <- vector("double", length(x))`. Antes de comenzar el bucle, siempre debes asignar suficiente espacio para la salida. Esto es muy importante para la eficiencia: si aumentas el bucle for en cada iteración usando, por ejemplo, `c()` , el bucle for será muy lento.
+
+Una forma general de crear un vector vacío de longitud dada es la función `vector()`. Tiene dos argumentos: el tipo de vector (“logical”, “integer”, “double”, “character”, etc) y su longitud.
+
+2. La secuencia: `i in seq_along(df)`. Este código determina sobre qué iterar: cada ejecución del bucle `for` asignará a `i` un valor diferente de `seq_along(df)`. Es útil pensar en `i` como un pronombre, como “eso”.
+
+Es posible que no hayas visto `seq_along()` con anterioridad. Es una versión segura de la más familiar `1:length(l)`, con una diferencia importante: si se tiene un vector de longitud cero, `seq_along()` hace lo correcto:
+
+```{r}
+y <- vector("double", 0)
+seq_along(y)
+1:length(y)
+```
+Probablemente no vas a crear un vector de longitud cero deliberadamente, pero es fácil crearlos accidentalmente. Si usamos 1: `length(x)` en lugar de `seq_along(x)`, es posible que obtengamos un mensaje de error confuso.
+
+3. El cuerpo: `output[[i]] <- median(df[[i]])`. Este es el código que hace el trabajo. Se ejecuta repetidamente, con un valor diferente para `i` cada vez. La primera iteración ejecutará `output[[1]] <- median(df[[1]])`, la segunda ejecutará `output[[2]] <- median (df [[2]])`, y así sucesivamente.
+
+¡Eso es todo lo que hay para el bucle for! Ahora es un buen momento para practicar creando algunos bucles for básicos (y no tan básicos) usando los ejercicios que se encuentran a continuación. Luego avanzaremos en algunas variaciones de este bucle que te ayudarán a resolver otros problemas que surgirán en la práctica.
+
+## Variaciones de `for` loop
+Una vez que tienes el `for` loop básico en tu haber, hay algunas variaciones que debes tener en cuenta. Hay cuatro variaciones del bucle for básico. Acá vamos a ver las dos primeras. Las siguientes pueden revisarlas en el link de libro (al principio de este notebook).
+
+- Modificar un objeto existente, en lugar de crear un nuevo objeto.
+- Iterar sobre nombres o valores, en lugar de índices.
+- Manejar outputs de longitud desconocida.
+- Manejar secuencias de longitud desconocida.
+
+### Modificar un objeto existente
+Algunas veces querrás usar un bucle for para modificar un objeto existente. Por ejemplo, recuerda el desafío que teníamos en el capítulo sobre funciones. Queríamos reescalar cada columna en un data frame:
+
+```{r}
+df <- tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+rescale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+
+df$a <- rescale01(df$a)
+df$b <- rescale01(df$b)
+df$c <- rescale01(df$c)
+df$d <- rescale01(df$d)
+```
+
+Para resolver esto con un bucle for, volvamos a pensar en los tres componentes:
+
+- Output: ya tenemos el output — ¡es lo mismo que la entrada!
+- Secuencia: podemos pensar en un data frame como una lista de columnas, por lo que podemos iterar sobre cada columna con `seq_along(df)`.
+- Cuerpo: aplicar `rescale01()`.
+
+Esto nos da:
+
+```{r}
+for (i in seq_along(df)) {
+  df[[i]] <- rescale01(df[[i]])
+}
+```
+
+Por lo general, se modificará una lista o un data frame con este tipo de bucle, así que recuerda utilizar `[[` y no `[`. Te habrás fijado que usamos `[[` en todos nuestros bucles `for`: creemos que es mejor usar `[[` incluso para vectores atómicos porque deja en claro que queremos trabajar con un solo elemento.
+
+### Patrones de bucle
+Hay tres formas básicas de hacer un bucle sobre un vector. Hasta ahora hemos visto la más general: iterar sobre los índices numéricos con `for(i in seq_along(xs))`, y extraer el valor con `x[[i]]`. Hay otras dos formas:
+
+- Iterar sobre los elementos: `for(x in xs)`. Esta forma es la más útil si solo te preocupas por los efectos secundarios, como graficar o grabar un archivo, porque es difícil almacenar el output de forma eficiente.
+
+- Iterar sobre los nombres: `for(nm in names(xs))`. Esto te entrega el nombre, que se puede usar para acceder al valor con `x[[nm]]`. Esto es útil si queremos utilizar el nombre en el título de un gráfico o en el nombre de un archivo. 
+
+- Iterar sobre los índices numéricos es la forma más general, porque dada la posición se puede extraer tanto el nombre como el valor:
+
+```{r}
+for (i in seq_along(df)) {
+  name <- names(df)[[i]]
+  value <- df[[i]]
+}
+```
+
+
+## Ejercicios rápidos
+1. Calculen la media aritmética de este vector usando un `for` loop:
+```{r}
+vec <- c(3,4,6,2,6,8,9,2,3,4,5,7,8,9,4,2,3,5,7,8,9,1)
+
+###
+```
+
+2. Tienen el siguiente dataset:
+
+```{r}
+data(iris)
+head(iris)
+```
+
+- Escriban un loop que determine el tipo de cada columna
+- Escriban un loop calcule la mediana de cada columna numérica
+
+```{r}
+###
+```
+
+
+3. Imaginen que tienen un directorio lleno de archivos CSV que quieres importar. Tienes sus ubicaciones en un vector, `files <- dir("data/", pattern = "\\.csv$", full.names = TRUE)`, y ahora quieres leer cada uno con read_csv(). Escribe un bucle for que los cargue en un solo data frame.
+```{r}
+###
+```
+
+
+
+Bueno... por ahora suficiente con loops. Volvamos a nuestro notebook principal.
