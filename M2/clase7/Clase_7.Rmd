@@ -117,7 +117,7 @@ La idea general es la misma en este caso, solamente que, en lugar de calcular pa
 
 Si generamos muchas remuestras, vamos a poder generar muchas pendientes y, por ende, muchas rectas diferentes.
 
-```{r message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 b <- ggplot()
 
 for(i in 1:200){
