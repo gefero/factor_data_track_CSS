@@ -132,9 +132,7 @@ for(i in 1:200){
 print(b)
 ```
 
-Se toman 200 remuestras de tamaño 352 de los datos originales. Cada uno de los modelos lineales estimados en cada una de las muestras bootstrap es ligeramente diferente.
-
-Pero antes de eso... vamos a introducir una herramienta que va a ser sumamente útil. Los "loops".
+Se toman 200 remuestras de tamaño 352 de los datos originales. Cada uno de los modelos lineales estimados en cada una de las muestras bootstrap es ligeramente diferente. Vamos a ver esto con más detalle. Pero antes de eso... vamos a introducir una herramienta que va a ser sumamente útil: [los `for` loops](https://gefero.github.io/factor_data_track_CSS/M2/clase7/Clase_7_loops.html).
 
 Ok. Ya vimos que es un `for` loop. Vamos a usarlo para hacer bootstrap.
 
