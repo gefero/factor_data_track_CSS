@@ -1722,8 +1722,8 @@ div.tocify {
 <li><span class="math inline">\(H_A: \beta_{1} \neq 0\)</span> El valor real de la pendiente es cero</li>
 </ul>
 <p>Rechazaríamos <span class="math inline">\(H_O\)</span> a favor de <span class="math inline">\(H_A\)</span> si los datos proporcionan una fuerte evidencia de que el parámetro de pendiente real es diferente de cero. Para evaluar las hipótesis, identificamos un error estándar para la estimación, calculamos un estadístico de prueba apropiado e identificamos el p-valor.</p>
-<div id="variabilidad-de-la-estadística" class="section level3">
-<h3>Variabilidad de la estadística</h3>
+<div id="variabilidad-del-estadístico-1" class="section level3">
+<h3>Variabilidad del estadístico</h3>
 <p>Al igual que otras estimaciones puntuales que hemos visto antes, podemos calcular un error estándar y una estadística de prueba para <span class="math inline">\(\beta_{1}\)</span>. Generalmente etiquetaremos el estadístico de prueba usando un estadistico <span class="math inline">\(T\)</span> que sigue una distribución T de Student</p>
 <p>Nos apoyaremos en el software estadístico para calcular el error estándar y dejaremos la explicación de cómo se determina este error estándar para un segundo o tercer curso de estadística. La tabla siguiente muestra la salida del software para la línea de regresión de mínimos cuadrados . La fila etiquetada como unemp incluye toda la información relevante sobre la pendiente estimada (es decir, el coeficiente de la variable de desempleo).</p>
 <pre class="r"><code>&gt; lm1 &lt;- df_mayores %&gt;%

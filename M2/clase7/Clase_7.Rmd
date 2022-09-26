@@ -302,7 +302,7 @@ Hay una pendiente negativa en la línea que se muestra en la figura anterior. Si
 
 Rechazaríamos $H_O$ a favor de $H_A$ si los datos proporcionan una fuerte evidencia de que el parámetro de pendiente real es diferente de cero. Para evaluar las hipótesis, identificamos un error estándar para la estimación, calculamos un estadístico de prueba apropiado e identificamos el p-valor.
 
-### Variabilidad de la estadística
+### Variabilidad del estadístico
 Al igual que otras estimaciones puntuales que hemos visto antes, podemos calcular un error estándar y una estadística de prueba para $\beta_{1}$. Generalmente etiquetaremos el estadístico de prueba usando un estadistico $T$ que sigue una distribución T de Student
 
 Nos apoyaremos en el software estadístico para calcular el error estándar y dejaremos la explicación de cómo se determina este error estándar para un segundo o tercer curso de estadística. La tabla siguiente muestra la salida del software para la línea de regresión de mínimos cuadrados . La fila etiquetada como unemp incluye toda la información relevante sobre la pendiente estimada (es decir, el coeficiente de la variable de desempleo).
