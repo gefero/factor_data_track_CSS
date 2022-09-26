@@ -39,7 +39,7 @@ Muchas de las ideas inferenciales son notablemente similares a las cubiertas en 
 
 En general, nos vamos a encontrar que estamos trabajando con datos muestrales. Esto quiere decir que nos vamos a encontrar con el bendito error muestral. Dicho de una forma simple: ya sabemos que la muestra que obtuvimos es solamente una de las muchas muestras posibles. Por lo tanto, todos los estadísticos y métricas que derivemos de esta única muestra 
 
-En la materia anterior, trabajamos con esta idea para promedios, proporciones y tests de asociación entre variables. Pero el mismo razonamiento aplica a un modelo de regresión (o cualquier otro modelo). Así, los $\hat_{\beta}_{k}$ de un modelo de regresión lineal son solamente estimaciones puntuales de los verderos $\beta_{k}$ poblacionales. Por lo tanto, va a ser necesario que generemos información sobre el error muestral. Vamos a hacerlo mediante dos instrumentos:
+En la materia anterior, trabajamos con esta idea para promedios, proporciones y tests de asociación entre variables. Pero el mismo razonamiento aplica a un modelo de regresión (o cualquier otro modelo). Así, los $\hat{\beta_{k}}$ de un modelo de regresión lineal son solamente estimaciones puntuales de los verderos $\beta_{k}$ poblacionales. Por lo tanto, va a ser necesario que generemos información sobre el error muestral. Vamos a hacerlo mediante dos instrumentos:
 
 - intervalos de confianza
 - pruebas de hipótesis
