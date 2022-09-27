@@ -190,7 +190,7 @@ cc1 %>%
             lim_sup = quantile(value, probs=0.975))
 ```
 
-Estamos 95% seguros de que para el modelo que describe la población en cuestión, un aumento de 1 kg en el peso promedio estará asociado con un aumento de entre 0.0569 kg. y 0.6874 kg. en la altura media. Como puede verse, el IC no se solapa con el cero.
+Estamos 95% seguros de que para el modelo que describe la población en cuestión, un aumento de 1 cm. en la altura promedio estará asociado con un aumento de entre 0.0569 kg. y 0.6874 kg. en el peso medio de esta población. Como puede verse, el IC no se solapa con el cero.
 
 Ahora, probemos la siguiente variable del dataset: `age_mother` que se refiere a la edad de la madre del sujeto en cuestión. ¿Es un buen predictor del peso de la persona? Veamos.
 
@@ -223,14 +223,18 @@ cc2 %>%
 - Calculen los límites exactos del intervalo de confianza para `age_mother`
 
 ```{r}
-###
+cc2 %>%
+  pivot_longer(cols=-id_sample) %>%
+  group_by(name) %>%
+  summarise(lim_inf = quantile(value, probs=0.025),
+            lim_sup = quantile(value, probs=0.975))
 ```
 
 - ¿Qué pueden decir de la relación entre edad de la madre y peso de la persona?
 
 ---
 
-
+  
 Ahora, hagamos una regresión múltiple e introduzcamos las dos variables.
 
 ```{r}
@@ -297,8 +301,8 @@ df_mayores %>%
 
 Hay una pendiente negativa en la línea que se muestra en la figura anterior. Sin embargo, esta pendiente (y la intersección con el eje y) es solamente una estimación de los valores de los parámetros. Podríamos preguntarnos, ¿es esta evidencia convincente de que el modelo lineal "verdadero" tiene una pendiente negativa? Es decir, ¿los datos brindan evidencia sólida de que la edad de la madre tiene influencia sobre el peso de las personas? Podemos enmarcar esta investigación en una prueba de hipótesis estadística:
 
-- $H_O: \beta_{1} = 0$ El valor real de la pendiente es diferente a cero
-- $H_A: \beta_{1} \neq 0$ El valor real de la pendiente es cero
+- $H_O: \beta_{1} = 0$ El valor real de la pendiente es IGUAL a cero
+- $H_A: \beta_{1} \neq 0$ El valor real de la pendiente es DIFERENTE a cero
 
 Rechazaríamos $H_O$ a favor de $H_A$ si los datos proporcionan una fuerte evidencia de que el parámetro de pendiente real es diferente de cero. Para evaluar las hipótesis, identificamos un error estándar para la estimación, calculamos un estadístico de prueba apropiado e identificamos el p-valor.
 
