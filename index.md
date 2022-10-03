@@ -83,6 +83,8 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Loops Explicación y práctica - RMarkdown](./M2/clase7/Clase_7_loops.Rmd)
 - [Práctica - Notebook](./M2/clase7/Clase_7_ejercicio.html)
 - [Práctica - RMarkdown](./M2/clase7/Clase_7_ejercicio.Rmd)
+- [Práctica solución - Notebook](./M2/clase7/Clase_7_ejercicio_solucion.html)
+- [Práctica solución - RMarkdown](./M2/clase7/Clase_7_ejercicio_solucion.Rmd)
 
 [![](./imgs/Download.png)](./M2/clase7/clase7.zip)
 

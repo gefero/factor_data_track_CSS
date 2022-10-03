@@ -1596,9 +1596,38 @@ div.tocify {
 <ul>
 <li>Genere un intervalo de confianza del 95% mediante boostrap para cada una de las variables</li>
 </ul>
-<pre class="r"><code>&gt; ###</code></pre>
+<pre class="r"><code>&gt; cc1 &lt;- tibble()
+&gt; 
+&gt; for (i in seq_along(1:2000)) {
++     c &lt;- final %&gt;%
++         slice_sample(n = nrow(final), replace = TRUE) %&gt;%
++         lm(gnipc_2019 ~ le_2019 + mys_2019 + SL.AGR.EMPL.ZS + SL.SRV.EMPL.ZS + SL.EMP.WORK.ZS,
++             data = .) %&gt;%
++         coef(.) %&gt;%
++         as_tibble_row() %&gt;%
++         mutate(id_sample = i)
++ 
++     cc1 &lt;- cc1 %&gt;%
++         bind_rows(c)
++ }</code></pre>
 <ul>
-<li><p>¿Cuáles son las variables que no contienen al cero en su intervalo de confianza?</p></li>
+<li>¿Cuáles son las variables que no contienen al cero en su intervalo de confianza?</li>
+</ul>
+<pre class="r"><code>&gt; cc1 %&gt;%
++     pivot_longer(cols = -id_sample) %&gt;%
++     group_by(name) %&gt;%
++     summarise(lim_inf = quantile(value, probs = 0.025), lim_sup = quantile(value,
++         probs = 0.975))
+## # A tibble: 6 × 3
+##   name             lim_inf lim_sup
+##   &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept)    -141996.  -48864.
+## 2 le_2019            454.    1158.
+## 3 mys_2019          -110.    2136.
+## 4 SL.AGR.EMPL.ZS    -122.     752.
+## 5 SL.EMP.WORK.ZS      92.6    484.
+## 6 SL.SRV.EMPL.ZS    -175.     955.</code></pre>
+<ul>
 <li><p>Analizando los p-valores, ¿qué variables presetan efectos significativamente diferentes a cero?</p></li>
 <li><p>Compare los resultados de las dos últimas pregutas. ¿Son coincidentes? ¿Las variables cuyos efectos son significativamente diferentes a cero y las variables cuyo IC no contiene a cero son las mismas?</p></li>
 </ul>
