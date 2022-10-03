@@ -91,6 +91,7 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Explicación y práctica - Notebook](./M2/clase8/Clase_8.html)
 - [Explicación y práctica - RMarkdown](./M2/clase8/Clase_8.Rmd)
 
+[![](./imgs/Download.png)](./M2/clase8/clase8.zip)
 
 
 ---
