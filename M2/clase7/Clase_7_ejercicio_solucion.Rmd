@@ -80,10 +80,16 @@ lm_1 <- final %>%
 summary(lm_1)
 ```
 
+```{r}
+confint(lm_1)
+```
+
+
+
 - Genere un intervalo de confianza del 95% mediante boostrap para cada una de las variables 
 ```{r}
 cc1 <- tibble()
-
+set.seed(1234)
 for (i in seq_along(1:2000)){
         c <- final %>%
             slice_sample(n=nrow(final), replace=TRUE) %>%
@@ -96,6 +102,11 @@ for (i in seq_along(1:2000)){
                 bind_rows(c)
 }
 ```
+
+```{r}
+cc1
+```
+
 
 - ¿Cuáles son las variables que no contienen al cero en su intervalo de confianza? 
 ```{r}

@@ -1,0 +1,390 @@
+---
+title: "Inferencia en regresión logística"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+---
+
+Este texto se basa en los siguientes materiales:
+
+- Capítulos 27 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
+
+---
+
+```{r}
+library(tidyverse)
+library(broom)
+library(car)
+library(patchwork)
+
+```
+## Introducción 
+Al igual que con la regresión lineal múltiple, el aspecto de la inferencia para la regresión logística se centrará en la interpretación de los coeficientes y las relaciones entre las variables explicativas. Tanto los p-valores como la validación cruzada se utilizarán para evaluar un modelo de regresión logística.
+
+Consideremos nuevamente a la ENES y volvamos sobre el problema de la autopercepción de clase. ¿Cuáles de las variables que hemos seleccionado son importantes para predecir la autopercepción?
+
+Carguemos los datos y repliquemos nuestros procesamientos para empezar...
+```{r}
+df <- read_rds('./data/ENES_psh_cony.rds')
+
+df <- df %>%
+  mutate(v109 = case_when(v109 == "Varón" ~ "Masculino", TRUE ~ "No masculino"))
+
+df <- df %>%
+        mutate(MS_CNO_calif = as.character(MS_CNO_calif)) %>%
+        mutate(MS_CNO_calif = case_when(
+                MS_CNO_calif %in% c("Profesional", "Técnica") ~ "Prof./tecn.",
+                is.na(MS_CNO_calif) ~ 'Operativa',
+                TRUE ~ MS_CNO_calif
+        ))
+
+
+df <- df %>%
+  mutate(status_ocup = case_when(
+            egp11 %in% levels(df$egp11)[1:2] ~ '1_Alto',
+            egp11 %in% levels(df$egp11)[3:4] ~ '1_Alto',
+            egp11 %in% levels(df$egp11)[5:7] ~ '2_Medio',
+            egp11 %in% levels(df$egp11)[8:11] ~ '3_Bajo',
+            is.na(egp11) ~ '9_Sin datos'
+  ))
+
+df <- df %>%
+  mutate(MS_status_ocup = case_when(
+            MS_egp11 %in% levels(df$MS_egp11)[1:2] ~ '1_Alto',
+            MS_egp11 %in% levels(df$MS_egp11)[3:4] ~ '1_Alto',
+            MS_egp11 %in% levels(df$MS_egp11)[5:7] ~ '2_Medio',
+            MS_egp11 %in% levels(df$MS_egp11)[8:11] ~ '3_Bajo',
+            is.na(MS_egp11) ~ '9_Sin datos'
+  ))
+
+df <- df %>%
+  mutate(MS_ned_agg = case_when(
+          is.na(MS_v240) ~ '1_Medio',
+          MS_v240 == 'Ninguno' ~ '0_Bajo',
+          MS_v240 %in% c('Primario', 'EGB', 'Educación especial') & MS_v241 == 'No' ~ '0_Bajo',
+          MS_v240 %in% c('Primario', 'EGB', 'Educación especial') & MS_v241 == 'Sí' ~ '0_Bajo',
+          MS_v240 %in% c('Secundario', 'Polimodal') & MS_v241 == 'No' ~ '1_Medio',
+          MS_v240 %in% c('Secundario', 'Polimodal') & MS_v241 == 'Sí' ~ '1_Medio',
+          MS_v240 %in% c('Terciario', 'Universitario', 'Posgrado Universitario') & MS_v241 == 'No' ~ '3_Alto',
+          MS_v240 %in% c('Terciario', 'Universitario','Posgrado Universitario') & MS_v241 == 'Sí' ~ '3_Alto',
+  ))
+
+df <- df %>% mutate(MS_ned_agg = if_else(is.na(MS_ned_agg), '0_Bajo', MS_ned_agg))
+
+df <- df %>%
+  mutate(taman_empresa = case_when(
+          v189 %in% c("Solo 1", "entre 2 y 5") ~ '1_H/5 pers.',
+          v189 %in% c("entre 6 y10", "entre 11 y 25", "entre 26 y 49") ~ '2_6 y 49 pers.',
+          v189 %in% c("50 y más") ~ '3_50 y más',
+          v189 == 'NS/NR' ~ '1_H/5 pers.')
+  )
+
+df <- df %>%
+  mutate(
+    percep_clase = case_when(
+           !is.na(MS_v260) ~ MS_v260,
+           is.na(MS_v260) ~ MS_v261
+           )
+    )
+
+df <- df %>% drop_na(percep_clase)
+
+df <- df %>%
+  mutate(
+    salud = case_when(
+      v134a %in% c("Obra social", "Prepaga", "Prepaga a través de Obra Social") ~ 'Tiene cobertura',
+      TRUE ~  'No tiene cobertura'
+      ),
+    
+    percep_obrera = as.factor(case_when(
+            percep_clase == 'Clase baja' | percep_clase == 'Clase obrera' ~ 'Obrera',
+            is.na(percep_clase) ~ NA_character_,
+            TRUE ~ 'No obrera')),
+    
+    percep_obrera_orig = as.factor(case_when(
+            MS_v260 == 'Clase baja' | MS_v260 == 'Clase obrera' ~ 'Obrera',
+            is.na(MS_v260) ~ NA_character_,
+            TRUE ~ 'No obrera')),
+    CNO_calif_agg = case_when(
+           CNO_calif == 'Profesional' | CNO_calif == 'Técnica' ~ 'Prof./técn',
+           CNO_calif == 'Operativa' | CNO_calif == 'No calificada' ~ 'Op./no calif.',
+         ),
+    nivel_ed_agg = case_when(
+                  nivel_ed == 'Menores de 5 años' | 
+                  nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
+                  nivel_ed == 'Primaria/EGB incompleto' | 
+                  nivel_ed == 'Primaria/EGB completo' |
+                  nivel_ed == 'Educación especial' | nivel_ed == 'NS/NR'~ '0_Bajo',
+     
+                nivel_ed == 'Secundario/Polimodal incompleto' | 
+                nivel_ed == 'Secundario/Polimodal completo' ~ '1_Medio',
+    
+                nivel_ed == 'Terciario incompleto' | 
+                nivel_ed == 'Terciario completo' |
+                nivel_ed == 'Universitario incompleto' | 
+                nivel_ed == 'Universitario completo' ~ '2_Alto'),
+         
+         class_eow_agg = case_when(
+         EOW_class == 'Managers' | EOW_class == 'Supervisores' ~ 'Manag./superv.',
+         EOW_class == 'Trabajadores' ~ 'Trabajadores',
+         EOW_class == 'Pequeña burguesía' & CNO_calif_agg == 'Prof./técn' ~ 'Propietarias',
+         EOW_class == 'Pequeña burguesía' & CNO_calif_agg == 'Op./no calif.' ~ 'TCP informales',
+         EOW_class == 'Pequeña burguesía' & is.na(CNO_calif_agg)  ~ 'Propietarias',
+         
+         EOW_class == 'Empleadores' ~ 'Propietarias'),
+   )
+
+df_ocupados <- df %>% filter(estado == 'Ocupado')
+
+```
+
+## Diagnosticando un modelo de regresión
+
+Antes de ver las pruebas de hipótesis asociadas con los coeficientes (que son muy similares a las de la regresión lineal), es importante comprender las condiciones técnicas que subyacen a la inferencia aplicada al modelo de regresión logística. 
+
+- En general, como ha visto en los ejemplos de modelos de regresión logística, es imperativo que la variable de respuesta sea binaria. 
+
+- Además, la condición técnica clave para la regresión logística tiene que ver con la relación entre las variables predictoras ($X_{i}$) y la probabilidad de se produzca el acontemiento modelado (en nuestro caso, que la autopercepción sea obrera). La relación es una forma funcional específica llamada función logit, donde $logit(p) = log_{e}(\frac{p}{1-p})$. La función puede parecer complicada y no es necesario memorizar la fórmula del logit para comprender la regresión logística. Lo que es importante es que la probabilidad de que el resultado se produzca es una función de una combinación lineal de las variables explicativas.
+
+---
+**Condiciones técnicas de la regresión logística**
+Hay dos condiciones clave para ajustar un modelo de regresión logística:
+
+- cada resultado $y_{i}$ es independiente de los otros resultados.
+- cada predictor $X_{i}$ está relacionado linealmente con la función $logit(p)$ si todos los demás predictores se mantienen constantes.
+---
+
+La primera condición del modelo de regresión logística, la independencia de los resultados, es razonable si podemos suponer que las unidades (en nuestro caso, personas y más específicamente jefes y cónyuges) son independientes entre sí respecto a su autopercepción. ¿Qué opinan? ¿Son independientes?
+
+La segunda condición del modelo de regresión logística no se verifica fácilmente sin una cantidad considerable de datos. ¡Afortunadamente, tenemos 8724 personas en el conjunto de datos! 
+
+Primero, reentremos nuestro modelo de la clase 5. 
+
+```{r}
+model1 <- df_ocupados %>%
+    glm(percep_obrera ~ class_eow_agg + v109 + v111 + v108 + nivel_ed_agg , data=., family='binomial')
+```
+
+Luego, visualicemos estos datos trazando la verdadera autopercepción de cada persona contra las probabilidades ajustadas del modelo.
+
+```{r}
+tibble(
+  obs = df_ocupados %>% select(percep_obrera) %>% pull(),
+  pred = predict(model1, df_ocupados, type="response")
+  ) %>%
+  drop_na() %>%
+  ggplot() + 
+    geom_boxplot(aes(y=obs, x=pred)) + 
+    xlim(0,1) +
+    labs(x="Probabilidad autoperep. obrera (modelo)",
+         y="Autopercepción observada") +
+    theme_minimal()
+
+```
+
+Nos gustaría evaluar la calidad del modelo. ¿Qué puede verse acá?
+
+
+## Testeo de hipótesis en regresión logística
+Veamos los coeficientes del modelo (cambió un poco de la clase 5 porque mejoramos el procesamiento en algunos casos que estaban missing):
+
+```{r}
+tidy(model1)
+```
+
+Podemos escribir la ecuación del modelo:
+$$\begin{aligned}
+log_e\left(\frac{P(obrera)_{i}}{1-P(obrera)_{i}}\right) =
+0.0752 \\
+-&0.1506 \times class\_eow\_agg_{prop}\\
++&0.5624 \times class\_eow\_agg_{tcp\ informal}\\
++&0.4183 \times class\_eow\_agg_{trabajador}\\
++&0.1598 \times v109{no\ masculino}\\
+-&0.2559 \times v111_{conyugye}\\
+-&0.0101 \times v108\\
+-&0.6125 \times nivel\_ed\_agg_{medio}\\
+-&1.5171 \times nivel\_ed\_agg_{alto}
+\end{aligned}
+$$
+
+De forma similar al caso de la regresión lineal, en la logística con múltiples predictores, cada prueba de hipótesis (para cada una de las variables explicativas) está condicionada a cada una de las demás variables que quedan en el modelo.
+
+Si hay múltiples predictores, $H_{0}: \beta_{i} = 0$ dado que el resto de las variables estén en el modelo.
+
+En general, los p-valores tienden a ser muy bajos. Así, a un nivel de significación de 0.05, la mayoría de las variables parecen ser relevantes al momento de predecir la autopercepción obrera. La única excepción es el p-valor asociada a la variable dummie de clase social de los propietarios. No obstante, en el resto de las dummies, los valores son significativos. Por lo cual, podría decirse que al nivel de significación dado, la clase social es una variable importante.
+
+Conideremos, por ejemplo, el p-valor presente en $H_{0}: \beta_{4} = 0$. Allí, $p = 0.0048$ es decir que sería improbable observar datos que produzcan un coeficiente en `v109` al menos tan lejos de 0 como 0.1598 si la verdadera relación entre 
+`v109` y la autopercepción no existiera.
+
+Aunque los p-valores brindan cierta información sobre la importancia de cada uno de los predictores en el modelo, hay muchos aspectos, posiblemente más importantes, a considerar al elegir el mejor modelo. Al igual que con la regresión lineal, la existencia de predictores que están correlacionados entre sí puede afectar tanto las estimaciones del coeficiente como los p-valoresasociados. Sin embargo, la investigación de la multicolinealidad en un modelo de regresión logística queda fuera del alcance de este curso. A continuación, como alternativa (o mejora) de creación de modelos a los p-valores, vamos a revisar la validación cruzada en el contexto de la predicción del estado de cada uno de los correos electrónicos individuales.
+
+---
+**Boostrap para regresión logística**
+
+Desde ya que sería posible realizar un bootstrap para generar intervalos de confianza para los coeficientes $\beta_{k}$ del modelo de regresión logística. La lógica es exactamente igual al caso de regresión lineal: 
+
+- extraer remuestras con reposición y del mismo tamaño que la muestra inicial
+- entrenar para cada remuestra una regresión logística
+- guardar para cada remuestra los valores de $\beta_{k}$
+- graficar la distribución de cada $\beta_{k}$ y calcular cuantiles
+
+Queda como ejercio para ustedes generar los intervalos de confianza de cada coeficiente mediante boostrap del modelo anterior.
+
+---
+
+
+## Validación cruzada en regresión logística
+
+El p-valor es una medida de probabilidad bajo el supuesto de que no existe relación entre el predictor y la variable dependiente. Ese p-valor proporciona información sobre el grado de la relación (p. ej., arriba medimos la relación entre spam y to_multiple usando un valor p), pero no mide qué tan bien predecirá el modelo las autopercepciones individuales. Según el objetivo del proyecto de investigación, es posible que se incline a centrarse en la importancia de las variables (a través de los valores p) o que se incline a centrarse en la precisión de la predicción (a través de la validación cruzada).
+
+Aquí presentamos un método posible para usar la precisión de la validación cruzada para determinar qué variables (si las hay) deben usarse en un modelo que predice si la autopercepción de una persona es obrera. Ya hemos visto validación cruzada en la clase anterior. La lógica es idéntica. Vamos a construir $k$ diferentes modelos que se utilizan para predecir las observaciones en cada uno de las $k$ muestras reservadas (test set). 
+
+Vamos a repetir la lógica anterior. Vamos a entrenar dos modelos:
+
+
+- un modelo pequeño (`base_model`) que solamente va a tener dos variables ` class_eow_agg + nivel_ed_agg` y dos de "control sociodemográfico: `v109 + v108`
+- un modelo grande (`full_model`) que va a hacer intervenir muchas variables: `class_eow_agg + nivel_ed_agg + status_ocup + MS_status_ocup + MS_ned_agg + v111` y las mismas dos de control sociodemográfico `v109 + v108`
+
+---
+
+**Actividad*
+Escriban las ecuaciones de cada uno de los modelos
+
+---
+
+Ahora bien. Vamos a preparar el código. Lo primero que tenemos que hacer es generar una función que, tomando como input la matriz de confusión, nos devuelva las cuatro métricas que estuvimos hablando:
+
+- Accuracy: $acc = \frac{TP + TN}{TP + FP + TN + FN}$
+- Recall: $rec = \frac{TP}{TP + FN}$
+- Precision: $prec = \frac{TP}{TP + FP}$
+- F1: $f1 = 2 \times \frac{prec \times rec}{prec + rec}$
+
+```{r}
+calc_metrics <- function(conf_matrix){
+  tp = conf_matrix[4]
+  tn = conf_matrix[1]
+  fp = conf_matrix[3]
+  fn = conf_matrix[2]
+  
+  n = sum(conf_matrix)
+  acc = (tp + tn) / n
+  prec = tp / (tp + fp)
+  recall = tp / (tp + fn)
+  f1 = 2 * (prec * recall) / (prec + recall)
+  
+  met <- c(acc, prec, recall, f1)
+  names(met) <- c("acc", "prec", "recall", "f1")
+  return(met)
+}
+```
+
+Y luego hacemos la validación cruzada. Volveremos sobre el código más adelante.
+
+```{r}
+# Mezclamos los datos
+set.seed(222)
+
+# Definimos la cantidad de grupos
+k <- 4
+
+# Creamos k grupos del mismo tamaño
+folds <- seq(1, nrow(df_ocupados)) %>%
+          cut_interval(., n=k) %>%
+          as.numeric()
+
+# Genermos una tibble en la que vamos a guardar las métricas
+errores <- tibble(k=numeric(),
+                  model=character(),
+                  metric=character(),
+                  value=as.numeric()
+)
+
+# Hacemos cross validation
+for(i in 1:k){
+  #Segement your data by fold using the which() function 
+  test_index <-  which(folds==i, arr.ind=TRUE)
+  test <- df_ocupados %>% slice(test_index)
+  train <- df_ocupados %>% slice(-test_index)
+  
+  ## Entrenamos los dos modelos
+  full_model <- train %>%
+    glm(percep_obrera ~ class_eow_agg + nivel_ed_agg + status_ocup + MS_status_ocup + MS_ned_agg + v109 + v111 + v108, data=., family='binomial')
+  
+  base_model <- train %>% 
+    glm(percep_obrera ~ class_eow_agg + nivel_ed_agg + v109 + v108, data=., family='binomial')  
+  
+  ## Generamos las predicciones (en probabilidades) de cada modelo
+  y_probs_full <- predict(full_model, test, type = 'response')
+  y_probs_base <- predict(base_model, test, type = 'response')
+  
+  ## Generamos las predicciones (en categorías) de cada modelo
+  y_preds_full <- ifelse(y_probs_full > 0.5, 'Obrera', 'No obrera')
+  y_preds_base <- ifelse(y_probs_base > 0.5, 'Obrera', 'No obrera')
+  
+  ## Calculamos las métricas de cada modelo
+  metrics_full <- enframe(calc_metrics(table(test$percep_obrera, y_preds_full)), 
+                          name="metric") %>%
+  mutate(model='full',
+           k = i) %>% 
+    select(k, model, everything())
+  
+  metrics_base <- enframe(calc_metrics(table(test$percep_obrera, y_preds_base)), 
+                          name="metric") %>%
+    mutate(model='base', 
+           k=i) %>% 
+    select(k, model, everything())
+  
+  ## Guardamos las métricas en errores
+  errores <- errores %>% 
+     bind_rows(metrics_base) %>%
+     bind_rows(metrics_full)
+}
+```
+
+Para cada modelo con validación cruzada, los coeficientes cambian ligeramente y el modelo se usa para hacer predicciones independientes en la muestra reservada (test set). Veamos las métricas de la cuarta iteración (k=4).
+
+```{r}
+errores %>%
+  filter(k==4) %>%
+  arrange(model)
+```
+
+Bien, ahora, para generar las métricas finales vamos a promediar cada métrica de cada modelo en cada iteración:
+
+```{r message=FALSE}
+errores %>%
+  group_by(model, metric) %>%
+  summarise(value = mean(value)) %>%
+  pivot_wider(id_cols=metric,
+              names_from=model, 
+              values_fro=value)
+```
+
+Puede verse que en términos del porcentaje de casos bien clasificados los modelos son prácticamente iguales (un 67%). En cambio, el moelo full es ligeramente superior en f1 y en recall. Este punto es importante porque muestra que no es cierto que agregar variables siempre conduzca a mejores predicciones. Existen variables que solo aportan "ruido" a la predicción y pueden amortiguar la señal de aquellas variables que realmente predicen el estado. 
+
+Ahora bien, surge otra pregunta muy importante en este punto: más allá de la comparación entre estos dos modelos (y que podríamos ampliar mucho con otras variables y/o otras pruebas) ¿es este un modelo "útil"? A priori, un 67% de casos bien clasificados parece un número alentador. No obstante, vemos la siguiente cuestión:
+
+```{r}
+df_ocupados %>%
+  group_by(percep_obrera) %>%
+  summarise(n=n()) %>%
+  mutate(prop = n/sum(n))
+```
+
+Si miramos la distribución de la variable dependiente (`percep_obrera`) se nota que existe un 66% de casos que se autoperciben como no obrera. Es decir, que si hubiésemos definido un modelo pavote como predecir siempre que la persona va autopercibirse como "no obrera" a hubiésemos obtenido una accuracy similar a nuestros modelos. 
+
+Es por ello que recall y precision son métricas importantes porque nos ayudan a ver hasta qué punto nuestro modelo logra captar todas las personas que se autoperciben obreras (recall), es decir, qué tan "sensible" es nuestro mdoelo. O si de todas las personas a las que nuestro modelo clasifica como "de percepción obrera", tienen efectivamente esa característica. En este punto, este modelo tal y como está hasta aquí no parece demasiado útil.

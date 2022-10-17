@@ -1511,7 +1511,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Inferencia en regresión lineal EII</h1>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">02 octubre, 2022</h4>
+<h4 class="date">16 octubre, 2022</h4>
 
 </div>
 
@@ -1536,8 +1536,9 @@ div.tocify {
 <hr />
 <p><strong>Error de predicción</strong></p>
 <p>El error de preducción (también llamado anteriormente residuo) es la diferencia entre el valor observado y el valor pronosticado (del modelo de regresión).</p>
-<p><span class="math display">\[error\_prediccion_{i} = e_{i} = y_{i} - \hat{y}_{i}\]</span></p>
-<p>La presentación a continuación (ver la comparación de las Figuras 25.5 y 25.7) muestra que el modelo con más variables predice body_mass_g con errores mucho menores (previsto menos masa corporal real) que el modelo que usa solo bill_length_g. Hemos utilizado deliberadamente un modelo que intuitivamente tiene sentido (cuantas más medidas corporales, más predecible es la masa). Sin embargo, en muchos entornos, no es obvio qué variables o qué modelos contribuyen más a las predicciones precisas. La validación cruzada es una forma de obtener predicciones independientes precisas con las que comparar diferentes modelos.</p>
+</div>
+<div id="error_prediccion_i-e_i-y_i---haty_i" class="section level2">
+<h2><span class="math display">\[error\_prediccion_{i} = e_{i} = y_{i} - \hat{y}_{i}\]</span></h2>
 <pre class="r"><code>&gt; df &lt;- read_rds(&quot;./data/ENES_psh_cony.rds&quot;)
 &gt; 
 &gt; df &lt;- df %&gt;%
