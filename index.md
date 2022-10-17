@@ -100,9 +100,9 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 ### Clase 9. Inferencia en regresión lineal EII
 - [Explicación y práctica - Notebook](./M2/clase9/Clase_9.html)
 - [Explicación y práctica - RMarkdown](./M2/clase9/Clase_9.Rmd)
-- [Diapositivas]()
+- [Diapositivas](./M2/clase9/Slides_Clase_9.pdf)
 
-[![](./imgs/Download.png)]()
+[![](./imgs/Download.png)](./M2/clase9/clase9.zip)
 
 
 ---
