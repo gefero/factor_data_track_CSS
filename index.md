@@ -16,6 +16,17 @@ Tanto los contenidos de los ejercicios prácticos como las lecturas más concept
 
 Para el procesamiento y análisis estadístico se utilizará el lenguaje R y datos de la Encuesta Permanente de Hogares del INDEC y de la Encuesta Nacional sobre la Estructura Social (ENES) realizada por el PISAC.
 
+---
+
+## Trabajo Final Integrador
+
+- **Fecha de entrega:** 14 de noviembre de 2022
+- [Consignas](https://docs.google.com/document/d/14LlpB5ny6yMSJ34jmojov7pjIeii81teSzc-d6QXXPA/edit?usp=sharing)
+
+---
+
+
+
 ## Programa
 - [Programa de la materia - 2do. cuatrimestre 2022](https://docs.google.com/document/d/1gPVwRZETVF07Rg7veu0UAUMKmdobLCtR6mDHq16vnoM/edit?usp=sharing)
 
@@ -97,7 +108,7 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 [![](./imgs/Download.png)](./M2/clase8/clase8.zip)
 
 
-### Clase 9. Inferencia en regresión lineal EII
+### Clase 9. Inferencia en regresión logística
 - [Explicación y práctica - Notebook](./M2/clase9/Clase_9.html)
 - [Explicación y práctica - RMarkdown](./M2/clase9/Clase_9.Rmd)
 - [Diapositivas](./M2/clase9/Slides_Clase_9.pdf)
