@@ -23,6 +23,8 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - **Fecha de entrega:** 14 de noviembre de 2022
 - [Consignas](https://docs.google.com/document/d/14LlpB5ny6yMSJ34jmojov7pjIeii81teSzc-d6QXXPA/edit?usp=sharing)
 
+- [Insumo: script para generar la clase total del hogar](./M2/clase10/script_class_hogar.R)
+
 ---
 
 
@@ -118,8 +120,8 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 ### Clase 10a. Taller TP Integrador I
 
 ### Clase 10b. Taller TP Integrador II + Haciendo entendible una regresión
-- [Explicación y práctica - Notebook](./M2/clase9/Clase_10.html)
-- [Explicación y práctica - RMarkdown](./M2/clase9/Clase_10.Rmd)
+- [Explicación y práctica - Notebook](./M2/clase10/Clase_10.html)
+- [Explicación y práctica - RMarkdown](./M2/clase10/Clase_10.Rmd)
 
 
 ---
