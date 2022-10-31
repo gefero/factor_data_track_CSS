@@ -115,6 +115,12 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 
 [![](./imgs/Download.png)](./M2/clase9/clase9.zip)
 
+### Clase 10a. Taller TP Integrador I
+
+### Clase 10b. Taller TP Integrador II + Haciendo entendible una regresión
+- [Explicación y práctica - Notebook](./M2/clase9/Clase_10.html)
+- [Explicación y práctica - RMarkdown](./M2/clase9/Clase_10.Rmd)
+
 
 ---
 

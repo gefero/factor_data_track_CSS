@@ -1,0 +1,298 @@
+---
+title: "Haciendo entendible una regresión II"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+---
+
+Este texto se basa en los siguientes materiales:
+
+- Capítulo 6 del libro [Data visualization. A practical introduction](https://socviz.co/modeling.html#modeling) de Kieran Healy. 
+
+---
+
+```{r}
+library(tidyverse)
+library(quantreg)
+library(gapminder)
+library(margins)
+```
+
+## Introducción
+La visualización de datos es más que generar cifras que muestran los números sin procesar de una tabla de datos. Desde el principio, implica resumir o transformar partes de los datos y luego graficar los resultados.
+
+Los modelos estadísticos son una parte central de ese proceso.
+
+## Objetivos
+- Entender brevemente cómo ggplot puede usar varias técnicas de modelado directamente dentro de geoms.
+- Aprender a usar las bibliotecas broom y margins para extraer y trazar de manera ordenada las estimaciones de los modelos que ajustamos
+
+
+## Ordenando modelos con `broom`
+La función `tidy()` toma un objeto modelo y devuelve un `data.frame` de información a nivel de componente. Podemos trabajar con esto para hacer gráficos de una manera familiar, y mucho más fácilmente que pescar dentro del objeto modelo para extraer los distintos términos. 
+
+Recodemos el modelo de la clase pasada:
+```{r}
+out <- lm(formula = lifeExp ~ gdpPercap + pop + continent,
+          data = gapminder)
+```
+
+A continuación, se muestra un ejemplo que utiliza los resultados predeterminados que se acaban de devolver. Para una visualización más conveniente de los resultados, canalizaremos el objeto que creamos con `tidy()` a través de una función que redondea las columnas numéricas del marco de datos a dos lugares decimales. Por supuesto, esto no cambia nada sobre el objeto en sí.
+
+```{r}
+library(broom)
+```
+
+
+```{r}
+out_comp <- tidy(out)
+out_comp %>% mutate(across(-term, round, digits=2))
+```
+
+Ahora podemos tratar este `data.frame` como cualquier otro dataset que hayamos visto hasta ahora.
+
+```{r}
+p <- ggplot(out_comp, mapping = aes(x = term,
+                                    y = estimate))
+
+p + geom_point() + coord_flip() + theme_minimal()
+```
+
+Podemos ampliar y limpiar esta parcela de varias formas. Por ejemplo, podemos decirle a `tidy()` que calcule los intervalos de confianza para las estimaciones, utilizando la función `confint()` de R.
+
+```{r}
+out_conf <- tidy(out, conf.int = TRUE)
+out_conf %>% mutate(across(-term, round, digits=2))
+```
+
+Vamos a quitar el término de `intercept` de la tabla. 
+
+También queremos formatear de forma bonita las etiquetas.
+
+Al ajustar un modelo con variables categóricas, R creará nombres de coeficientes basados en el nombre de la variable y el nombre de la categoría, como `continentAméricas`. Normalmente nos gusta limpiarlos antes de plotear.
+
+Por lo general, solo queremos eliminar el nombre de la variable al comienzo de la etiqueta del coeficiente. 
+
+Para esto podemos usar prefix_strip (), una función de conveniencia en la biblioteca socviz. Le decimos qué prefijos eliminar, usándolo para crear una nueva variable de columna en out_conf que corresponde a la columna de términos, pero que tiene etiquetas más bonitas.
+
+```{r}
+out_conf <- subset(out_conf, !term %in% "(Intercept)")
+out_conf <- out_conf %>% mutate(term = str_remove(term, 'continent'))
+out_conf
+```
+
+Ahora podemos usar `geom_pointrange()` para hacer una figura que muestre algo de información sobre nuestra confianza en las estimaciones de las variables, en lugar de solo los coeficientes. 
+
+Al igual que con las gráficas de caja anteriores, usamos `reorder()` para ordenar los nombres de los términos del modelo por la variable de estimación, ordenando así nuestra gráfica de efectos de mayor a menor magnitud.
+
+```{r}
+p <- ggplot(out_conf, mapping = aes(x = reorder(term, estimate),
+                                    y = estimate, 
+                                    ymin = conf.low, 
+                                    ymax = conf.high))
+
+p + 
+    geom_pointrange() + 
+    coord_flip() + 
+    labs(x="", y="OLS Estimate") +
+    theme_minimal()
+```
+
+Los gráficos de puntos (dotplots) de este tipo pueden ser muy compactos. El eje vertical a menudo se puede comprimir bastante, sin pérdida de información. 
+
+De hecho, a menudo son más fáciles de leer con mucho menos espacio entre las filas que el que ofrece una forma cuadrada predeterminada.
+
+### Obtener estadísticas de nivel de observación con `augment()`
+Los valores devueltos por `augment()` son estadísticos calculadas al nivel de las observaciones originales. Como tales, se pueden agregar al `data.frame` en el que se basa el modelo. Una llamada a `augment()` devolverá un `data.frame` con todas las observaciones originales utilizadas en la estimación del modelo, junto con una serie de colunmas como las siguientes:
+
+- `.fitted`: los valores ajustados del modelo.
+- `.se.fit`: los errores estándar de los valores ajustados.
+- .`resid`: los residuos.
+- `.hat`: la diagonal de la _hat matrix_
+- `.sigma`: una estimación de la desviación estándar residual cuando la observación correspondiente se elimina del modelo.
+- `.cooksd`: distancia de Cook, un diagnóstico de regresión común; y
+- `.std`.resid: los residuos estandarizados.
+
+
+Cada una de estas variables se nombra con un punto inicial, por ejemplo `.hat` en lugar de `hat`, y así sucesivamente. Esto es para evitar confundirlo accidentalmente con (o sobrescribir accidentalmente) una variable existente en sus datos con este nombre. Las columnas de valores devueltas diferirán ligeramente según la clase de modelo que se esté ajustando.
+
+```{r}
+out_aug <- augment(out)
+head(out_aug) %>% mutate(across(-continent, round, digits=3))
+```
+
+Por defecto, `augment()` va a extraer la data disponibles del objeto modelo. Por lo general, esto incluirá las variables utilizadas en el modelo en sí, pero no las adicionales contenidas en el `data.frame` original. A veces es útil tener estos. Podemos agregarlos especificando el argumento de datos:
+
+```{r}
+out_aug <- augment(out, data = gapminder)
+head(out_aug) %>% mutate(across(-c(country, continent), round, digits=3))
+```
+
+Si algunas filas que contienen datos faltantes se descartaron para ajustarse al modelo, estas no se trasladarán al `data.frame`  aumentado.
+
+Las nuevas columnas creadas por `augment()` se pueden usar para crear algunos gráficos de regresión estándar. Por ejemplo, podemos graficar los [residuos frente a los valores ajustados](https://https://online.stat.psu.edu/stat501/lesson/4/4.2). La siguiente figura sugiere, como era de esperar, que los datos de nuestro país-año tienen una estructura bastante mayor que la que captura nuestro modelo MCO.
+
+```{r}
+p <- ggplot(data = out_aug,
+            mapping = aes(x = .fitted, y = .resid))
+p + geom_point() + theme_minimal()
+```
+
+### Obteniendo estadísticas a nivel de modelo con `glance()`
+Esta función organiza la información que se presenta normalmente en la parte inferior de la salida de `summary()` de un modelo. Por sí solo, generalmente solo devuelve una tabla con una sola fila. Pero como veremos en un momento, el poder real del enfoque de `broom` es la forma en que puede escalar a los casos en los que agrupamos o submuestreamos nuestros datos.
+
+```{r}
+glance(out) %>% mutate(across(everything(), round, digits=3))
+```
+
+`broom` puede ordenar (y aumentar) una amplia gama de tipos de modelos. No todas las funciones están disponibles para todas las clases de modelo. 
+
+Pueden [consultar la documentación](https://broom.tidymodels.org/) de `broom` para obtener más detalles sobre lo que está disponible. 
+
+
+## Análisis por grupos 
+`broom` hace posible ajustar rápidamente modelos a diferentes subconjuntos de sus datos y obtener tablas de resultados consistentes y utilizables en el otro extremo. Por ejemplo, digamos que queríamos analizar los datos de `gapminder` examinando la relación entre la esperanza de vida -`lifeExp`- y el PIB por continente -`gdpPercap`-, para cada año -`year`-.
+
+Los datos de `gapminder` están organizados en la parte inferior por país-año. Esa es la unidad de observación en las filas. Si quisiéramos, podríamos tomar una parte de los datos manualmente, como "todos los países observados en Asia, en 1962" o "todos en África, 2002". Aquí está "Europa, 1977":
+
+```{r}
+eu77 <- gapminder %>% filter(continent == "Europe", year == 1977)
+```
+
+Luego podemos ver cómo era la relación entre la esperanza de vida y el PIB para ese grupo continente-año:
+
+```{r}
+fit <- lm(lifeExp ~ log(gdpPercap), data = eu77)
+summary(fit)
+```
+
+Con `dplyr` y `broom` podemos hacer esto para cada segmento de datos de un año y continente de una manera compacta y ordenada. 
+
+Comenzamos con nuestra tabla de datos, y luego (`%>%`) agrupamos los países por continente y año usando la función` group_by()`. 
+
+Nuestros datos se reorganizan primero por continente y dentro de continente por año. 
+
+Aquí daremos un paso más y anidaremos los datos que componen cada grupo:
+
+```{r}
+out_le <- gapminder %>%
+    group_by(continent, year) %>%
+    nest()
+
+head(out_le)
+```
+
+Pensemos en lo que hace `nest()`. Es como una versión recargada de `group_by()`. 
+
+El objeto resultante tiene la forma tabular que esperamos (es una `tibble`) pero parece un poco inusual. 
+
+Las dos primeras columnas son el `continent` y el `year` familiares. Pero ahora también tenemos una nueva columna, `data`, que contiene una pequeña tabla de datos correspondiente a cada grupo continente-año. 
+
+Esta es una columna de lista, algo que no hemos visto antes. Resulta muy útil para agrupar objetos complejos (estructurados, en este caso, como una lista de `tibbles`, cada uno de los cuales es una tabla de datos de 33x4) dentro de las filas de nuestros datos (que sigue siendo tabular). 
+
+Nuestro ajuste de "Europa 1977" está ahí. Podemos verlo, si queremos, filtrando los datos y luego desanidando la columna de la lista.
+
+```{r}
+out_le %>% filter(continent == "Europe" & year == 1977) %>% unnest()
+```
+
+Las columnas de lista son útiles porque podemos actuar sobre ellas de forma compacta y ordenada. En particular, podemos pasar funciones a cada fila de la columna de la lista y hacer que suceda algo. 
+
+Por ejemplo, hace un momento hicimos una regresión de la esperanza de vida y registramos el PIB de los países europeos en 1977. Podemos hacer eso para cada combinación continente-año en los datos. 
+
+Primero creamos una función ad-hoc llamada `fit_ols()` que toma un solo argumento, `df` (para el marco de datos) y que se ajusta al modelo lineal que nos interesa.
+
+Entonces, mapeamos esa función para cada fila de `out_le`. Es decir, aplicamos esa función para cada una de las filas y para cada fila (que contiene una `tibble`), fiteamos un modelo. 
+"Mapear" es una idea importante en la programación funcional. Si han escrito código en otros lenguajes, puede pensar en él como una alternativa compacta a escribir un `for` loop. Por supuesto, podríamos hacer esto escribiendo un for loop. 
+
+Computacionalmente, a menudo no son menos eficientes que sus alternativas funcionales. Pero la asignación de funciones a matrices se integra más fácilmente en una secuencia de transformaciones de datos.
+
+```{r}
+fit_ols <- function(df) {
+    lm(lifeExp ~ log(gdpPercap), data = df)
+}
+
+out_le <- gapminder %>%
+    group_by(continent, year) %>%
+    nest() %>% 
+    mutate(model = map(data, fit_ols)) 
+
+head(out_le)
+```
+
+Antes de meternos adentro de todo esto, creemos una nueva función: su único trabajo es estimar un modelo MCO particular en algunos datos. 
+
+Como casi todo en R, las funciones son una especie de objeto. Para hacer uno nuevo, usamos la función `function()` ligeramente especial. 
+
+(A los nerds les encanta ese tipo de cosas). 
+
+Para ver cómo se ve `fit_ols()` una vez creado, podemos escribir `fit_ols` sin paréntesis en la consola. Para ver lo que hace, pruebe` fit_ols (df = gapminder)` o `summary(fit_ols (gapminder))`.
+
+Ahora tenemos dos columnas de lista: `data` y `model`. Esta última fue creada mapeando la función `fit_ols()` a cada fila de datos. 
+
+Dentro de cada elemento de `model` hay un objeto de modelo lineal para ese continente-año. Así que ahora tenemos sesenta ajustes de MCO, uno para cada grupo continente-año. 
+
+Tener los modelos dentro de la columna `model` no nos sirve de mucho en sí mismo. Pero podemos extraer la información que queremos mientras mantenemos las cosas en una forma tabular ordenada. Para mayor claridad, ejecutaremos el pipelinedesde el principio nuevamente, esta vez agregando algunos pasos nuevos.
+
+```{r}
+fit_ols <- function(df) {
+    lm(lifeExp ~ log(gdpPercap), data = df)
+}
+
+out_tidy <- gapminder %>%
+    group_by(continent, year) %>%
+    nest() %>% 
+    mutate(model = map(data, fit_ols),
+           tidied = map(model, tidy)) %>%
+    unnest(tidied, .drop=TRUE) %>%
+    filter(! (term %in% "(Intercept)") & ! (continent %in% "Oceania"))
+
+
+out_tidy %>% head(5)
+```
+
+a) extraemos estadísticas de resumen de cada modelo mapeando la función `tidy()` de `broom` a `model` (columna-lista que tiene todos los objetos de modelos lineales). 
+
+b) hacemos `unnest()` sobre el resultado y descartamos las otras columnas en el proceso
+
+c) filtramos todos los términos de interceptoy también descartamos todas las observaciones de Oceanía.  En el caso de los `Intercepts`, lo hacemos solo por conveniencia. Oceanía abandonamos solo porque hay muy pocas observaciones. 
+
+d) guardamos los resultados en un objeto llamado `out_tidy`.
+
+Ahora tenemos un resultado de regresión ordenado con una estimación de la asociación entre el logaritmo del PIB per cápita y la esperanza de vida para cada año, dentro de los continentes. Podemos graficar estas estimaciones de una manera que aproveche su grupo.
+
+```{r}
+p <- ggplot(data = out_tidy,
+            mapping = aes(x = year, 
+                          y = estimate,
+                          ymin = estimate - 2*std.error,
+                          ymax = estimate + 2*std.error,
+                          group = continent, 
+                          color = continent))
+
+p + geom_pointrange(position = position_dodge(width = 1)) +
+    scale_x_continuous(breaks = unique(gapminder$year)) + 
+    labs(x = "Year", y = "Estimate", color = "Continent") + 
+    theme_minimal() +
+    theme(legend.position = 'top')
+```
+
+La llamada a` position_dodge()` dentro de `geom_pointrange()` permite que los rangos de puntos de cada continente estén cerca unos de otros en años, en lugar de estar graficados uno encima del otro. 
+
+Esta técnica es muy útil no solo para casos como este, sino también cuando desea comparar los coeficientes dados por diferentes tipos de modelo estadístico. 
+
+Esto a veces sucede cuando estamos interesados en ver cómo, por ejemplo, OLS se desempeña en comparación con alguna otra especificación del modelo.

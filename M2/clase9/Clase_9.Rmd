@@ -233,6 +233,7 @@ Conideremos, por ejemplo, el p-valor presente en $H_{0}: \beta_{4} = 0$. Allí, 
 Aunque los p-valores brindan cierta información sobre la importancia de cada uno de los predictores en el modelo, hay muchos aspectos, posiblemente más importantes, a considerar al elegir el mejor modelo. Al igual que con la regresión lineal, la existencia de predictores que están correlacionados entre sí puede afectar tanto las estimaciones del coeficiente como los p-valoresasociados. Sin embargo, la investigación de la multicolinealidad en un modelo de regresión logística queda fuera del alcance de este curso. A continuación, como alternativa (o mejora) de creación de modelos a los p-valores, vamos a revisar la validación cruzada en el contexto de la predicción del estado de cada uno de los correos electrónicos individuales.
 
 ---
+
 **Boostrap para regresión logística**
 
 Desde ya que sería posible realizar un bootstrap para generar intervalos de confianza para los coeficientes $\beta_{k}$ del modelo de regresión logística. La lógica es exactamente igual al caso de regresión lineal: 
