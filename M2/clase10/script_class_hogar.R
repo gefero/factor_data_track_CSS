@@ -1,4 +1,6 @@
 library(tidyverse)
+
+## Carguen datos de la ruta que tengan...
 df <- read_rds('/media/grosati/Elements/PEN/Datasets_ML/factor_data_track_CSS/M2/clase3/data/ENES_Personas_M1_EOW.rds')
 
 ## Generamos un conteo de clases por hogar y nos quedamos con el valor máximo
