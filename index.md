@@ -123,6 +123,10 @@ Para el procesamiento y análisis estadístico se utilizará el lenguaje R y dat
 - [Explicación y práctica - Notebook](./M2/clase10/Clase_10.html)
 - [Explicación y práctica - RMarkdown](./M2/clase10/Clase_10.Rmd)
 
+### Clase 11. Taller TP Integrador III
+
+### Clase 12. Entrega y exposición
+
 
 ---
 
