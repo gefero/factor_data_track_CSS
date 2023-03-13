@@ -32,9 +32,19 @@ Durante el curso se espera que les estudiantes:
 - [Explicación y práctica - Notebook](./M3/clase1/Clase_1.html)
 - [Explicación y práctica - RMarkdown](./M3/clase1/Clase_1.Rmd)
 - [Práctica independiente - Notebook](./M3/clase1/Clase_1_pract.html)
-- [Práctica independiente - RMarkdown](./M3/clase1/Clase_1pract.Rmd)
+- [Práctica independiente - RMarkdown](./M3/clase1/Clase_1_pract.Rmd)
 
 [![](./imgs/Download.png)](./M3/clase1/clase1.zip)
+
+### Clase 2. Aprendizaje No Supervisado E2: Análisis de Correspondencias Múltiples (MCA)
+- [Diapositivas]()
+- [Explicación y práctica - Notebook](./M3/clase1/Clase_2.html)
+- [Explicación y práctica - RMarkdown](./M3/clase1/Clase_2.Rmd)
+- [Práctica independiente - Notebook](./M3/clase1/Clase_2_pract.html)
+- [Práctica independiente - RMarkdown](./M3/clase1/Clase_2_pract.Rmd)
+
+
+
 
 ---
 
