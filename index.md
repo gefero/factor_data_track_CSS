@@ -34,6 +34,8 @@ Durante el curso se espera que les estudiantes:
 - [Práctica independiente - Notebook](./M3/clase1/Clase_1_pract.html)
 - [Práctica independiente - RMarkdown](./M3/clase1/Clase_1pract.Rmd)
 
+[![](./imgs/Download.png)](./M3/clase1/clase1.zip)
+
 ---
 
 ## Modulo 2: Métodos de análisis cuantitativos multivariados
