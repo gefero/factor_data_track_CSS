@@ -25,75 +25,25 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 
 ```
 
-# Construyendo tipologías e índices
-Probablemente sea una de las herramientas más utilizadas en el análisis sociológico. Todo el tiempo estamos construyendo tipologías, índices y demás. Todo el tiempo estamos combinando variables, atributos, propiedades. Una cuestión importante a marcar tiene que ver con ese uso transversal de la construcción de tipos. Todes les científiques construimos tipos. Es más, todas las personas construyen tipos en el transcurrir de su vida cotidiana. Eso que @schutz_luck llamaron "acervo de conocimiento" está constituido por un conjunto de tipos y significatividades, que se erigen sobre sedimentaciones de experiencias anteriores y tienen como función dominar y definir cada situación de la vida cotidiana. Dicho de otra forma más simple: el conocimiento "ordinario" sobre el mundo social que cada sujeto tiene está constituido por tipologías y constituyen las construcciones de primer orden, mientras que el conocimiento científico sería un constructo de segundo orden, una "tipificación de tipificaciones" @schutz_real.
 
-Hay toda una tradición de investigación en ciencias sociales que se encarga de reconstruir los procesos por los cuales esos tipos son construidos. Existe un amplio campo de debate teórico acerca de la forma en que estos discursos asumen, su función, su estructura interna y su significado. Independientemente de los diferentes fundamentos conceptuales y metodológicos del que provengan, los estudios sobre representaciones y discursos sociales parecen coincidir en que los mismos no conforman un sistema lógico totalmente consistente: pueden estar configurados por fragmentos de ideas no vinculadas de forma coherente. Tampoco resultan un sistema completamente estático: los mismos se encuentran abiertos al cambio. Exploraciones conceptuales tan diversas como las de @gramsci_1971 sobre el sentido común, las de @schutz_luck sobre los acervos de conocimiento y las vinculadas a la equilibración de los sistemas cognitivos de @piaget_2010 coinciden en estos puntos. A su vez, estudios más recientes desde el campo de la psicología social han postulado la existencia de una estructura y una diferenciación de funciones en los elementos de estas representaciones: un núcleo central y una periferia (@lomonaco_2017, @piermateeo_2018).
+## Análisis de Correspondencias Múltiples (variables cualitativas)
 
-No obstante, en este capítulo vamos a centrarnos en las tipologías que surgen del trabajo científico. Y más precisamente, de aquellas que se producen en ciencias sociales.
+La clase pasada habíamos trabajado sobre PCA que operaba sobre variables cuantitativas. Ahora, ¿qué pasa si tenemos variables cualitativas? Si bien no podemos usar PCA, sí podemos echar mano a otras técnicas más adecuadas y con una lógica bastante similar. 
 
-## Tipologías e índices. Combinando variables
+Seguramente, la aplicación más famosa de la técnica que vamos a trabajar sea el siguiente gráfico:
 
-Decíamos más arriba que todo el tiempo usamos tipos. En la vida cotidiana y en la actividad científica. De hecho, una variable tan común y, aparentemente tan transparente y simple como la condición de actividad, es en realidad una combinación de al menos dos preguntas:
+!['Dinámica del espacio social'](./_imgs/06-bourdieu.jpeg)
 
--   ¿Trabajó la semana pasada al menos una hora?
--   Si no trabajó, ¿buscó trabajo?
+**Referencia a Bourdieu**
 
-Asi, podríamos esquematizar la variable de la siguiente forma:
+\-<https://personal.utdallas.edu/~herve/Abdi-MCA2007-pretty.pdf>
 
-|                   | **Trabajó** | **No trabajó** |
-|-------------------|-------------|----------------|
-| **Buscó trabajo** | ///////     | Desocupado     |
-| **No buscó**      | Ocupado     | Inactivo       |
-
-: Tipología de situaciones de situación ocupacional
-
-Y no solamente en los trabajos que usan datos cuantitativos. Los estudios de corte más cualitativo también tienen a las tipologías como parte de su instrumental analítico y metodológico. Por ejemplo, @kessler_2000 construye una tipología de la experiencia de empobrecimiento de los sectores medios en Buenos Aires. Identifica 6 tipos en función de cuatro criterios: uso de capital social, valoración de capital cultural, control del riesgo y grado de autonomía. El material empírico analizado estuvo centrado en entrevistas en profundidad e historias de vida.
-
-\*\*AGREGAR EL DE CANNEVARO\*¨
-
-Es más, el trabajo teórico también hace uso (aunque quizás más implícitamente en muchos casos de procedimientos tipológicos). Los tres tipos de dominación o de acción social de Weber [@weber_2014], las formas de solidaridad [@durkheim_1993] y los tipos de suicidios [@durkheim_2000] en Durkheim serían ejemplos de esta forma de procedimeinto en el trabajo teórico.
-
-Conceptos tan generales como pueden ser los modos de producción (capitalismo, feudalismo, socialismo) tienen características tipológicas. Así, la definición conceptual de lo que es una clase social puede ser pensada de manera tipológica no solamente a nivel metodológico (¿cómo puedo medir la distribución de la población según clases sociales?) sino también nivel conceptual. Probablemente, uno de los trabajos más sistemáticos tanto en el plano teórico como metodológico (más allá de las limitaciones que podamos encontrar) es el de Erik Olin Wright. Estableció tres posiciones básicas en las relaciones de clase del capitalismo:
-
--   la burguesía (posee propiedad económica y ejercer control sobre los medios físicos de producción y la fuerza de trabajo de otros)
--   la pequeña burguesía posee y controla sus medios de producción pero no controla la fuerza de trabajo de otros,
--   el proletariado que no tiene la propiedad ni el control de su fuerza de trabajo.
-
-Dado que el contexto en que escribe este primer trabajo, una de las principales preocupaciones había sido la emergencia en el capitalismo contemporáneo de las (mal) llamadas "nuevas clases medias". Trabajaremos este proceso más adelante, pero lo fundamental aquí es que como resultado de esta preocupación incluyó dos nuevas posiciones:
-
--   directivos y supervisores quienes no son poseedores de los medios de producción en términos de la concepción clásica marxista, sin embargo, ejercen de hecho diferentes tipos de control sobre los medios materiales de producción y la fuerza de trabajo, muchas veces a gran escala,
-
-Así @wright_1994 define una de sus tipologías de posiciones de clase basado en la idea que existen tres criterios básicos[^06-construyendo-tipologias-1]: si se trata de vendedores o no de fuerza de trabajo (empleados/asalariados o autónomos); si emplean a otros (compran fuerza de trabajo); si controlan o supervisan a otros en el trabajo (sea porque son dueños de locales o sea porque supervisan de forma asalariada).
-
-[^06-construyendo-tipologias-1]: En efecto, Olin Wright modificó varias veces su esquema conceptual para el análisis de la estructura social. Aquí presentamos uno de sus primeros enfoques el de las "posiciones contradictorias" de clase.
-
-Ahora bien, pese al uso extendido que tienen las tipologías en ciencias sociales no siempre parecen haber recibido la reflexión necesaria por parte de sociólogues y científiques sociales en general. El objetivo de este capítulo, entonces, será avanzar en dos direcciones:
-
--   tratar de establecer algunas preciciones conceptuales y lógicas acerca de las tipologías e índices
--   mostrar algunas técnicas útiles para su construcción
-
-### La idea de "espacio de propiedades"
-
-Si prestamos atención a los ejemplos de la sección anterior podremos entrever que en todos los casos lo que ocurrió fue la combinación de diversas variables o dimensiones con diferentes categorías o valores dando como resultado una clasificación más "resumida".
-
--   qué es un espacio de propiedades
--   formas de reduccion (acá entra lo de índices vs tipologías)
-
-ESPACIO DE PROPIEDADES EN EL CASO CUANTITATIVO
-
-En ese sentido, podemos considerar a las tipologías como un caso particular de los "índices", sobre los que volveremos más adelante.
-
-## ¿Por qué usarlas en ciencias sociales?
-
-## Índices y técnica sde reducción de dimensionalidad
-
-DESARROLLAR
+El famoso mapa de los espacios y capitales sociales que Bourdieu despliega en "La Distinción". Luego podemos discutir sobre si el gráfico es claro o no, pero lo que nos interesa destacar aquí es que el mismo fue construido con el llamado Análisis de Correspondencias Múltiples (o MCA por sus sigrlas en inglés)
 
 
-### Análisis de Correspondencias Múltiples (variables cualitativas)
 
-Ahora, ¿qué pasa si tenemos variables cualitativas? Si bien no podemos usar PCA, sí podemos echar mano a otras técnicas más adecuadas y con una lógica bastante similar. En este apartado, vamos a trabajar con el siguiente problema: queremos a partir de la Encuesta Permanente de Hogares del III trimestre de 2022 poder construir índices que nos hablen de las condiciones contractuales y laborales en que se desarrolla el trabajo de los asalariados ocupados en la semana de referencia.
+
+En esta clase, vamos a trabajar con el siguiente problema: queremos a partir de la Encuesta Permanente de Hogares del III trimestre de 2022 poder construir índices que nos hablen de las condiciones contractuales y laborales en que se desarrolla el trabajo de los asalariados ocupados en la semana de referencia.
 
 Si revisamos la documentación y el [diseño de registro](https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_3T2021.pdf)] vemos que hay muchas variables que podrían servir para tal objetivo. En particular, vamos a ver las siguientes:
 
@@ -107,15 +57,6 @@ Así, podemos ver que hay cierta estructura en las variables:
 
 De esta forma, la idea va a ser combinar estas variables en por lo menos un índice que nos permita resumir dicha información.
 
-### ¿Qué es el Análisis de Correspondencias Múltiples?
-
-Seguramente, la aplicación más famosa de esta técnica sea el siguiente gráfico:
-
-!['Dinámica del espacio social'](./_imgs/06-bourdieu.jpeg)
-
-**Referencia a Bourdieu**
-
-\-<https://personal.utdallas.edu/~herve/Abdi-MCA2007-pretty.pdf>
 
 ### Construyendo un índice de condiciones de trabajo (ICT)
 
