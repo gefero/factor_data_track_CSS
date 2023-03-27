@@ -262,7 +262,7 @@ Pero recordemos que estamos buscando obtener un solo índice. Por ello, por ahor
 
 ```{r}
 idh <- idh %>%
-  bind_cols(bake(pca_estimates, idh))
+  bind_cols(pca_data)
 ```
 
 ## Normalizando las variables
@@ -299,11 +299,45 @@ Vemos como los pesos de cada componente cambian notablemente. El `PC1` aparece a
 
 --- 
 
+
+```{r}
+tidy(pca_estimates2, 1, type="variance") %>%
+  filter(terms=="percent variance") %>%
+  mutate(component=paste0("PC", component)) %>%
+  ggplot(aes(x=component,y=value,group=terms)) +
+      geom_col() +
+      ylim(0,100) +
+      labs(title="% varianza",
+           x="Componente",
+           y="Valor") + 
+      theme_minimal() +
+
+tidy(pca_estimates2, 1, type="variance") %>%
+  filter(terms=="cumulative percent variance") %>%
+  mutate(component=paste0("PC", component)) %>%
+  ggplot(aes(x=component,y=value,group=terms)) +
+      geom_col() +
+      ylim(0,100) +
+      labs(title="% varianza acum.",
+           x="Componente",
+           y="Valor") + 
+      theme_minimal()
+```
+
+
 ## Actividad
 Comparen (de la forma que crean más conveniente) los resultados de nuestro índice orignal (con las variables escaladas) y el IDH original producido por la ONU (`hdi_2019`). ¿Qué puede decir al respecto'
 
 ```{r}
-###
+idh %>%
+  ggplot(aes(x=hdi_2019, y=PC1, color=region)) +
+    geom_point() +
+    labs(x="IDH original",
+         y="IDH PCA",
+         color="Region") +
+    theme_minimal()
+
+
 ```
 
 ---`

@@ -25,6 +25,13 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 
 ```
 
+```{r}
+library(patchwork)
+library(tidyverse)
+library(tidymodels)
+library(GDAtools)
+```
+
 
 ## Análisis de Correspondencias Múltiples (variables cualitativas)
 
@@ -32,18 +39,87 @@ La clase pasada habíamos trabajado sobre PCA que operaba sobre variables cuanti
 
 Seguramente, la aplicación más famosa de la técnica que vamos a trabajar sea el siguiente gráfico:
 
-!['Dinámica del espacio social'](./_imgs/06-bourdieu.jpeg)
-
-**Referencia a Bourdieu**
-
-\-<https://personal.utdallas.edu/~herve/Abdi-MCA2007-pretty.pdf>
+!['Dinámica del espacio social'](./imgs/bourdieu.jpg)
 
 El famoso mapa de los espacios y capitales sociales que Bourdieu despliega en "La Distinción". Luego podemos discutir sobre si el gráfico es claro o no, pero lo que nos interesa destacar aquí es que el mismo fue construido con el llamado Análisis de Correspondencias Múltiples (o MCA por sus sigrlas en inglés)
 
+## Una primera formalización
+Tenemos, ahora, una matriz de datos con variables cualitivas. Si recordamos lo que trabajamos el cuatrimestre anterior, podemos retomar la idea de que es posible representar una variable cualitativa en una matriz, como un conjunto de columnas "dummy": tomábamos una categoría base y podíamos representar la variable como k-1 columnas (k es la cantidad de categorías) dicotómicas.
+
+Por ejemplo, esta variable
+
+```{r}
+ex <- tibble(id = 1:7,
+       confianza = as.factor(c("Media","Alta", "Baja","Media", "Baja", "Baja", "Alta")),
+       voto = as.factor(c("Sí", "No", "Sí", "Sí", "Sí", "No", "Sí")),
+       niv_educ = as.factor(c("Prim.", "Sec.",  "Sec.", "Terc. o univ.", "Prim.",  "Sec.", "Terc. o univ.")),
+       )
+```
+
+podemos representarla como
+
+```{r}
+ex_dum <- ex %>% 
+  recipe(~ .) %>% 
+  step_dummy(confianza, voto, niv_educ) %>% 
+  prep(training = ex) %>% 
+  bake(new_data=ex)
+
+ex_dum
+```
+
+---
+
+**Actividad**
+¿Qué pasó en el código anterior?
 
 
+---
 
-En esta clase, vamos a trabajar con el siguiente problema: queremos a partir de la Encuesta Permanente de Hogares del III trimestre de 2022 poder construir índices que nos hablen de las condiciones contractuales y laborales en que se desarrolla el trabajo de los asalariados ocupados en la semana de referencia.
+Se observa, por ejemplo, que la categoría base que se tomó fue "Alta". Así, el perfil `confianza_Baja == 0 & confianza_Media == 0` que el registro 5 tiene confianza "Alta".
+
+Pero supongamos que queremos retener todos los niveles, es decir, no tomar ninguna categoría como base:
+
+```{r}
+ex_dummy2 <- ex %>% 
+  recipe(~ .) %>% 
+  step_dummy(confianza, voto, niv_educ, one_hot = TRUE) %>% 
+  prep(training = ex) %>% 
+  bake(new_data=ex)
+
+
+ex_dummy2
+```
+
+Vamos a llamar a esta tabla "tabla disyuntinva completa" y va a ser uno de los insumos fundamentales del MCA. En general, vamos a ver que a esta tabla se la suele llamar $\textbf{Z}$. Siendo la matriz $\textbf{Z}$ una matriz de ceros y unos, se debe tomar en cuenta este hecho para deducir la forma particular que tienen las nubes de puntos sobre las que se hará el
+análisis.
+
+Tenemos, entonces, $n$ individuos y $q$ variables. Los marginales de $\textbf{Z}$ son 
+
+- $z_{i.} = q$ porque hay $q$ unos en cada fila
+- $z_{.j} = q$ número de individuos con la característica $j$
+
+Así, la suma total de la tabla es 
+
+$$\sum_{i}\sum_{j} z_{ij}= nq$$
+
+A partir $\textbf{Z}$ vamos a construir la llamada "Tabla de Burt" $\textbf{B}$ de la siguiente forma:
+
+$$\textbf{B} = \textbf{Z}^T \textbf{Z}$$
+
+Más simple: $\textbf{B}$, que contiene por bloques las tablas de contingencia de cada pareja de variables cualitativas. Por ejemplo, para el caso de las tablas anteriores, entonces la tabla de Burt puede tener el aspecto
+
+```{r}
+as_tibble(burt(data.frame(ex %>% select(-id))),rownames="var")
+```
+
+Si llamamos $D = diag(z_{.j})$ a la diagonal de los márgenes columna de $\textbf{Z}$, entonces, hacer MCA es diagonalizar la matriz $\textbf{Z}$ o la matriz $\textbf{B}$
+
+
+$$ \textbf{S} =     \frac{1}{q} \textbf{Z}^T \textbf{Z} \textbf{D}^{-1} = \frac{1}{q}  \textbf{B} \textbf{D}{^-1}$$
+
+## Un caso real...
+Basta de abstracciones. Vamos a trabajar con el siguiente problema: queremos a partir de la Encuesta Permanente de Hogares del III trimestre de 2022 poder construir índices que nos hablen de las condiciones contractuales y laborales en que se desarrolla el trabajo de los asalariados ocupados en la semana de referencia.
 
 Si revisamos la documentación y el [diseño de registro](https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_3T2021.pdf)] vemos que hay muchas variables que podrían servir para tal objetivo. En particular, vamos a ver las siguientes:
 
@@ -184,8 +260,12 @@ A su vez, el eje Y muestra la percepción de algunos beneficios que podríamos l
 
 Un punto importate es entender cuál es la "importancia" de las diferentes variables en cada dimensión. Una primera intuició podemos obtenerla a partir de ver la cercanía de cada etiqueta sobre cada eje. Cuanto más cerca esté cada etiqueta de cada eje, más importnate será la variable, más correlacionada estará con esa dimensión.
 
-|**Actividad** 
-| Nombrá las dos variables más importantes de la dimensión 1 a partir del gráfico anterior.
+---
+
+**Actividad**
+Nombrar las dos variables más importantes de la dimensión 1 a partir del gráfico anterior.
+
+---
 
 Pero podemos utilizar otra función para generar un gráfico `fviz_contrib()`. Le pedimos que use el objeto `mca_ict` que contiene nuestras estimaciones, que calcule la contribución de cada variable de la dimensión 1.
 
@@ -239,19 +319,3 @@ df %>%
 ```
 Se observa cómo a mayor calificación las ocupaciones de mayor calificaión aparecen más asociadas a mejores condiciones de contratación.
 
-
-
-### Análisis de Componentes Princiales (variables cuantitativas)
-
-Para ilustrar la aplicación de métodos de reducción de dimensionalidad con variables cuantativas vamos a plantear el siguiente problema. Disponemos de una serie de métricas para cada radio censal de los hogares que residen en los mismos. Los datos provienen del Censo Nacional de Población y Vivienda del año 2010
-
-El objetivo será construir una medida agregada que pueda interpretarse como un resumen de las condiciones de vida de los hogares del Área Metropolitana de Buenos Aires. Para ello, vamos a utilizar
-
-
-
-### Otras técnicas
-
-Las dos técnicas mencionadas en este apartado no agotan, desde ya, la totalidad de herramientas disponbiles. Si bien quedan por fuera del alcance de este libro, pueden mencionarse algunas:
-
--   variables cuantitativas
--   variables cualitativas
