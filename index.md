@@ -42,7 +42,7 @@ Durante el curso se espera que les estudiantes:
 - [Práctica independiente - Notebook](./M3/clase1/Clase_2_pract.html)
 - [Práctica independiente - RMarkdown](./M3/clase1/Clase_2_pract.Rmd)
 
-
+[![](./imgs/Download.png)](./M3/clase2/clase2.zip)
 
 ---
 
