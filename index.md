@@ -28,7 +28,7 @@ Durante el curso se espera que les estudiantes:
 
 ## Contenidos y materiales
 ### Clase 1. Presentación - Aprendizaje No Supervisado E1: PCA
-- [Diapositivas]()
+- [Diapositivas](./M3/clase1/M3_Clase_1.pdf)
 - [Explicación y práctica - Notebook](./M3/clase1/Clase_1.html)
 - [Explicación y práctica - RMarkdown](./M3/clase1/Clase_1.Rmd)
 - [Práctica independiente - Notebook](./M3/clase1/Clase_1_pract.html)
@@ -37,12 +37,17 @@ Durante el curso se espera que les estudiantes:
 [![](./imgs/Download.png)](./M3/clase1/clase1.zip)
 
 ### Clase 2. Aprendizaje No Supervisado E2: Análisis de Correspondencias Múltiples (MCA)
-- [Explicación y práctica - Notebook](./M3/clase1/Clase_2.html)
-- [Explicación y práctica - RMarkdown](./M3/clase1/Clase_2.Rmd)
-- [Práctica independiente - Notebook](./M3/clase1/Clase_2_pract.html)
-- [Práctica independiente - RMarkdown](./M3/clase1/Clase_2_pract.Rmd)
+- [Diapositivas](./M3/clase2/M3_Clase_2.pdf)
+- [Explicación y práctica - Notebook](./M3/clase2/Clase_2.html)
+- [Explicación y práctica - RMarkdown](./M3/clase2/Clase_2.Rmd)
+- [Práctica independiente - Notebook](./M3/clase2/Clase_2_pract.html)
+- [Práctica independiente - RMarkdown](./M3/clase2/Clase_2_pract.Rmd)
+- [Bibliografía-Baranger](./M3/clase2/biblio/Baranger_ACM.pdf)
+- [Bibliografía-De la Fuente Fernández](./M3/clase2/biblio/correspondencias.pdf)
 
 [![](./imgs/Download.png)](./M3/clase2/clase2.zip)
+
+
 
 ---
 
