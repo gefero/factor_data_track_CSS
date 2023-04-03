@@ -45,7 +45,13 @@ Durante el curso se espera que les estudiantes:
 - [Bibliografía-Baranger](./M3/clase2/biblio/Baranger_ACM.pdf)
 - [Bibliografía-De la Fuente Fernández](./M3/clase2/biblio/correspondencias.pdf)
 
-[![](./imgs/Download.png)](./M3/clase2/clase2.zip)
+### Clase 2. Aprendizaje No Supervisado E3: Clustering K-Medias
+- [Diapositivas](./M3/clase3/M3_Clase_3.pdf)
+- [Explicación y práctica - Notebook](./M3/clase3/Clase_2.html)
+- [Explicación y práctica - RMarkdown](./M3/clase3/Clase_3.Rmd)
+- [Práctica independiente - Notebook](./M3/clase3/Clase_3_pract.html)
+
+[![](./imgs/Download.png)](./M3/clase3/clase3.zip)
 
 
 
