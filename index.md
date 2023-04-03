@@ -47,7 +47,7 @@ Durante el curso se espera que les estudiantes:
 
 ### Clase 3. Aprendizaje No Supervisado E3: Clustering K-Medias
 - [Diapositivas](./M3/clase3/M3_Clase_3.pdf)
-- [Explicación y práctica - Notebook](./M3/clase3/Clase_2.html)
+- [Explicación y práctica - Notebook](./M3/clase3/Clase_3.html)
 - [Explicación y práctica - RMarkdown](./M3/clase3/Clase_3.Rmd)
 - [Práctica independiente - Notebook](./M3/clase3/Clase_3_pract.html)
 
