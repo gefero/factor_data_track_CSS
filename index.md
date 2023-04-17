@@ -54,6 +54,13 @@ Durante el curso se espera que les estudiantes:
 [![](./imgs/Download.png)](./M3/clase3/clase3.zip)
 
 
+### Clase 4. Aprendizaje No Supervisado E3: Clustering Jerárquico y pŕactica
+- [Diapositivas](./M3/clase3/M3_Clase_3.pdf)
+- [Explicación y práctica - Notebook](./M3/clase4/Clase_4.html)
+- [Explicación y práctica - RMarkdown](./M3/clase4/Clase_4.Rmd)
+- [Práctica independiente - Notebook](./M3/clase4/Clase_4_pract.html)
+
+[![](./imgs/Download.png)](./M3/clase4/clase4.zip)
 
 ---
 
