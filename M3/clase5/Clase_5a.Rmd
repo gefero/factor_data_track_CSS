@@ -24,7 +24,7 @@ options(dplyr.summarise.inform = FALSE)
 
 
 # Introducción   
-En este material aplicaremos la técnica de cross-validation para testear distintos modelos vistos a lo largo del módulo. Utilizaremos las herramientas específicas de tidymodels para aprender a comparar modelos.
+En este material aplicaremos la técnica de cross-validation para testear distintos modelos. Utilizaremos las herramientas específicas de tidymodels para aprender a comparar modelos.
 
 # Cross-Validation   
 La función ```vfold_cv()``` nos crea un objeto que contiene las particiones en cuestión. Aplicando CV con 10 folds para un solo modelo. Usaremos **K = 10**, lo que implica que pparticionaremos en 10 el dataset, para que cada parte actue como testing de las otras 9 en cada una de las iteraciones  
