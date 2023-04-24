@@ -47,7 +47,7 @@ mi_formula_gral <- recipe(
                ) 
 
 validacion_fit <- fit_resamples(
-  object       = mi_modelo,# Definición de mi (mis) modelos
+  object       = mi_modelo, # Definición de mi (mis) modelos
   preprocessor = mi_formula_gral, #formula a aplicar
   resamples    = base_folds, # De donde saco las particiones 
   metrics      = metric_set(rmse, mae), #Metricas (Root mean squear error y Mean abs error)
