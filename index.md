@@ -62,6 +62,17 @@ Durante el curso se espera que les estudiantes:
 
 [![](./imgs/Download.png)](./M3/clase4/clase4.zip)
 
+
+### Clase 5. Introducción al flujo de trabajo supervisado
+- [Diapositivas](./M3/clase5/M3_Clase_5.pdf)
+- [Explicación y práctica Parte 1 - Notebook](./M3/clase5/Clase_5a.html)
+- [Explicación y práctica Parte 1 - RMarkdown](./M3/clase5/Clase_5a.Rmd)
+- [Explicación y práctica Parte 2 - Notebook](./M3/clase5/Clase_5b.html)
+- [Explicación y práctica Parte 2 - RMarkdown](./M3/clase5/Clase_5b.Rmd)
+- [Práctica independiente - Notebook](./M3/clase5/Clase_5_pract.html)
+
+[![](./imgs/Download.png)](./M3/clase5/clase5.zip)
+
 ---
 
 ## Modulo 2: Métodos de análisis cuantitativos multivariados
