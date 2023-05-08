@@ -76,8 +76,8 @@ Durante el curso se espera que les estudiantes:
 
 ### Clase 6. Árboles de decisión - CART
 - [Diapositivas](./M3/clase6/M3_Clase_6.pdf)
-- [Explicación y práctica Parte 1 - Notebook](./M3/clase6/Clase_6.html)
-- [Explicación y práctica Parte 1 - RMarkdown](./M3/clase6/Clase_6.Rmd)
+- [Explicación y práctica - Notebook](./M3/clase6/Clase_6.html)
+- [Explicación y práctica - RMarkdown](./M3/clase6/Clase_6.Rmd)
 - [Práctica independiente - Notebook](./M3/clase5/Clase_6_pract.html)
 
 [![](./imgs/Download.png)](./M3/clase6/clase6.zip)
