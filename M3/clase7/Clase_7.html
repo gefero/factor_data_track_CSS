@@ -1521,7 +1521,7 @@ library(tidyverse)</code></pre>
 ## ✖ dplyr::lag()      masks stats::lag()
 ## ✖ yardstick::spec() masks readr::spec()
 ## ✖ recipes::step()   masks stats::step()
-## • Learn how to get started at https://www.tidymodels.org/start/</code></pre>
+## • Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
 <pre class="r"><code>library(themis)
 library(baguette)
 library(rpart.plot)</code></pre>
@@ -1623,9 +1623,6 @@ test &lt;- testing(split)</code></pre>
 <h2>Árbol simple</h2>
 <p>Refresquemos el modelo de clase previa. Lo podemos importar como
 RDS.</p>
-</div>
-<div id="chequear-esto" class="section level2">
-<h2>CHEQUEAR ESTO</h2>
 <pre class="r"><code>cart_final_fit &lt;- read_rds(&#39;./models/cart_final_train.rds&#39;)
 
 test_cart &lt;- cart_final_fit %&gt;%

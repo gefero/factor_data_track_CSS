@@ -106,9 +106,6 @@ test <- testing(split)
 ## Árbol simple
 
 Refresquemos el modelo de clase previa. Lo podemos importar como RDS.
-
-
-## CHEQUEAR ESTO
 ```{r message=FALSE, warning=FALSE}
 cart_final_fit <- read_rds('./models/cart_final_train.rds')
 
