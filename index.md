@@ -78,10 +78,16 @@ Durante el curso se espera que les estudiantes:
 - [Diapositivas](./M3/clase6/M3_Clase_6.pdf)
 - [Explicación y práctica - Notebook](./M3/clase6/Clase_6.html)
 - [Explicación y práctica - RMarkdown](./M3/clase6/Clase_6.Rmd)
-- [Práctica independiente - Notebook](./M3/clase5/Clase_6_pract.html)
+- [Práctica independiente - Notebook](./M3/clase6/Clase_6_pract.html)
 
 [![](./imgs/Download.png)](./M3/clase6/clase6.zip)
 
+### Clase 7. Ensamble Learning E1 - Bagging + Random Forest
+- [Diapositivas Parte 1](./M3/clase7/M3_Clase_7_I.pdf)
+- [Explicación y práctica - Notebook](./M3/clase7/Clase_7.html)
+- [Explicación y práctica - RMarkdown](./M3/clase7/Clase_7.Rmd)
+
+[![](./imgs/Download.png)](./M3/clase7/clase7.zip)
 
 
 ---
