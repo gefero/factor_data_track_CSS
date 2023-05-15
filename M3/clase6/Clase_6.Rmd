@@ -13,7 +13,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-tree_rs <- readRDS('./data/tree_resamples.RDS')
+#tree_rs <- readRDS('./data/tree_resamples.RDS')
 ```
 
 # El problema
@@ -232,7 +232,7 @@ tidy(folds)
 
 Ahora vamos a probar los posibles valores que puede adoptar el modelo con los distintos parámetros en las muestras con cross-validation.
 
-```{r eval=FALSE, include=TRUE}
+```{r eval=TRUE, include=TRUE}
 doParallel::registerDoParallel()
 
 set.seed(345)
@@ -244,6 +244,8 @@ tree_rs <- tree_wf %>%
   metrics = metric_set(roc_auc, precision, 
                        recall, f_meas)
 )
+
+write_rds(tree_rs, './data/cart_rs.rds')
 ```
 
 Podemos ver los resultados de este objeto con `collect_metrics()`.
@@ -280,7 +282,7 @@ Hasta acá, el modelo está actualizado y finalizado (no lo podemos seguir tunea
 
 ```{r}
 final_fit <- tree_wf %>% update_model(final_tree) %>% fit(train)
-
+write_rds(final_fit, './data/cart_final_train.rds') # Lo persistimos
 final_fit
 ```
 
