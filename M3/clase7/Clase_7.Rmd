@@ -22,10 +22,11 @@ library(rpart.plot)
 
 #write_rds(tree_rs, './models/tree_rs.rds')
 tree_rs <- read_rds('./models/tree_rs.rds')
+tree_rs_rf <- read_rds('./models/tree_rs_rf.rds')
 
 ```
 
-# El problema
+## El problema
 
 La clase pasada, cerramos viendo que los árboles de decisión presentan algunos pros y varios contras. Si bien son modelos muy interpretables y sencillos de explicar, no tienen mucha potencia en capacidad predictiva. Esto se debe a que:
 
@@ -53,11 +54,12 @@ data <- data %>% mutate_at(
                    vars(SEXO_SEL), 
                     ~as.factor(case_when(
                       . == 1 ~ "Mujer",
-                      . == 2 ~ "Varón"
+                      . == 2 ~ "Varon"
                     )))
                    
  
- data <- data %>% mutate_at(vars(CONDICION_ACTIVIDAD_AGRUPADA), 
+
+data <- data %>% mutate_at(vars(CONDICION_ACTIVIDAD_AGRUPADA), 
                    ~as.factor(case_when(
                      . == 1 ~ "Ocupado",
                      . == 2 ~ "No ocupado"
@@ -66,7 +68,7 @@ data <- data %>% mutate_at(
 data <- data %>% mutate_at(vars(BHCH04_SEL), 
                    ~as.factor(case_when(
                      . == 1 ~ "Jefe/a",
-                     . == 2 ~ "Cónyuge/pareja",
+                     . == 2 ~ "Conyuge/pareja",
                      . == 3 ~ "Hijo/a",
                      . == 4 ~ "Hijastro/a",
                      . == 5 ~ "Yerno/nuera",
@@ -74,7 +76,7 @@ data <- data %>% mutate_at(vars(BHCH04_SEL),
                      . == 7 ~ "Padre o madre",
                      . == 8 ~ "Suegro/a",
                      . == 9 ~ "Hermano/a",
-                     . == 10 ~ "Cuñado/a",
+                     . == 10 ~ "Cuniado/a",
                      . == 11 ~ "Sobrino/a",
                      . == 12 ~ "Abuelo/a",
                      . == 13 ~ "Otro familiar",
@@ -87,12 +89,12 @@ data <- data %>% mutate_at(vars(BHCH04_SEL),
                      . == 0 ~ "No es demandante de cuidado",
                      . == 1 ~ "Es demandante de cuidado"
                    )))
- 
-data <- data %>% select(-TCS_GRUPO_DOMESTICO)
+
+data<- data %>% select(-TCS_GRUPO_DOMESTICO)
 ```
 
-# Ensamble: Bagging
-## Partición train/test
+## Ensamble: Bagging
+### Partición train/test
 Siempre que empezamos el flujo de trabajo de un modelo, lo primero es hacer la partición del dataset de entrenamiento y validación.
 
 ```{r}
@@ -103,8 +105,7 @@ train <- training(split)
 test <- testing(split)
 ```
 
-## Árbol simple
-
+### Árbol simple
 Refresquemos el modelo de clase previa. Lo podemos importar como RDS.
 ```{r message=FALSE, warning=FALSE}
 cart_final_fit <- read_rds('./models/cart_final_train.rds')
@@ -129,8 +130,7 @@ class_metrics_dt(test_cart, truth = realiza_domest, estimate = .pred_class)
 Veamos si podemos mejorar nuestro modelo con bagging.
 
 
-## Feature engineering
-
+### Feature engineering
 Procesamos las variable haciendo la "receta" del modelo. Con `recipe()` especificamos un set de transformaciones que queremos hacer sobre el modelo. Su principal argumento es la fórmula del modelo, que en nuestro caso es `realiza_domest ~ .`
 
 ```{r}
@@ -146,8 +146,7 @@ wf <- workflow() %>%
   add_recipe(recipe)
 ```
 
-## Hiperparámetros
-
+### Hiperparámetros
 Recordemos que podemos modificar algunos parámetros del modelo que van a modificar su performance. Vamos a poner la opción de tunear los distintos elementos del árbol. Pero además, vamos a definir un número para la cantidad de remuestreos bootstrap que queremos para nuestro modelo.
 
 ```{r}
@@ -178,9 +177,9 @@ set.seed(1912)
 
 tree_grid <- grid_regular(tree_depth(), 
                           min_n(), 
-                          levels = 20)
+                          levels = 9)
 
-folds <- vfold_cv(train, v = 3)
+folds <- vfold_cv(train, v = 5)
 
 tree_rs <- tree_bag %>% 
   tune_grid(
@@ -188,6 +187,7 @@ tree_rs <- tree_bag %>%
   grid = tree_grid,
   metrics = metric_set(precision, recall,
                        roc_auc, f_meas))
+
 ```
 
 ¿Cómo funcionó el modelo?
@@ -204,14 +204,15 @@ best_model <- select_best(tree_rs, "roc_auc")
 final_model <- finalize_model(tree_spec, best_model)
 ```
 
-## Fit y exploración
-
+### Fit y exploración
 Fiteamos el modelo a nuestra muestra de entrenamiento.
 
 ```{r eval=TRUE, include=TRUE}
 final_fit <- wf %>%
   update_model(final_model) %>%
   fit(train)
+
+write_rds(final_fit, './models/bagging_final_train.rds')
 ```
 
 ¿Qué variables aparecen en este modelo?
@@ -227,8 +228,7 @@ final_fit$fit$fit$fit$imp %>%
 
 ``` 
 
-## Evaluación
-
+### Evaluación
 ¿Cómo fue la performance final del set de validación?
 
 ```{r}
@@ -242,13 +242,91 @@ test_val <- predict(final_fit, test, type = "prob") %>%
 class_metrics <- metric_set(precision, recall,
                        accuracy, f_meas)
 
-
-
-
 roc_auc(test_val, truth = realiza_domest, ".pred_No realiza") %>% 
   bind_rows(class_metrics(test_val, truth = realiza_domest, estimate = .pred_class))
 ```
-- Incrementa en 2 puntos porcentuales la cantidad de casos bien clasificados (accuracy)
+- Incrementa en 1 punto porcentual la cantidad de casos bien clasificados (accuracy)
 - Mejora en un 2 porcentuales la precision
-- Recall se mantiene 
 - Mejora un 2% el área ROC.
+
+## Random Forest
+Vamos, ahora, a entrenar un random forest.
+
+```{r}
+# Volvemos a instanciar el workflow
+wf <- workflow() %>%
+        add_recipe(recipe)
+
+# Definimos los parámetros de tuneo del modelo
+rf_spec <- rand_forest(
+        trees = 750,
+        mtry = tune(),
+        min_n = tune()
+) %>%
+        set_mode("classification") %>%
+        set_engine("ranger")
+
+rf_spec %>% translate()
+
+# Agregamos el modelo al wf
+tree_rf <- wf %>%
+        add_model(rf_spec)
+```
+
+En este caso, vamos a setear una grilla de hiperparámetros de forma manual.
+
+```{r,  eval=FALSE, include=TRUE}
+tree_grid <- expand.grid(
+        mtry = seq(1,8,2),
+        min_n = seq(1,50,10)
+)
+
+## Podríamos reutilizar el objeto folds que habíamos definido más arriba.
+set.seed(1912)
+folds <- vfold_cv(train, v = 5)
+
+## Entrenamos el RF
+tree_rs_rf <- tree_rf %>% 
+        tune_grid(
+                resamples = folds,
+                grid = tree_grid,
+                metrics = metric_set(precision, recall,
+                                     roc_auc, f_meas))
+
+
+```
+
+```{r}
+autoplot(tree_rs_rf)
+```
+
+```{r eval=TRUE, include=TRUE}
+best_model_rf <- select_best(tree_rs_rf, "roc_auc")
+
+final_model_rf <- finalize_model(rf_spec, best_model_rf)
+
+final_fit_rf <- wf %>%
+        update_model(final_model_rf) %>%
+        fit(train)
+
+write_rds(final_fit_rf, './models/rf_final_train.rds')
+```
+
+
+### Evaluación
+```{r}
+test_vaf_rf <- final_fit_rf %>%
+  predict(test) %>%
+  bind_cols(., test)
+
+test_vaf_rf <- predict(final_fit_rf, test, type = "prob") %>%
+  bind_cols(test_vaf_rf, .)
+
+class_metrics <- metric_set(precision, recall,
+                       accuracy, f_meas)
+
+roc_auc(test_vaf_rf, truth = realiza_domest, ".pred_No realiza") %>% 
+  bind_rows(class_metrics(test_vaf_rf, truth = realiza_domest, estimate = .pred_class))
+```
+
+¿Qué modelo funciona mejor?
