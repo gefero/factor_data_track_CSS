@@ -89,6 +89,15 @@ Durante el curso se espera que les estudiantes:
 
 [![](./imgs/Download.png)](./M3/clase7/clase7.zip)
 
+### Clase 8. Ensamble Learning E2 - Boosting
+- [Diapositivas Random Forest](./M3/clase8/M3_Clase_7_II.pdf)
+- [Diapositivas Boosting](./M3/clase8/M3_Clase_8.pdf)
+- [Explicación y práctica - Notebook](./M3/clase8/Clase_8_I.html)
+- [Explicación y práctica - RMarkdown](./M3/clase8/Clase_8_I.Rmd)
+- [Explicación y práctica parte 2 - Notebook](./M3/clase8/Clase_8_II.html)
+- [Explicación y práctica parte 2 - RMarkdown](./M3/clase8/Clase_8_II.Rmd)
+
+[![](./imgs/Download.png)](./M3/clase8/clase8.zip)
 
 ---
 

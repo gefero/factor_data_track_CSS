@@ -149,17 +149,16 @@ tune_params <- tune_wf %>%
    tune_grid(folds,
              metrics = metric_set(precision, recall,
                                roc_auc, f_meas),
-             grid = 10)
+             grid = 15)
 tictoc::toc() 
-
-
 ```
 
-Ahora, seleccionamos el mejor modelo en base a f1 y lo finalizamos.
+
+
+Ahora, seleccionamos el mejor modelo en base a `roc_auc` y lo finalizamos.
 
 ```{r}
 best_model <- select_best(tune_params, metric = "roc_auc")
-
 final_model <- finalize_model(bt_spec, best_model)
 ```
 
@@ -177,27 +176,88 @@ fit_tree
 Guardamos el modelo para usarlo a futuro.
 
 ```{r echo = FALSE}
-write_rds(fit_tree, "./model/boosting_fit.RDS")
+write_rds(fit_tree, "./models/boosting_fit.rds")
 ```
 
-Ahora, vamos a predecir sobre el test set, obtener las métricas de evaluación y compararlas con los otros modelos.
+Ahora, vamos a predecir sobre el test set, obtener las métricas de evaluación y compararlas con los otros modelos. Recordemos los modelos previos.
 
 ```{r}
-rm(boost_valid)
-
-boost_valid <- fit_tree %>%
+cart_final_fit <- read_rds('./models/cart_final_train.rds')
+cart_test <- cart_final_fit %>%
   predict(test) %>%
-  bind_cols(., test)
+  bind_cols(test, .)
 
-boost_valid <- predict(fit_tree, test, type = "prob") %>%
-  bind_cols(boost_valid, .)
+cart_test <- predict(cart_final_fit, test, type = "prob") %>%
+  bind_cols(cart_test, .)
 
-names(boost_valid)
+bagging_final_fit <- read_rds('./models/bagging_final_train.rds')
+bagging_test <- bagging_final_fit %>%
+  predict(test) %>%
+  bind_cols(test, .)
+
+bagging_test <- predict(bagging_final_fit, test, type = "prob") %>%
+  bind_cols(bagging_test, .)
+
+rf_final_fit <- read_rds('./models/rf_final_train.rds')
+rf_test <- rf_final_fit %>%
+  predict(test) %>%
+  bind_cols(test, .)
+
+rf_test <- predict(rf_final_fit, test, type = "prob") %>%
+  bind_cols(rf_test, .)
+
+datasets <- list(cart_test, bagging_test, rf_test)
+
 class_metrics <- metric_set(precision, recall,
                        accuracy, f_meas)
 
-boost_metrics <- roc_auc(boost_valid, truth = realiza_domest, ".pred_No realiza") %>%
-  bind_rows(class_metrics(boost_valid, truth = realiza_domest, estimate = .pred_class)) %>%
+#Hago una función para mapear y no repetir lo mismo 3 veces
+
+metricas <- function(dataset, model_name){
+  
+  metrics <-  roc_auc(dataset, truth = realiza_domest, ".pred_No realiza") %>%
+    bind_rows(class_metrics(dataset, truth = realiza_domest, estimate = .pred_class))
+  
+  return(metrics)
+}
+
+
+
+metrics_eval <- datasets %>% 
+  map_dfr(metricas, .id = "model")
+
+metrics_eval <- metrics_eval %>% 
+  mutate_at(vars(model),
+            ~as.factor(
+              case_when(
+              . %in% "1" ~ "Árbol de decisión",
+              . %in% "2" ~ "Bagging",
+              . %in% "3" ~ "Random Forest")
+            ))
+
+ggplot(metrics_eval, aes(x = .metric, y = .estimate, fill = model))+
+  geom_col(position = "dodge")+
+  scale_fill_viridis_d()+
+  theme_minimal()
+
+```
+-   ¿Qué modelo funciona mejor? ¿Por qué?
+
+Comparemos, ahora, con Boosting...
+
+```{r}
+boost_test <- fit_tree %>%
+  predict(test) %>%
+  bind_cols(., test)
+
+boost_test <- predict(fit_tree, test, type = "prob") %>%
+  bind_cols(boost_test, .)
+
+class_metrics <- metric_set(precision, recall,
+                       accuracy, f_meas)
+
+boost_metrics <- roc_auc(boost_test, truth = realiza_domest, ".pred_No realiza") %>%
+  bind_rows(class_metrics(boost_test, truth = realiza_domest, estimate = .pred_class)) %>%
   mutate(model = "Boosting")
 
 metrics_eval <- bind_rows(metrics_eval, boost_metrics)
@@ -218,64 +278,5 @@ Teniendo en cuenta qué significa cada métrica de evaluación, ¿qué pueden de
 -   ¿Cuál funciona mejor en base a esos dos criterios? ¿Y peor?
 
 
-## Árboles simples y modelos de bagging
 
-Recordemos los modelos previos.
-
-```{r}
-
-cart_final_fit <- read_rds('./models/cart_final_train.rds')
-cart_test <- cart_final_fit %>%
-  predict(test) %>%
-  bind_cols(test, .)
-
-bagging_final_fit <- read_rds('./models/bagging_final_train.rds')
-bagging_test <- bagging_final_fit %>%
-  predict(test) %>%
-  bind_cols(test, .)
-
-rf_final_fit <- read_rds('./models/rf_final_train.rds')
-rf_test <- rf_final_fit %>%
-  predict(test) %>%
-  bind_cols(test, .)
-
-#decision_tree <- readRDS('./data/validation_test_dt.RDS')
-#bagging <- readRDS('./data/validation_test_bag.RDS')
-#random_forest <- readRDS('./data/validation_rf.RDS')
-
-datasets <- list(cart_test, bagging_test, rf_test)
-
-class_metrics <- metric_set(precision, recall,
-                       accuracy, f_meas)
-
-#Hago una función para mapear y no repetir lo mismo 3 veces
-
-metricas <- function(dataset, model_name){
-  
-  metrics <-  roc_auc(dataset, truth = realiza_domest, estimate = ".pred_No realiza") %>%
-    bind_rows(class_metrics(dataset, truth = realiza_domest, estimate = .pred_class))
-  
-  return(metrics)
-}
-
-metrics_eval <- datasets %>% 
-  map_dfr(metricas, .id = "model")
-
-metrics_eval <- metrics_eval %>% 
-  mutate_at(vars(model),
-            ~as.factor(
-              case_when(
-              . %in% "1" ~ "Árbol de decisión",
-              . %in% "2" ~ "Bagging",
-              . %in% "3" ~ "Random Forest")
-            ))
-
-ggplot(metrics_eval, aes(x = .metric, y = .estimate, fill = model))+
-  geom_col(position = "dodge")+
-  scale_fill_viridis_d()+
-  theme_minimal()
-
-```
-
--   ¿Qué modelo funciona mejor? ¿Por qué?
 
