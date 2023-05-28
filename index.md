@@ -26,6 +26,15 @@ Durante el curso se espera que les estudiantes:
 ## Programa
 - [Programa de la materia - 1er. cuatrimestre 2023](https://docs.google.com/document/d/18AaSQh2mvOahGhLAniOhCyUrIOhLL3ZhqUauhcOSM2o/edit?usp=sharing)
 
+## Trabajo Final Integrador
+- [Consignas - Notebook](./M3/TFI/TFI_Consignas.html)
+- [Consignas - Rmarkdown](./M3/TFI/TFI_Consignas.Rmd)
+- [Dataset 1 - Datos sobre condiciones de vida](./M3/TFI/data/radios_hogar.csv)
+- [Dataset 2 - Datos sobre accesibildad a servicios de salud](./M3/TFI/data/vuln_sanit.csv)
+- [Dataset 3 - Radios pertenecientes a EPH](./M3/TFI/data/env_eph.csv)
+
+[![](./imgs/Download.png)](./M3/TFI/TFI.zip)
+
 ## Contenidos y materiales
 ### Clase 1. Presentación - Aprendizaje No Supervisado E1: PCA
 - [Diapositivas](./M3/clase1/M3_Clase_1.pdf)
@@ -98,6 +107,9 @@ Durante el curso se espera que les estudiantes:
 - [Explicación y práctica parte 2 - RMarkdown](./M3/clase8/Clase_8_II.Rmd)
 
 [![](./imgs/Download.png)](./M3/clase8/clase8.zip)
+
+
+### Clase 9 a 11. Taller Trabajo Final Integrador
 
 ---
 

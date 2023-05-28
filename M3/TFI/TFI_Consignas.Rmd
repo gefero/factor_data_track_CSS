@@ -1,0 +1,86 @@
+---
+title: "Machine Learning aplicado a las Ciencias Sociales"
+subtitle: "Trabajo Final Integrador"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
+```
+
+## Planteo del problema
+Forman parte del equipo de factor~data. Actualmente, estamos trabajando en la realización de un análisis de la accesibilidad a los diferentes servicios de salud en Argentina, con especial énfasis en los grandes aglomerados urbanos. En ese sentido, buscamos abordar dos objetivos generales:
+
+- generar un mapa con el mayor nivel de desagregación posible de la accesibilidad a la salud
+- identificar los determinantes más importantes de esta accesibilidad
+
+## Datos disponibles a la fecha
+Para ello, será necesario integrar diferentes fuentes de información. Actualmente, poseemos disponibles tres datasets con los 52.400 radios de _todo el país_. El primero de ellos (`./data/radios_hogar.csv`), contiene alguna información del Censo Nacional de Población y Vivienda del año 2010.
+
+- `link` 
+- `provincia` 
+- `depto` 
+- `hogares_sin_nbi` 
+- `banio_uso_exclusivo` 
+- `cocina_gas_red`
+- `desague_red_cloaca` 
+- `techo_membrana` 
+- `piso_ceramica_baldosa`
+- `agua_de_red` 
+- `revestimiento_techo`
+- `agua_canieria_dentro` 
+- `tiene_bano_o_letrina_si` 
+- `inodoro_con_cadena`
+- `regimen_tenencia_propietario`
+
+Cada variable contiene la proporción de hogares dentro de cada radio que son clasificados en cada categoría. Fueron construidas sobre las preguntas del [cuestionario de hogar del Censo](https://www.indec.gob.ar/ftp/cuadros/poblacion/cuestionario_basico_2010.pdf). Pueden encontrar [información sobre las definiciones de las variables aquí](https://www.indec.gob.ar/ftp/cuadros/poblacion/glosario_censo2010.pdf). Será necesario explorar el cuestionario del Censo y pensar qué otra información puede agregarse para el análisis.
+
+El segundo dataset (también a nivel de radio censal, disponible en `./data/vuln_sanit.csv`) contiene los tiempos de acceso en minutos a tres tipos de establecimientos de salud:
+
+- `tpo_hospital`: tiempo de acceso a hospitales (alta complejidad)
+- `tpo_ctro_salud`: tiempo de acceso a centros de salid (media complejidad)
+- `tpo_posta`: tiempo de acceso a postas sanitarias (baja complejidad)
+
+Contiene, además, un campo (`geometry`) con la información vectorial para generar la georreferenciación de cada uno de los radios.
+
+El dataset está tomado del sitio [poblaciones.org](https://mapa.poblaciones.org/map/19501/#/@-34.992107,-63.604001,4z) y está basado en los datos construidos en el [este paper](https://equityhealthj.biomedcentral.com/articles/10.1186/s12939-020-01292-3).
+
+El tercer dataset (disponible en `./data/env_eph.csv`) permite identificar qué radio pertenece a cada uno de los aglomerados urbanos relevados por la Encuesta Permanente de Hogares.
+
+## Preguntas orientadoras para ir avanzando...
+Será necesario **especificar el problema a abordar**. 
+- ¿Cómo definir la "accesibilidad" a servicios de salud? ¿Cómo medirla de la forma más completa posible con la información disponible?
+
+Además, deberemos pensar en las **fuetes de información**
+- ¿Qué información podemos utilizar de los datasets disponibles para la pregunta por los determinantes de dicha accesibilidad?
+- ¿Qué otra información del CNPyV 2010 podemos utilizar para enriquecer el dataset?
+- ¿Cómo podemos diferenciar zonas urbanas de zonas no urbanas? ¿Cómo podemos identificar los grandes aglomerados urbanos?
+
+También deberemos abordar el **diseño del análisis y modelado**
+- ¿Qué técnicas deberemos utilizar para abordar los objetivos planteados? ¿Cómo identificar los determinantes de la accesibilidad?
+- ¿Se trata de un problema de aprendizaje supervisado (de clasificación o de regresión) o no supervisado? 
+- ¿Qué métricas deberemos utilizar para evaluar el problema?
+- ¿Qué diseño de remuestreo será necesario para una correcta estimación de los errores?
+- ¿Qué metricas utilizaremos 
+
+---
+
+## Entregables finales
+Al finalizar el trabajo, cada equipo deberá entregar 
+
+- un informe de resultados en el que se expondrán los criterios metodológicos llevados adelante para abordar los objetivos, los problemas encontrados, las soluciones a los mismos y los resultados. La extensión máxima del informe será 15 carillas en formato Times New Roman 12, con interlineado 1.5 en hoja A4.
+- una presentación en formato Google Slides o similar en el que presetan (en 8 diapositivas como máximo) los principales resultados y problemas del estudio  
+- el código utilizado en formato "reutilizable"
+
+## Fecha de presentación
+- 26 de Junio de 2023
