@@ -53,7 +53,7 @@ El segundo dataset (también a nivel de radio censal, disponible en `./data/vuln
 
 Contiene, además, un campo (`geometry`) con la información vectorial para generar la georreferenciación de cada uno de los radios.
 
-El dataset está tomado del sitio [poblaciones.org](https://mapa.poblaciones.org/map/19501/#/@-34.992107,-63.604001,4z) y está basado en los datos construidos en el [este paper](https://equityhealthj.biomedcentral.com/articles/10.1186/s12939-020-01292-3).
+El dataset está tomado del sitio [poblaciones.org](https://mapa.poblaciones.org/map/19501/#/@-34.992107,-63.604001,4z) y está basado en los datos construidos en el [este paper](https://equityhealthj.biomedcentral.com/articles/10.1186/s12939-020-01292-3). Hay, además, en este [link una versión resumida](https://arxiv.org/pdf/1901.08105.pdf) en castellano.
 
 El tercer dataset (disponible en `./data/env_eph.csv`) permite identificar qué radio pertenece a cada uno de los aglomerados urbanos relevados por la Encuesta Permanente de Hogares.
 
@@ -75,7 +75,7 @@ También deberemos abordar el **diseño del análisis y modelado**
 - ¿Se trata de un problema de aprendizaje supervisado (de clasificación o de regresión) o no supervisado? 
 - ¿Qué métricas deberemos utilizar para evaluar el problema?
 - ¿Qué diseño de remuestreo será necesario para una correcta estimación de los errores?
-- ¿Qué metricas utilizaremos 
+
 
 ---
 
