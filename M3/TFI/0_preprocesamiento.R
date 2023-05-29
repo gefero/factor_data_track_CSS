@@ -1,8 +1,8 @@
 library(tidyverse)
 library(sf)
 
-vuln <- read_sf('./clase9/data/Vulnerabilidad sanitaria 2010-2018.csv')
-cond <- read_csv('./clase9/data/radios_hogar.csv')
+vuln <- read_sf('./TFI/data/Z_vuln_sanit.csv')
+cond <- read_csv('./TFI/data/radios_hogar.csv')
 
 cond <- cond %>% rename(link=radio)
 
@@ -18,4 +18,4 @@ vuln_final <- vuln %>%
         left_join(cond) %>%
         select(everything(), geometry)
 
-write_csv(vuln_final, "./clase9/data/vulnerabilidad_final.csv")
+write_csv(vuln, "./TFI/data/vuln_sanit.csv")
