@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 ```
 
 ## Planteo del problema
-Forman parte del equipo de factor~data. Actualmente, estamos trabajando en la realización de un análisis de la accesibilidad a los diferentes servicios de salud en Argentina, con especial énfasis en los grandes aglomerados urbanos. En ese sentido, buscamos abordar dos objetivos generales:
+Actualmente, en factor~data estamos trabajando en la realización de un análisis de la accesibilidad a los diferentes servicios de salud en Argentina, con especial énfasis en los grandes aglomerados urbanos. En ese sentido, buscamos abordar dos objetivos generales:
 
 - generar un mapa con el mayor nivel de desagregación posible de la accesibilidad a la salud
 - identificar los determinantes más importantes de esta accesibilidad
@@ -59,14 +59,18 @@ El tercer dataset (disponible en `./data/env_eph.csv`) permite identificar qué 
 
 ## Preguntas orientadoras para ir avanzando...
 Será necesario **especificar el problema a abordar**. 
-- ¿Cómo definir la "accesibilidad" a servicios de salud? ¿Cómo medirla de la forma más completa posible con la información disponible?
+
+- ¿Cómo definir la "accesibilidad" a servicios de salud? 
+- ¿Cómo medirla de la forma más completa posible con la información disponible?
 
 Además, deberemos pensar en las **fuetes de información**
+
 - ¿Qué información podemos utilizar de los datasets disponibles para la pregunta por los determinantes de dicha accesibilidad?
 - ¿Qué otra información del CNPyV 2010 podemos utilizar para enriquecer el dataset?
 - ¿Cómo podemos diferenciar zonas urbanas de zonas no urbanas? ¿Cómo podemos identificar los grandes aglomerados urbanos?
 
 También deberemos abordar el **diseño del análisis y modelado**
+
 - ¿Qué técnicas deberemos utilizar para abordar los objetivos planteados? ¿Cómo identificar los determinantes de la accesibilidad?
 - ¿Se trata de un problema de aprendizaje supervisado (de clasificación o de regresión) o no supervisado? 
 - ¿Qué métricas deberemos utilizar para evaluar el problema?
