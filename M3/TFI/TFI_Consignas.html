@@ -1488,18 +1488,17 @@ border-radius: 0px;
 Sociales</h1>
 <h3 class="subtitle">Trabajo Final Integrador</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">28 mayo, 2023</h4>
+<h4 class="date">29 mayo, 2023</h4>
 
 </div>
 
 
 <div id="planteo-del-problema" class="section level2">
 <h2>Planteo del problema</h2>
-<p>Forman parte del equipo de factor~data. Actualmente, estamos
-trabajando en la realización de un análisis de la accesibilidad a los
-diferentes servicios de salud en Argentina, con especial énfasis en los
-grandes aglomerados urbanos. En ese sentido, buscamos abordar dos
-objetivos generales:</p>
+<p>Actualmente, en factor~data estamos trabajando en la realización de
+un análisis de la accesibilidad a los diferentes servicios de salud en
+Argentina, con especial énfasis en los grandes aglomerados urbanos. En
+ese sentido, buscamos abordar dos objetivos generales:</p>
 <ul>
 <li>generar un mapa con el mayor nivel de desagregación posible de la
 accesibilidad a la salud</li>
@@ -1554,31 +1553,43 @@ vectorial para generar la georreferenciación de cada uno de los
 radios.</p>
 <p>El dataset está tomado del sitio <a href="https://mapa.poblaciones.org/map/19501/#/@-34.992107,-63.604001,4z">poblaciones.org</a>
 y está basado en los datos construidos en el <a href="https://equityhealthj.biomedcentral.com/articles/10.1186/s12939-020-01292-3">este
-paper</a>.</p>
+paper</a>. Hay, además, en este <a href="https://arxiv.org/pdf/1901.08105.pdf">link una versión
+resumida</a> en castellano.</p>
 <p>El tercer dataset (disponible en <code>./data/env_eph.csv</code>)
 permite identificar qué radio pertenece a cada uno de los aglomerados
 urbanos relevados por la Encuesta Permanente de Hogares.</p>
 </div>
 <div id="preguntas-orientadoras-para-ir-avanzando" class="section level2">
 <h2>Preguntas orientadoras para ir avanzando…</h2>
-<p>Será necesario <strong>especificar el problema a abordar</strong>. -
-¿Cómo definir la “accesibilidad” a servicios de salud? ¿Cómo medirla de
-la forma más completa posible con la información disponible?</p>
+<p>Será necesario <strong>especificar el problema a
+abordar</strong>.</p>
+<ul>
+<li>¿Cómo definir la “accesibilidad” a servicios de salud?</li>
+<li>¿Cómo medirla de la forma más completa posible con la información
+disponible?</li>
+</ul>
 <p>Además, deberemos pensar en las <strong>fuetes de
-información</strong> - ¿Qué información podemos utilizar de los datasets
-disponibles para la pregunta por los determinantes de dicha
-accesibilidad? - ¿Qué otra información del CNPyV 2010 podemos utilizar
-para enriquecer el dataset? - ¿Cómo podemos diferenciar zonas urbanas de
-zonas no urbanas? ¿Cómo podemos identificar los grandes aglomerados
-urbanos?</p>
+información</strong></p>
+<ul>
+<li>¿Qué información podemos utilizar de los datasets disponibles para
+la pregunta por los determinantes de dicha accesibilidad?</li>
+<li>¿Qué otra información del CNPyV 2010 podemos utilizar para
+enriquecer el dataset?</li>
+<li>¿Cómo podemos diferenciar zonas urbanas de zonas no urbanas? ¿Cómo
+podemos identificar los grandes aglomerados urbanos?</li>
+</ul>
 <p>También deberemos abordar el <strong>diseño del análisis y
-modelado</strong> - ¿Qué técnicas deberemos utilizar para abordar los
-objetivos planteados? ¿Cómo identificar los determinantes de la
-accesibilidad? - ¿Se trata de un problema de aprendizaje supervisado (de
-clasificación o de regresión) o no supervisado? - ¿Qué métricas
-deberemos utilizar para evaluar el problema? - ¿Qué diseño de remuestreo
-será necesario para una correcta estimación de los errores? - ¿Qué
-metricas utilizaremos</p>
+modelado</strong></p>
+<ul>
+<li>¿Qué técnicas deberemos utilizar para abordar los objetivos
+planteados? ¿Cómo identificar los determinantes de la
+accesibilidad?</li>
+<li>¿Se trata de un problema de aprendizaje supervisado (de
+clasificación o de regresión) o no supervisado?</li>
+<li>¿Qué métricas deberemos utilizar para evaluar el problema?</li>
+<li>¿Qué diseño de remuestreo será necesario para una correcta
+estimación de los errores?</li>
+</ul>
 <hr />
 </div>
 <div id="entregables-finales" class="section level2">
