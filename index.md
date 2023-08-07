@@ -1,9 +1,51 @@
 ![](./imgs/LOGO-FactorData-Color.jpg)
 
-
 ## Docente
 - [Germán Rosati](https://gefero.github.io/)
 
+## Presentación
+Esta materia se constituye como la última de un trayecto de materias optativas orientado a incorporar a las carreras de la EIDAES un conjunto de materias que permitan realizar a les estudiantes un primer acercamiento al campo disciplinar conocido como "Ciencias Sociales Computacionales". Por ello, se plantean como una continuación y profundización de la materia Metodologías Cuantitativas. En este sentido, la orientación es correlativa a las materias “Metodología de la Investigación” y “Metodologías Cuantitativas”. 
+
+El objetivo general de este cuarto módulo es brindar un acercamiento a algunas técnicas avanzadas de procesamiento de lenguaje natural para la investigación empírica. También se abordarán algunas estrategias de web scraping. Particularmente, se trabajará desde un enfoque conceptual (fundamentos teórico-metodológicos, casos y problemas de aplicación, etc.) y técnico (análisis de algoritmos, herramientas con interfaces gráficas, etc.).
+
+Tanto los contenidos de los ejercicios prácticos como las lecturas más conceptuales giran en torno de una misma temática, que para el segundo semestre de 2023 será el análisis de un corpus textual de letras de dos géneros (rock y tango) de la música popular argentina. Esta focalización en un único tema pretende facilitar la comprensión de métodos y técnicas y, al mismo tiempo, aportar a la formación sustantiva de les estudiantes. 
+
+El curso es una introducción práctica al análisis computacional de textos. Se propone que les asistentes 
+logren comprender algunos conceptos metodológicos fundamentales para el preprocesamiento de datos textuales (tokenizacion, lematizacion, stemming, etc.) y representación vectorial clásica de textos (Term-Frequency Matrix, tf-idf, bag of words, n-gramas, etc.); 
+conozcan algunas técnicas de modelado y detección de tópicos; 
+se introduzcan a algunas técnicas modernas de representación vectorial de textos (word embeddings); 
+conozcan algunos fundamentos para la recolección de datos no estructurados de páginas web (web scraping)
+sean capaces de identificar situaciones de aplicación de estas técnicas en sus propias investigaciones.
+
+## Modalidad de trabajo
+Las clases estarán organizadas en dos segmentos. En el primero se expondrán los contenidos conceptuales del curso. En el segundo se trabajará en forma colectiva en la resolución de prácticas guiadas e independientes: repaso metodológico de investigaciones empíricas, procesamiento de datos, análisis e interpretación de resultados. 
+
+## Correlatividades
+Para poder cursar esta materia es necesario haber aprobado la materia “Metodologías cuantitativas”. Al mismo tiempo, es requisito haber cursado y mantenido la regularidad de los tres primeros módulos del trayecto (“Procesamiento de datos con R para ciencias sociales” y “Métodos de análisis cuantitativos multivariados” y “Machine Learning aplicado a las Ciencias Sociales”). 
+
+## Condiciones de cursada y evaluación
+Para obtener la regularidad de la materia es necesario: a) asistir al 80% de las clases (tanto teóricas como prácticas); b) realizar las actividades propuestas en clase y c) aprobar con una nota de 4 o más tres instancias de evaluación: la presentación de un trabajo monográfico final (grupal), una exposición de avance (grupal) y su defensa oral (individual).
+
+La nota final de la materia consistirá en el promedio del puntaje obtenido en las dos instancias de evaluación. La materia se inscribe en el régimen de promoción directa de la UNSAM, que requiere que el alumno obtenga un promedio de cursada igual o mayor a 7 (siete) y una nota igual o mayor a 6 (seis) en cada una de las instancias parciales. 
+
+## Programa
+- [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
+
+## Contenidos y materiales
+### Clase 1. ¿Cómo hacer de un corpus de texto crudo algo analizable mediante métodos cuantitativos? Cualitativo y cuantitativo como niveles de estandarización de los datos. Preprocesamiento de texto: stopwords, lemmas y stemming. Concepto general del formato tidytext. 
+- [Diapositivas](./M4/)
+- [Explicación y práctica - Notebook](./M4/clase1/)
+- [Explicación y práctica - RMarkdown](./M4/clase1/)
+- [Práctica independiente - Notebook](./M4/clase1/)
+- [Práctica independiente - RMarkdown](./M4/clase1/)
+- [Bibliografía](./M4/clase1/biblio)
+
+	
+
+---
+
+## Modulo 3: Machine Learning aplicado a las Ciencias Sociales
+### Presentación
 
 ## Presentación
 Esta materia se constituye como la tercera de un trayecto de materias optativas orientado a incorporar a las carreras de la EIDAES un conjunto de materias que permitan realizar a les estudiantes un primer acercamiento al campo disciplinar conocido como "Ciencias Sociales Computacionales". Por ello, se plantean como una continuación y profundización de la materia Metodologías Cuantitativas. En este sentido, la orientación es correlativa a las materias “Metodología de la Investigación” y “Metodologías Cuantitativas”. 
