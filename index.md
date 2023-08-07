@@ -33,15 +33,16 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 
 ## Contenidos y materiales
 ### Clase 1. ¿Cómo hacer de un corpus de texto crudo algo analizable mediante métodos cuantitativos? Cualitativo y cuantitativo como niveles de estandarización de los datos. Preprocesamiento de texto: stopwords, lemmas y stemming. Concepto general del formato tidytext. 
-- [Diapositivas](./M4/)
-- [Explicación y práctica - Notebook](./M4/clase1/)
-- [Explicación y práctica - RMarkdown](./M4/clase1/)
-- [Práctica independiente - Notebook](./M4/clase1/)
-- [Práctica independiente - RMarkdown](./M4/clase1/)
+- [Diapositivas](./M4/M4_clase_1.pdf)
+- [Explicación y práctica - Notebook](./M4/clase1/clase_1.html)
+- [Explicación y práctica - RMarkdown](./M4/clase1/clase_1.Rmd)
+- [Práctica independiente - Notebook](./M4/clase1/practica_clase_1.html)
+- [Práctica independiente - RMarkdown](./M4/clase1/practica_clase_1.Rmd)
 - [Bibliografía](./M4/clase1/biblio)
 
-	
+[![](./imgs/Download.png)](./M4/clase1/clase1.zip)
 
+	
 ---
 
 ## Modulo 3: Machine Learning aplicado a las Ciencias Sociales
