@@ -108,7 +108,7 @@ Luego, podemos calcular la frecuencia del término de la misma manera que lo hic
 ```{r}
 freq_by_rank %>% 
   ggplot(aes(rank, `tf`, color = tomo)) +
-        geom_line(size = 1.1, alpha = 0.8) +
+        geom_line(linewidth = 1.1, alpha = 0.8) +
         scale_x_log10() +
         scale_y_log10() +
         theme_minimal()
