@@ -10,7 +10,7 @@ author: "Germán Rosati"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-## Introducción
+### Introducción
 En esta parte vamos a aplicar algunas de las herramientas que vimos recién a una tarea bastante clásica en Procesamiento de Lenguaje Natural: el análisis de sentimento, también conocido como minería de opiniones. Esta actividad nos va a servir también para tener una primera aproximación a una forma de trabajar en NLP: el uso de lexicones (o diccionarios).
 
 Supongamos que tenemos un conjunto de comentarios de Facebook o de lectores en un foro. Y queremos tener una idea del "tono" general de los comentarios. Es decir, queremos tener una idea si los comentarios son positivos, negativos, si expresan cierto tipo de emociones, etc. Esta es, básicamente, la esencia del análisis de sentimiento: dado un texto (oración, párrafo, un tuit, etc.) queremos poder clasificarlo en términos de su "tono" o sus "emociones".
