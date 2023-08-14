@@ -32,8 +32,18 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 - [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
+### Clase 2.¿Cómo vectorizar textos? Contando palabras y extrayendo conclusiones de un corpus. Bag of Words. Term-frequency matrix: conteos crudos y ponderación TF-IDF. Análisis de sentimientos sobre un corpus.
+- [Diapositivas](./M4/clase2/M4_clase_2.pdf)
+- [Explicación y práctica - Sentiment Analysis - Notebook](./M4/clase2/notebooks/clase_2_1_sentiment_analysis.html)
+- [Explicación y práctica - Sentiment Analysis - RMarkdown](./M4/clase2/notebooks/clase_2_1_sentiment_analysis.Rmd)
+- [Explicación y práctica - TFIDF - Notebook](./M4/clase2/notebooks/clase_2_2_tfidf.html)
+- [Explicación y práctica - TFIDF - RMarkdown](./M4/clase2/notebooks/clase_2_2_tfidf.Rmd)
+
+[![](./imgs/Download.png)](./M4/clase2/clase2.zip)
+
+
 ### Clase 1. ¿Cómo hacer de un corpus de texto crudo algo analizable mediante métodos cuantitativos? Cualitativo y cuantitativo como niveles de estandarización de los datos. Preprocesamiento de texto: stopwords, lemmas y stemming. Concepto general del formato tidytext. 
-- [Diapositivas](./M4/M4_clase_1.pdf)
+- [Diapositivas](./M4/clase1/M4_clase_1.pdf)
 - [Explicación y práctica - Notebook](./M4/clase1/notebooks/clase_1.html)
 - [Explicación y práctica - RMarkdown](./M4/clase1/notebooks/clase_1.Rmd)
 - [Práctica independiente - Notebook](./M4/clase1/notebooks/practica_clase_1.html)
