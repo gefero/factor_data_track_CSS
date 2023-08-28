@@ -33,8 +33,8 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 
 ## Contenidos y materiales
 ### Clase 3.¿Cómo vectorizar textos? N-gramas, co-ocurrencias, grafos y correlaciones entre palabras.
-- [Explicación y práctica - Sentiment Analysis - Notebook](./M4/clase2/notebooks/clase_3_n_grams.html)
-- [Explicación y práctica - Sentiment Analysis - RMarkdown](./M4/clase2/notebooks/clase_3_n_grams.Rmd)
+- [Explicación y práctica - Sentiment Analysis - Notebook](./M4/clase3/notebooks/clase_3_n_grams.html)
+- [Explicación y práctica - Sentiment Analysis - RMarkdown](./M4/clase3/notebooks/clase_3_n_grams.Rmd)
 
 ### Clase 2.¿Cómo vectorizar textos? Contando palabras y extrayendo conclusiones de un corpus. Bag of Words. Term-frequency matrix: conteos crudos y ponderación TF-IDF. Análisis de sentimientos sobre un corpus.
 - [Diapositivas](./M4/clase2/M4_clase_2.pdf)
