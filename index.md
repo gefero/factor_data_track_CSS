@@ -32,6 +32,10 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 - [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
+### Clase 3.¿Cómo vectorizar textos? N-gramas, co-ocurrencias, grafos y correlaciones entre palabras.
+- [Explicación y práctica - Sentiment Analysis - Notebook](./M4/clase2/notebooks/clase_3_n_grams.html)
+- [Explicación y práctica - Sentiment Analysis - RMarkdown](./M4/clase2/notebooks/clase_3_n_grams.Rmd)
+
 ### Clase 2.¿Cómo vectorizar textos? Contando palabras y extrayendo conclusiones de un corpus. Bag of Words. Term-frequency matrix: conteos crudos y ponderación TF-IDF. Análisis de sentimientos sobre un corpus.
 - [Diapositivas](./M4/clase2/M4_clase_2.pdf)
 - [Explicación y práctica - Sentiment Analysis - Notebook](./M4/clase2/notebooks/clase_2_1_sentiment_analysis.html)
