@@ -32,6 +32,17 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 - [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
+### Clase 3. ¿Cómo recolectar datos de la web? Web scraping y APIS
+- [Diapositivas](./M4/clase4/M4_clase_4.pdf)
+- [Explicación - Scraping - Notebook](./M4/clase4/notebooks/clase_4_scraping.html)
+- [Explicación - Scraping - RMarkdown](./M4/clase4/notebooks/clase_4_scraping.Rmd)
+- [Explicación - APIs - Notebook](./M4/clase4/notebooks/clase_4_APIs.html)
+- [Explicación - APIs - RMarkdown](./M4/clase4/notebooks/clase_4_APIs.Rmd)
+- [Práctica independiente - Notebook](./M4/clase4/notebooks/clase_4_practica_independiente.html)
+- [Práctica independiente - RMarkdown](./M4/clase4/notebooks/clase_4_practica_independiente.Rmd)
+
+[![](./imgs/Download.png)](./M4/clase4/clase4.zip)
+
 ### Clase 3.¿Cómo vectorizar textos? N-gramas, co-ocurrencias, grafos y correlaciones entre palabras.
 - [Explicación y práctica - Sentiment Analysis - Notebook](./M4/clase3/notebooks/clase_3_n_grams.html)
 - [Explicación y práctica - Sentiment Analysis - RMarkdown](./M4/clase3/notebooks/clase_3_n_grams.Rmd)
