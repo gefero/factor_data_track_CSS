@@ -35,10 +35,10 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 
 ### Práctica integradora 1.
 Se entrega 
-- [Consignas - Notebook](./M4/practica_integradora_c1_c3.html)
-- [Consignas - RMarkdown](./M4/practica_integradora_c1_c3.Rmd)
-- [Corpus](./M4/data/tango_rock.csv)
-- [Lexicon stopwords](./M4/data/stop_words_complete.csv)
+- [Consignas - Notebook](./M4/practica_integradora_1/practica_integradora_c1_c3.html)
+- [Consignas - RMarkdown](./M4/practica_integradora_1/practica_integradora_c1_c3.Rmd)
+- [Corpus](./M4/practica_integradora_1/data/tango_rock.csv)
+- [Lexicon stopwords](./M4/practica_integradora_1/data/stop_words_complete.csv)
 
 [![](./imgs/Download.png)](./M4/practica_integradora_1/practica_integradora_1.zip)
 
