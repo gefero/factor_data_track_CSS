@@ -1,0 +1,73 @@
+---
+title: "Práctia integradora 1"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+## Introducción
+El objetivo de esta práctica es doble:
+
+- integrar los conceptos y las implementaciones de vectorización de texto y construcción de lexicones que estuvimos trabajando
+- comenzar a operar sobre el dataset del proyecto "Letras de la música popular argentina".
+
+El proyecto tiene los siguientes objetivos
+
+**Objetivo general** 
+Comprender los discursos e imaginarios sociales que aparecen en las líricas de la música popular argentina entre los inicios del siglo XX hasta los primeros años del siglo XXI. 
+
+**Objetivos específicos**
+- Construir un corpus amplio de letras de canciones de la música popular argentina (tango, rock, cumbia, trap y folklore) que abarque desde los inicios del siglo XX hasta los primeros años del siglo XXI. 
+
+- Identificar los principales tópicos que aparecen en los diferentes géneros y su evolución histórica. 
+
+- Vincular la evolución temática de las letras a procesos  más generales  en la estructura social argentina (cambios  en la  estructura  económica, movimientos migratorios, etc.) y con las diferentes etapas políticas y de conflictividad social. 
+
+- Generar representaciones vectoriales densas de palabras (word embeddings) correspondientes a las letras de la música popular argentina que permitan testear hipótesis más específicas sobre la evolución de ciertos temas.
+
+- Contribuir a la apertura de información sobre la problemática mediante la publicación de una base de datos consolidada, junto con scripts y repositorios que permitan replicar los resultados obtenidos.
+
+Actualmente se dispone de un corpus de letras de tango y otro de rock. El proceso de recolección de información fue elaborado a partir del srapeo de dos repositorios de letras:
+
+- todotango.com 
+- rock.com.ar
+
+Ambos agrupan una gran cantidad de letras (5.600 y 16.000 respectivamente). 
+
+En ambos casos además de la letra de cada canción, se recabó información complementaria (llamada, en la jerga, metadata): el nombre de la banda/artista, el nombre del disco en el que fue incluida y la fecha de lanzamiento del disco/canción en cuestión. 
+
+Un punto importante a tener en cuenta es que en el caso del corpus de letras de tango hay una gran cantidad de datos faltantes en la fecha (alrededor del 60% del total de letras). A su vez, en el caso del corpus de letras de rock, la fecha con la que contamos es la de edición del disco en el que se encuentra la letra analizada. Esto plantea ciertas limitaciones  al análisis, en tanto la fecha de composición/escritura de una canción no necesariamente coincide con la de la edición en un disco.
+
+Pueden encontrar dos análisis de cada corpus en los siguientes textos:
+
+- http://jornadasdesociologia2021.sociales.uba.ar/wp-content/uploads/ponencias2021/1179_969.pdf
+- http://www.relmis.com.ar/ojs/index.php/relmis/article/view/procesamiento_lenguaje_natural/217 
+
+```{r}
+library(tidyverse)
+library(tidytext)
+```
+
+### Cargamos los datos
+```{r}
+letras <- read_delim('./data/tango_rock.csv', delim=",") 
+```
+
+### Consigna 1. ¿Cuáles son las palabras más relevantes en cada década según cada género?
+Es importante que reflexionen sobre cuál es la métrica más adecuada para responder adecuadamente a esta pregunta
+
+### Consigna 2. Elegir 10 bandas de rock relevantes y analizar el uso de palabras en cada una de forma comparativa 
+Deberán pensar un criterio de selección reproducible, es decir, no puede ser exclusivamente el gusto personal de cada une- para seleccionar 10 bandas de rock. Por ejemplo, popularidad, ventas, etc. Pueden (y deben) recurrir a fuentes externas para hacer la selección (por ejemplo, rankings de Spotify).
+
+### Consigna 3. Identificar una problemática relevante, armar un lexicón al respecto y analizar la evolución de la relevancia de ese tema a lo largo del tiempo en todo el dataset de letras de rock.
+Deberán pensar algún tipo de temática que les resulte relevante (género, política, racismo, etc.). Luego, deberán confeccionar un lexicón que aborde ese tema (de unos 20 o 30 términos). Finalmente, deberán analizar la relevancia que ese tema (a partir del lexicón) tiene en todo el corpus a lo largo del tiempo.
+
+## Entregables
+Cada grupo deberá presentar de forma oral los resultados de este ejercicio en las tres consignas. Dispondrán de 20 minutos y deberán preparar una presentación en Google Slides o formato similar.
+
+## Fecha de exposición
+Lunes 25/09 - 18.00 hs.

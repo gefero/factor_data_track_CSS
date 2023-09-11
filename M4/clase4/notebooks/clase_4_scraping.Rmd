@@ -1,5 +1,5 @@
 ---
-title: "Clase 3 - Web scraping con RVest"
+title: "Clase 4 - Web scraping con RVest"
 output: 
   html_document:
     toc: TRUE

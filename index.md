@@ -32,7 +32,17 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 - [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
-### Clase 3. ¿Cómo recolectar datos de la web? Web scraping y APIS
+
+### Práctica integradora 1.
+Se entrega 
+- [Consignas - Notebook](./M4/practica_integradora_c1_c3.html)
+- [Consignas - RMarkdown](./M4/practica_integradora_c1_c3.Rmd)
+- [Corpus](./M4/data/tango_rock.csv)
+- [Lexicon stopwords](./M4/data/stop_words_complete.csv)
+
+[![](./imgs/Download.png)](./M4/practica_integradora_1/practica_integradora_1.zip)
+
+### Clase 4. ¿Cómo recolectar datos de la web? Web scraping y APIS
 - [Diapositivas](./M4/clase4/M4_clase_4.pdf)
 - [Explicación - Scraping - Notebook](./M4/clase4/notebooks/clase_4_scraping.html)
 - [Explicación - Scraping - RMarkdown](./M4/clase4/notebooks/clase_4_scraping.Rmd)
