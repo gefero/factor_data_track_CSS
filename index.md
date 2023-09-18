@@ -42,6 +42,17 @@ Se entrega
 
 [![](./imgs/Download.png)](./M4/practica_integradora_1/practica_integradora_1.zip)
 
+### Clase 5. ¿Cómo detectar temas en un corpus? Dos técnicas de modelado de tópicos
+- [Diapositivas](./M4/clase5/M4_clase_5.pdf)
+- [Explicación - LDA - Notebook](./M4/clase5/notebooks/clase_51_topic_modeling_LDA.html)
+- [Explicación - LDA - RMarkdown](./M4/clase5/notebooks/clase_51_topic_modeling_LDA.Rmd)
+- [Explicación - STM - Notebook](./M4/clase5/notebooks/clase_52_topic_modeling_STM.html)
+- [Explicación - STM - RMarkdown](./M4/clase5/notebooks/clase_52_topic_modeling_STM.Rmd)
+- [Práctica independiente - Notebook](./M4/clase4/notebooks/clase_53_practica_independiente.html)
+- [Práctica independiente - RMarkdown](./M4/clase4/notebooks/clase_53_practica_independiente.Rmd)
+
+[![](./imgs/Download.png)](./M4/clase5/clase5.zip)
+
 ### Clase 4. ¿Cómo recolectar datos de la web? Web scraping y APIS
 - [Diapositivas](./M4/clase4/M4_clase_4.pdf)
 - [Explicación - Scraping - Notebook](./M4/clase4/notebooks/clase_4_scraping.html)

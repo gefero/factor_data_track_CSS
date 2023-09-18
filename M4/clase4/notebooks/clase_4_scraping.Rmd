@@ -101,14 +101,15 @@ La página nos trae también el botón para suscribirse. Por eso, vamos a especi
 Con `html_text2()` extraemos el texto del elemento. 
 
 ```{r}
-libro %>% html_elements("h1.titulo-libro") %>% 
+libro %>% 
+        html_elements("h1.titulo-libro") %>% 
         html_text2()
 ```
 
 Vamos a hacer lo mismo para el resumen: este lo identificamos porque está en el elemento div con clase textContent. 
 
 ```{r}
-libro %>% html_element(".textContent") %>%
+libro %>% html_element("div.textContent") %>%
         html_text2() %>%
         str_squish() #Borramos los espacios en blanco de más
 
@@ -127,7 +128,7 @@ tabla_info
 Pivoteamos para darle formato. 
 
 ```{r}
-tabla_info%>%
+tabla_info %>%
         pivot_wider(names_from = "X1", values_from = "X2") %>%
         rename("isbn" = "ISBN",
                "ean" = "EAN",
@@ -276,5 +277,19 @@ libros_piglia
 ### Actividad
 Traer de la página de Anagrama el listado de todos los autores que tienen disponibles. 
 ```{r}
-###
+links_letras_autores <- paste0("https://www.anagrama-ed.es/autores/", letters)
+
+autores <- tibble(autor=character(),
+                  link=character())
+
+for (l in links_letras_autores[1]){
+        autor <- read_html(l)
+        nombre <- autor %>% html_elements("div.autor") %>% html_text2() 
+        link_autor <- autor %>% html_elements("div.autor") %>% html_elements("a") %>% html_attr("href")
+        
+        a <- tibble(cbind(nombre, link_autor))
+        
+        autores <- bind_rows(a)
+        
+}
 ```

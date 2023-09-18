@@ -37,7 +37,7 @@ Lo interesante (entre otras cosas) de este proyecto es que no te hace bajar un m
 ```{r}
 #povcalnet <- GET("http://iResearch.worldbank.org/PovcalNet/PovcalNetAPI.ashx?C0=CHN&PL0=2.5&Y0=All&format=#json")
 
-api<-GET("https://api.worldbank.org/pip/v1/pip?country=CHN&year=all&povline=2.5&fill_gaps=false&format=csv")
+api <- GET("https://api.worldbank.org/pip/v1/pip?country=CHN&year=all&povline=2.5&fill_gaps=false&format=csv")
 ```
 
 La búsqueda tiene varias partes:
@@ -84,7 +84,18 @@ api %>%
 Traer las estimaciones de pobreza de Brasil con un umbral de pobreza de U$S2 para todos los años disponibles y graficarlo. 
 
 ```{r}
+api_bric <- GET("https://api.worldbank.org/pip/v1/pip?country=BRA&country=CHN&country=IND&country=RUS&country=ZAF&year=all&povline=2.5&fill_gaps=false&format=csv")
 
+api_birc <- read_csv(rawToChar(api_bric$content))
+
+api_birc %>%
+        filter(reporting_level=="national") %>%
+        ggplot(aes(x=survey_year, y=headcount, color=country_name))+
+        geom_line() +
+        labs(x='Año',
+             y='% población c/ menos de 2.5 U$S diarios') +
+        theme_minimal() +
+        facet_wrap(~country_name)
 ```
 
 ## Autenticación 
