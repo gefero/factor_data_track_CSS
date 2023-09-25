@@ -48,8 +48,8 @@ Se entrega
 - [Explicación - LDA - RMarkdown](./M4/clase5/notebooks/clase_51_topic_modeling_LDA.Rmd)
 - [Explicación - STM - Notebook](./M4/clase5/notebooks/clase_52_topic_modeling_STM.html)
 - [Explicación - STM - RMarkdown](./M4/clase5/notebooks/clase_52_topic_modeling_STM.Rmd)
-- [Práctica independiente - Notebook](./M4/clase4/notebooks/clase_53_practica_independiente.html)
-- [Práctica independiente - RMarkdown](./M4/clase4/notebooks/clase_53_practica_independiente.Rmd)
+- [Práctica independiente - Notebook](./M4/clase5/notebooks/clase_53_practica_independiente.html)
+- [Práctica independiente - RMarkdown](./M4/clase5/notebooks/clase_53_practica_independiente.Rmd)
 
 [![](./imgs/Download.png)](./M4/clase5/clase5.zip)
 
