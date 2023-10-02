@@ -32,19 +32,22 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 - [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
-### Clase 6. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
+### Clase 7. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
 - [Diapositivas](./M4/clase7/M4_clase_7.pdf)
 - [Explicación - LDA - Notebook](./M4/clase7/notebooks/clase_7_word2vec.html)
 - [Explicación - LDA - RMarkdown](./M4/clase7/notebooks/notebooks/clase_7_word2vec.Rmd)
 
-### Práctica integradora 1.
-Se entrega 
-- [Consignas - Notebook](./M4/practica_integradora_1/practica_integradora_c1_c3.html)
-- [Consignas - RMarkdown](./M4/practica_integradora_1/practica_integradora_c1_c3.Rmd)
-- [Corpus](./M4/practica_integradora_1/data/tango_rock.csv)
-- [Lexicon stopwords](./M4/practica_integradora_1/data/stop_words_complete.csv)
+[![](./imgs/Download.png)](./M4/clase7/clase7.zip)
 
-[![](./imgs/Download.png)](./M4/practica_integradora_1/practica_integradora_1.zip)
+
+### Clase 6. Práctica integradora 1.
+Se entrega 
+- [Consignas - Notebook](./M4/clase6_practica_integradora_1/practica_integradora_c1_c3.html)
+- [Consignas - RMarkdown](./M4/clase6_practica_integradora_1/practica_integradora_c1_c3.Rmd)
+- [Corpus](./M4/practica_integradora_1/data/tango_rock.csv)
+- [Lexicon stopwords](./M4/clase6_practica_integradora_1/data/stop_words_complete.csv)
+
+[![](./imgs/Download.png)](./M4/clase6_practica_integradora_1/practica_integradora_1.zip)
 
 ### Clase 5. ¿Cómo detectar temas en un corpus? Dos técnicas de modelado de tópicos
 - [Diapositivas](./M4/clase5/M4_clase_5.pdf)
