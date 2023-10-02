@@ -33,9 +33,9 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 
 ## Contenidos y materiales
 ### Clase 6. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
-- [Diapositivas](./M4/clase6/M4_clase_6.pdf)
-- [Explicación - LDA - Notebook](./M4/clase6/notebooks/clase_6_word2vec.html)
-- [Explicación - LDA - RMarkdown](./M4/clase6/notebooks/notebooks/clase_6_word2vec.Rmd)
+- [Diapositivas](./M4/clase7/M4_clase_7.pdf)
+- [Explicación - LDA - Notebook](./M4/clase7/notebooks/clase_7_word2vec.html)
+- [Explicación - LDA - RMarkdown](./M4/clase7/notebooks/notebooks/clase_7_word2vec.Rmd)
 
 ### Práctica integradora 1.
 Se entrega 
