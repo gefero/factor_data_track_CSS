@@ -1,0 +1,127 @@
+---
+title: "Clasificación de texto"
+subtitle: "Analizando reseñas de Amazon"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(tidymodels)
+library(textrecipes)
+```
+
+```{r}
+reviews <- read_csv('../data/amazon_reviews_train.csv') %>% select(-"...1")
+```
+
+
+```{r}
+reviews %>% 
+        group_by(product_category) %>% 
+        summarise(n=n()) %>% 
+        mutate(prop=n/sum(n)) %>% 
+        arrange(desc(prop)) %>%
+        print(n=30)
+```
+
+
+
+```{r}
+reviews <- reviews %>%
+        filter(stars != 3) %>%
+        mutate(stars = case_when(
+                stars <= 2 ~ 'Negativa',
+                stars >= 4 ~ 'Postiva')
+        )
+```
+
+
+Hacemos el split:
+
+```{r}
+```
+
+
+```{r}
+reviews_split <- initial_split(reviews, strata = stars)
+
+train <- training(reviews_split)
+test <- testing(reviews_split)
+```
+
+
+```{r}
+reviews_rec <-
+  recipe(stars ~ review_body, data = train)
+```
+
+```{r}
+reviews_rec <- reviews_rec %>%
+  step_tokenize(review_body) %>%
+  step_tokenfilter(review_body, max_tokens = 1000) %>%
+  step_tfidf(review_body)
+```
+
+
+```{r}
+reviews_wf <- workflow() %>%
+  add_recipe(reviews_rec)
+```
+
+
+```{r}
+logreg_spec <- logistic_reg() %>%
+  set_mode("classification") %>%
+  set_engine("glm")
+```
+
+
+```{r}
+set.seed(234)
+reviews_folds <- vfold_cv(train)
+```
+
+```{r}
+nb_wf <- workflow() %>%
+  add_recipe(reviews_rec) %>%
+  add_model(logreg_spec)
+
+nb_wf
+```
+
+```{r}
+nb_rs <- fit_resamples(
+  nb_wf,
+  reviews_folds,
+  control = control_resamples(save_pred = TRUE)
+)
+```
+
+
+```{r}
+nb_rs_metrics <- collect_metrics(nb_rs)
+nb_rs_predictions <- collect_predictions(nb_rs)
+```
+
+```{r}
+nb_rs_metrics
+```
+
+## Random Forest
+
+```{r}
+rf_spec <-rand_forest %>%
+  set_mode("classification") %>%
+  set_engine("ranger")
+```
+
+
+
+## Logistic regression con embeddings
