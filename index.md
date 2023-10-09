@@ -33,15 +33,15 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 
 ## Contenidos y materiales
 ### Clase 8. Clasificación de textos mediante TF-IDF y Word Embeddings
-- [Explicación - LDA - Notebook](./M4/clase8/notebooks/clase_8_clasificacion.html)
-- [Explicación - LDA - RMarkdown](./M4/clase8/notebooks/notebooks/clase_8_clasificacion.Rmd)
+- [Explicación - Clasificación - Notebook](./M4/clase8/notebooks/clase_8_clasificacion.html)
+- [Explicación - Clasificación - RMarkdown](./M4/clase8/notebooks/notebooks/clase_8_clasificacion.Rmd)
 
 [![](./imgs/Download.png)](./M4/clase8/clase8.zip)
 
 ### Clase 7. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
 - [Diapositivas](./M4/clase7/M4_clase_7.pdf)
-- [Explicación - LDA - Notebook](./M4/clase7/notebooks/clase_8_clasificacion.html)
-- [Explicación - LDA - RMarkdown](./M4/clase7/notebooks/notebooks/clase_8_clasificacion.Rmd)
+- [Explicación - Word2Vec - Notebook](./M4/clase7/notebooks/clase_8_clasificacion.html)
+- [Explicación - Word2Vec - RMarkdown](./M4/clase7/notebooks/notebooks/clase_8_clasificacion.Rmd)
 
 [![](./imgs/Download.png)](./M4/clase8/clase8.zip)
 
