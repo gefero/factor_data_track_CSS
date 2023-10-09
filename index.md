@@ -32,13 +32,18 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 - [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
-### Clase 7. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
-- [Diapositivas](./M4/clase7/M4_clase_7.pdf)
-- [Explicación - LDA - Notebook](./M4/clase7/notebooks/clase_7_word2vec.html)
-- [Explicación - LDA - RMarkdown](./M4/clase7/notebooks/notebooks/clase_7_word2vec.Rmd)
+### Clase 8. Clasificación de textos mediante TF-IDF y Word Embeddings
+- [Explicación - LDA - Notebook](./M4/clase8/notebooks/clase_7_word2vec.html)
+- [Explicación - LDA - RMarkdown](./M4/clase8/notebooks/notebooks/clase_7_word2vec.Rmd)
 
 [![](./imgs/Download.png)](./M4/clase7/clase7.zip)
 
+### Clase 7. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
+- [Diapositivas](./M4/clase7/M4_clase_7.pdf)
+- [Explicación - LDA - Notebook](./M4/clase7/notebooks/clase_8_clasificacion.html)
+- [Explicación - LDA - RMarkdown](./M4/clase7/notebooks/notebooks/clase_8_clasificacion.Rmd)
+
+[![](./imgs/Download.png)](./M4/clase8/clase8.zip)
 
 ### Clase 6. Práctica integradora 1.
 Se entrega 
