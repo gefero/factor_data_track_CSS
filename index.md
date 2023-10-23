@@ -32,6 +32,13 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 - [Programa de la materia - 2do. cuatrimestre 2023](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
+### Clase 9. Taller Trabajo Final Integrador
+- [Explicación - Clasificación - Notebook](./M4/clase9_tp_final/tp_final.html)
+- [Explicación - Clasificación - RMarkdown](./M4/clase9_tp_final/tp_final.Rmd)
+
+[![](./imgs/Download.png)](./M4/clase9_tp_final/clase9_tp_final.zip)
+
+
 ### Clase 8. Clasificación de textos mediante TF-IDF y Word Embeddings
 - [Explicación - Clasificación - Notebook](./M4/clase8/notebooks/clase_8_clasificacion.html)
 - [Explicación - Clasificación - RMarkdown](./M4/clase8/notebooks/notebooks/clase_8_clasificacion.Rmd)
