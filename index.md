@@ -46,10 +46,10 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 
 ### Clase 7. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
 - [Diapositivas](./M4/clase7/M4_clase_7.pdf)
-- [Explicación - Word2Vec - Notebook](./M4/clase7/notebooks/clase_8_clasificacion.html)
-- [Explicación - Word2Vec - RMarkdown](./M4/clase7/notebooks/notebooks/clase_8_clasificacion.Rmd)
+- [Explicación - Word2Vec - Notebook](./M4/clase7/notebooks/clase_7_word2vec.html)
+- [Explicación - Word2Vec - RMarkdown](./M4/clase7/notebooks/notebooks/clase_7_word2vec.Rmd)
 
-[![](./imgs/Download.png)](./M4/clase8/clase8.zip)
+[![](./imgs/Download.png)](./M4/clase7/clase7.zip)
 
 ### Clase 6. Práctica integradora 1.
 Se entrega 
