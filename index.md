@@ -38,7 +38,6 @@ La nota final de la materia consistirá en el promedio del puntaje obtenido en l
 
 [![](./imgs/Download.png)](./M4/clase9_tp_final/clase9_tp_final.zip)
 
-
 ### Clase 8. Clasificación de textos mediante TF-IDF y Word Embeddings
 - [Explicación - Clasificación - Notebook](./M4/clase8/notebooks/clase_8_clasificacion.html)
 - [Explicación - Clasificación - RMarkdown](./M4/clase8/notebooks/notebooks/clase_8_clasificacion.Rmd)
