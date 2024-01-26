@@ -3,6 +3,11 @@
 ## Docente
 - [Germán Rosati](https://gefero.github.io/)
 
+- [M1](./M1/M1.md)
+- [M2](./M2/M2.md)
+- [M3](./M3/M3.md)
+- [M4](./M4/M4.md)
+
 ## Presentación
 Esta materia se constituye como la última de un trayecto de materias optativas orientado a incorporar a las carreras de la EIDAES un conjunto de materias que permitan realizar a les estudiantes un primer acercamiento al campo disciplinar conocido como "Ciencias Sociales Computacionales". Por ello, se plantean como una continuación y profundización de la materia Metodologías Cuantitativas. En este sentido, la orientación es correlativa a las materias “Metodología de la Investigación” y “Metodologías Cuantitativas”. 
 
