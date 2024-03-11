@@ -4,7 +4,7 @@ output:
   html_document:
     toc: TRUE
     toc_float: TRUE
-author: "Laia Domenech Burin y Germán Rosati"
+author: "Germán Rosati"
 
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
@@ -346,7 +346,7 @@ rm(data)
 ```
 Si quiero borrar múltiples elementos a la vez, tengo que encapsularlos en una lista dentro de la función: 
 ```{r}
-rm(list=c(objeto_1, objeto_2))
+rm(objeto_1, objeto_2)
 ```
 
 ¡Terminamos! Ahora, vamos a la parte práctica. 
