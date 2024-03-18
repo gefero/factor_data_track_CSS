@@ -50,11 +50,22 @@ Más arriba mencionamos que el paquete `magrittr` introduce la pipe y la señala
 
 Para desarrollar los ejemplos de esta clase, vamos a trabajar con datos de la Encuesta Permanente de Hogares. Para ello, usaremos el paquete `eph`. Por ahora, lo único que vamos a usar de él es la función `get_microdata()`, que nos devuelve la base de microdatos de individuos o hogares para el trimestre seleccionado:
 ```{r}
-df <- get_microdata(year=2020, trimester=2, type='individual')
+df <- get_microdata(year=2023, trimester=3, type='individual')
 
 df <- organize_labels(df=df, type='individual') # Vamos a etiquetar la base
+
+df$NRO_HOGAR <- as.character(df$NRO_HOGAR)
+
 table(df$CAT_OCUP)
 ```
+
+---
+
+#### Ejercicio rápido
+¿Qué les parece que hace esta línea?
+`df$NRO_HOGAR <- as.character(df$NRO_HOGAR)`
+
+---
 
 Ahora, con una pipe...
 ```{r}
@@ -70,6 +81,15 @@ df$CAT_OCUP%>%
         prop.table()%>%
         round(., 2)
 ```
+
+---
+
+### Ejercicio rápido ***
+¿Cómo obtendrían la tabla anterior sin usar `%>%`? O sea en R-base...
+```{r}
+###
+```
+---
 
 
 ## dplyr
@@ -115,6 +135,7 @@ head(select_prueba_3)
   + `starts_with` : selecciona columnas que empiecen con el string que pasemos.
   + `ends_with` : selecciona columnas que terminen con el string que le pasemos. 
   + `contains` : selecciona columnas que contengan la palabra que indicamos. 
+  
 ```{r}
 select_prueba_4 <- df %>% select(starts_with("CH"))
 
@@ -268,12 +289,12 @@ df %>%
 medidas_resumen <- df %>%
   group_by(sexo) %>% 
   summarise(media_edad = mean(CH06, na.rm = TRUE),
-            mediana_edad = median(CH06, na.rm = TRUE)) %>% 
+            sd_edad = sd(CH06, na.rm = TRUE)) %>% 
   select(sexo, 
-         media_edad, mediana_edad) 
+         media_edad, sd_edad) 
 
 pivot_longer_resumen <- medidas_resumen%>% 
-  pivot_longer(cols = c(media_edad, mediana_edad), 
+  pivot_longer(cols = c(media_edad, sd_edad), 
                names_to = "variable", 
                values_to = "valor")
 ```
@@ -284,9 +305,10 @@ pivot_longer_resumen <- medidas_resumen%>%
   + `values_from`: indico en qué columna están los valores de las variables
 
 ```{r}
-pivot_longer_resumen%>% pivot_wider(id_cols= sexo, 
-                                names_from=variable,
-                                values_from = valor)
+pivot_longer_resumen %>% 
+        pivot_wider(id_cols= sexo, 
+                    names_from=variable,
+                    values_from = valor)
 ```
 
 ### `join()`
@@ -299,11 +321,12 @@ pivot_longer_resumen%>% pivot_wider(id_cols= sexo,
   
 Supongamos que queremos "joinear" la base que tenemos con las variables de resumen del hogar (cantidad de personas en el hogar `IX_TOT`, las personas menores de 10 años `IX_MEN10` y las personas de 10 o más años de edad, `IX_MAYEQ10`). Todas estas variables están en la tabla de hogares. La columna **CODSU** nos da un identificador único de cada registro. De manera que podemos hacer un seguimiento de los individuos en el hogar a través de esa columna:
 ```{r}
-df_2 <- get_microdata(year=2020, trimester=2, type='hogar') %>%
-        organize_labels(type='hogar')
+df_2 <- get_microdata(year=2023, trimester=3, type='hogar') %>%
+        organize_labels(type='hogar') %>%
+        mutate(NRO_HOGAR = as.character(NRO_HOGAR))
 
 df_2 <- df_2 %>%
-    select(CODUSU, IX_TOT:IX_MAYEQ10) # Selecciono únicamente las variables de ID y las variables de resumen del hogar 
+    select(CODUSU, NRO_HOGAR, IX_TOT:IX_MAYEQ10) # Selecciono únicamente las variables de ID y las variables de resumen del hogar 
 
 df_merged <- df %>% left_join(df_2, by = c("CODUSU", "NRO_HOGAR"))
 ```
