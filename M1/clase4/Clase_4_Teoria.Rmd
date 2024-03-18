@@ -1,5 +1,5 @@
 ---
-title: "Clase 4. Explorando datos categóricos"
+title: "Clase 5. Explorando datos cuantitativos"
 subtitle: "Contenidos conceptuales"
 output: 
   html_document:
@@ -11,6 +11,7 @@ theme: Boadilla
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE)
+install.packages("gapminder")
 ```
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
@@ -18,158 +19,249 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ```
 
 ```{r warning=TRUE, include=FALSE}
+library(gapminder)
 library(tidyverse)
 library(eph)
-df <- get_microdata(year = 2021, trimester = 2, type = "individual")
+library(gt)
+df <- get_microdata(year = 2016, trimester = 3, type = "individual")
+
+df <- df %>% calculate_poverty(canastas_reg_example)
 df <- organize_labels(df=df, type='individual') # Vamos a etiquetar la base
-df <- df %>% mutate_at(vars(REGION, CH03, CH04, CH07:CAT_INAC), ~as.character(.))
+df <- df %>% mutate_at(vars(REGION, AGLOMERADO, CH03, CH04, CH07:CAT_INAC), ~as.character(.))
 
 df <- df %>%
         mutate(REGION = if_else(REGION == '44', 'Patagonia', REGION))
 ```
 
-## Tablas de contingencia (dos variable)
-La siguiente tabla nos resume la condición de actividad en función del sexo.
-```{r echo=FALSE}
-df %>%
-  filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  janitor::tabyl(ESTADO, CH04) %>%
-  janitor::adorn_totals(where = c('row','col')) %>%
-  gt::gt()  
-```
+Pensemos, ahora, en variables como el ingreso laboral `P21` o la edad `CH06`. Ambas variables son cuantitativas en tanto podemos calcular la diferencia entre dos ingresos laborales o entre dos valores de edad. Pero variables como el código postal no refieren a magnitudes sino a zonas o áreas. Por lo tanto, no tiene sentido considerar la diferencia entre un código postal correspondiente a Villa Devoto (1417) y otro perteneciente a Villa Luro (1407).
 
-Cada valor en la tabla (celda) representa la cantidad de veces que una combinación particular de valores ocurrieron. Asi, Por ejemplo, la tabla nos dice que hubo 12.147 personas inactivas que eran mujeres. Los *totales de columna* proveen información sobre el total de casos para cada columna y lo propio sucede con los *totales de fila*-
+Vamos a ver, entonces, ahora algunos métodos para realizar un análisis descriptivo de variables cuantitativas.
 
-Otra forma común de representar esto es mediante un gráfico "facetado":
+## Gráficos de dispersión (o scatterplots)
+Un diagrama de dispersión proporciona una vista caso por caso de los datos de dos variables numéricas. En la Figura siguiente, se usó un diagrama de dispersión para examinar el promedio de ingresos laborales y no laborales de cada algomerado. 
 
 ```{r echo=FALSE}
 df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
-  summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=ESTADO, y=n)) +
-    facet_wrap(~CH04) +
+  group_by(AGLOMERADO) %>%
+  summarise(media_ing_lab = mean(P21),
+            media_ing_no_lab = mean(T_VI)) %>%
+  ggplot() +
+    geom_point(aes(x=media_ing_lab, y=media_ing_no_lab),
+               size=2, color='lightblue') +
+    labs(
+        title='Medias de ingresos laborales y no laborales por aglomerado',
+        x='Media de ingresos laborales',
+         y='Media de ingresos no laborales') +
+    scale_x_continuous(labels=scales::dollar_format(), limits=c(0,10000)) +
+    scale_y_continuous(labels=scales::dollar_format(), limits=c(0,2500)) +
     theme_minimal()
+
 ```
 
-El gráfico anterior nos muestra la misma información que la tabla: cada panel es una de las columnas de la tabla, en el eje X encontramos las filas de la tabla y en el eje Y el conteo de valores. Sin embargo, falta algo...
+En cualquier diagrama de dispersión, cada punto representa un solo caso. Como hay 32 aglomerados urbanos relevados en la EPH hay 32 puntos en la Figura 5.1.
 
-## Visualizando dos variables categóricas
-### Gráficos de barra con dos variables
-Podemos mostrar las distribuciones de dos variables categóricas en un gráfico de barras al mismo tiempo. Estos gráficos suelen ser útiles para visualizar la relación entre dos variables categóricas. La figura siguiente muestra tres gráficos de este tipo que visualizan la relación entre sexo y condición de actividad. El siguiente es un gráfico de barras apiladas:
+Se ve que parece existir una cierta relación entre ambas variables. A medida que hay se incrementan los ingresos laborales lo mismo parece suceder con los no laborales. No obstante, existe algunos puntos en los que esta relación no se cumple. ¿Cuáles son?
+
+A continuación hemos calculado el porcentaje de personas pobres y la media del ingreso total del hogar para cada aglomerado.
 
 ```{r echo=FALSE}
 df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
+  filter(ITF > 0) %>%
+  group_by(AGLOMERADO) %>%
+  summarise(media_ing_lab = mean(ITF)) %>%
+  left_join(df %>%
+  mutate(situacion = if_else(situacion %in% c('indigente', 'pobre'), 'pobre', 'no pobre')) %>%
+  group_by(AGLOMERADO, situacion) %>%
   summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=CH04, y=n, fill=ESTADO), position="stack") +
+  mutate(pobreza = n/sum(n)) %>%
+  filter(situacion == 'pobre') %>%
+  select(-n, -situacion)) %>%
+  ggplot() +
+    geom_point(aes(x=pobreza, y=media_ing_lab),
+               size=2, color='lightblue') +
+    geom_smooth(aes(x=pobreza, y=media_ing_lab),
+                size=0.5,
+               linetype='dashed', color='red', se=FALSE) +
+    labs(
+        title='Aglomerados según tasa de pobreza y media de ITF',
+        x='Tasa de pobreza',
+         y='Media de ingresos total del hogar') +
+    scale_x_continuous(labels=scales::percent_format(), limits=c(0,0.6)) +
+    scale_y_continuous(labels=scales::dollar_format(), limits=c(0,40000)) +
     theme_minimal()
+
 ```
 
-Este gráfico muestra que las mujeres son más que los varones. Es difícil decir, basándose únicamente en este diagrama, cómo las diferentes condiciones de actividad varían según sexo. Pareciera ser que los varones están ocupadas en mayor medida.
+¿Qué relación pueden ver acá? La relación es evidentemente no lineal, como lo destaca la línea discontinua. Esto es diferente de los diagramas de dispersión anteriores que hemos visto, que indican muy poca o ninguna curvatura en la tendencia.
 
-La gráfica B es una gráfica de barras "desplazadas".
-```{r echo=FALSE}
-df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
-  summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=CH04, y=n, fill=ESTADO), position='dodge') +
-    theme_minimal()
-```
-
-Este gráfico muestra claramente que dentro de cada sexo la principal forma de actividad es diferente: ocupados en varones, inactivas en mujeres.
-
-Finalmente, el gráfico C es un gráfico de barras estandarizado (también conocido como gráfico de barras rellenas). 
+## Medidas de tendencia central: media
 
 ```{r echo=FALSE}
 df %>%
-    filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  group_by(CH04, ESTADO) %>%
-  summarise(n=n()) %>%
-  ggplot() + 
-    geom_col(aes(x=CH04, y=n, fill=ESTADO), position = 'fill') +
-    theme_minimal()
+  #filter(P21 > 100) %>%
+  mutate(CH06 = as.numeric(as.character(CH06))) %>%
+  ggplot() +
+    geom_histogram(aes(x=CH06), bins=100, color='white') +
+    geom_vline(xintercept = mean(df$CH06), color='red') +
+    theme_minimal() +
+    labs(x='Edad en años simples',
+         y='Frecuencia')
+
 ```
 
 
-Este gráfico muestra con mayor claridad que la condición de actividad más común entre mujeres es la inactividad y entre los varones la ocupación. A su vez, la proporción de desocupados es muy similar entre varones y mujeres.
+La media, a menudo llamada promedio, es una forma común de medir el centro de una distribución de datos. Para calcular la tasa de interés media, sumamos todas las tasas de interés y las dividimos por el número de observaciones.
 
-El gráfico de barras apiladas es más útil cuando es razonable asignar una variable como variable explicativa (aquí, sexo `CH04`) y la otra variable como respuesta (aquí, condición de actividad `ESTADO`), ya que estamos agrupando primero por una variable y luego separándola por las demás. .
+La media de la muestra a menudo se etiqueta $\overline x$. Es útil pensar en la media como el punto de equilibrio de la distribución, y se muestra como una línea roja en la figura anterior.
 
-Los diagramas de barras esquivadas son más agnósticos en su visualización sobre qué variable, si alguna, representa la variable explicativa y cuál la variable de respuesta. También es fácil discernir el número de casos en cada una de las seis combinaciones de grupos diferentes. Sin embargo, una desventaja es que tiende a requerir más espacio horizontal; la estrechez del segundo gráfico en comparación con las otras dos . Además, cuando dos grupos son de tamaños muy diferentes, como vemos en el propio grupo en relación con cualquiera de los otros dos grupos, es difícil discernir si existe una asociación entre las variables.
+La media se calcula de la siguiente forma: 
+$$\overline x = \frac{x_{1} + x_{2} + ... x_{n}}{n} = \frac{\sum_{i=1}^n x_{i}}{n}$$
 
-El gráfico de barras apiladas estandarizado es útil si la variable principal en el gráfico de barras apiladas está relativamente desequilibrada. En este caso la distribucion por `CH04` no está muy desequilibrada pero aún así resulta más complejo en ese gráfico de barras apiladas simple verificar una asociación. La principal desventaja de la versión estandarizada es que perdemos todo sentido de cuántos casos representa cada una de las barras.
+El conjunto de datos de la EPH representa una muestra de una población más grande (¿cuál?). Podríamos calcular una media para toda la población de la misma manera que la media de la muestra. Sin embargo, la media poblacional tiene una etiqueta especial: $\mu$. Es la letra griega mu y representa el promedio de todas las observaciones en la población. A veces un subíndice, como $_{x}$  se utiliza para representar a qué variable se refiere la media de la población ($\mu_{x}$).  A menudo es demasiado costoso medir la media de la población con precisión, por lo que a menudo estimamos $\mu$ utilizando $\overline x$.
 
-## Porcentajes de filas y columnas
-En las secciones anteriores, inspeccionamos visualizaciones de dos variables categóricas en gráficos de barras. Sin embargo, no hemos discutido cómo se calculan los valores. En esta sección investigaremos cómo calcular las diferentes proporciones en una tabla de contingencia. 
+Aquí estamos trabajando con un muestra, con lo cual no podemos calcular la media de edad exacta de la población... pero podemos hacer una _estimacion_ de ese valor usando los datos de la muestra. Esos 34.2 años que obtuvimos, son una estimación un tanto rústica de la media de edad de la población urbana ($\mu_{edad}$). Si bien no es perfecta, esta es nuestra mejor _estimación puntual_ de la edad media de toda la población urbana en Argentina. Más adelante, desarrollaremos herramientas para caracterizar la precisión de las estimaciones puntuales, como la media muestral. Como podrán intuir, las estimaciones puntuales basadas en muestras más grandes tienden a ser más precisas que las basadas en muestras más pequeñas.
 
-La siguiente tabla muestra las *proporciones por fila* para la primera tabla que vimos antes. Las mismas se calculan como los conteos divididos por los totales de las filas. 
-
-El valor 12147 en la intersección de mujer e inactivo se reemplaza por: $\frac{12147}{19765} = 0.615$. Entonces, ¿qué representa 0,615? Corresponde a la proporción de encuestades inactivas que son mujeres.
-
-```{r echo=FALSE}
-df %>%
-  filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  janitor::tabyl(ESTADO, CH04) %>%
-  janitor::adorn_totals(where = c('row','col')) %>%
-  janitor::adorn_percentages(denominator = 'row') %>%
-  gt::gt() %>%
-  gt::fmt_number(
-          columns = c(-ESTADO),
-          decimals=3)
-```
-Una tabla de contingencia con las *proporciones por columnas* se calcula de manera similar, donde cada una se calcula como el recuento dividido por el total de la columna correspondiente. La siguiente es una tabla de este tipo. Podemos ver, entonces, que el 56.5% de las mujeres son inactivas. Este valor es notablemente superior al de los varones (39.2%). A su vez, los varones tienen una mayor tasa de ocupación. Esto constituye evidencia de que las variables pueden estar asociadas.
+### Medias ponderadas
+Supongamos que queremos calcular [la esperanza de vida](https://es.wikipedia.org/wiki/Esperanza_de_vida) promedio en América durante 2007 de la siguiente tabla:
 
 ```{r echo=FALSE}
-df %>%
-  filter(ESTADO %in% c("Ocupado", "Desocupado", "Inactivo")) %>%
-  janitor::tabyl(ESTADO, CH04) %>%
-  janitor::adorn_totals(where = c('row','col')) %>%
-  janitor::adorn_percentages(denominator = 'col') %>%
-  gt::gt() %>%
-  gt::fmt_percent(
-          columns = c(-ESTADO),
-          decimals=2)
+gapminder %>%
+  filter(continent=="Americas" & year==2007) %>%
+  select(country, continent, lifeExp, pop) %>%
+  gt()
 ```
 
-Las proporciones de fila y columna también pueden considerarse proporciones condicionales, ya que nos informan sobre la proporción de observaciones en un nivel dado de una variable categórica condicional en el nivel de otra variable categórica.
+Podríamos tomar las esperanzas de vida de cada uno de los países en esta región y promediarla. ¿Qué problemas se les ocurre que tiene este enfoque? ¿Cómo podríamos hacerlo mejor?
 
-## Comparando datos numéricos en diferentes grupos
-Algunas de las preguntas de investigación más interesantes surgen del análisis y la comparación de variables cuantitativas entre diferentes grupos. En esta sección, ampliaremos algunos métodos que ya hemos visto para hacer gráficos de datos numéricos de múltiples grupos, así como también presentaremos algunos métodos nuevos para comparar datos numéricos entre grupos.
+El conjunto de datos es especial porque cada país en realidad representa a muchas personas individuales. Si tuviéramos que promediar simplemente la variable `lifeExp`, estaríamos tratando condados con 1.056.608 y 301.139.947 de residentes por igual en los cálculos. En su lugar, debemos calcular la expectativa de vida total de cada país, sumar los totales de todos los países y luego dividir por la cantidad de personas en todos los países. 
 
-Vamos a analizary comparar el ingreso total familiar promedio, la cantidad promedio de miembros por hogar y la edad promedio de la población en las 6 regiones que releva la EPH.
+```{r echo=FALSE}
+gapminder %>%
+  filter(continent=="Americas" & year==2007) %>%
+  select(country, continent, lifeExp, pop) %>%
+  summarise(max = max(pop),
+            min = min(pop),
+            mean = mean(lifeExp),
+            mean_weigted = weighted.mean(lifeExp, w=pop)) %>%
+  gt()
+```
 
 
-el conjunto de datos del condado y compararemos el ingreso familiar medio de los condados que aumentaron la población entre 2010 y 2017 con los condados que no aumentaron. Si bien nos gustaría hacer una conexión causal entre el ingreso y el crecimiento de la población, recuerde que estos son datos de observación y, por lo tanto, tal interpretación sería, en el mejor de los casos, a medias.
+Si completamos estos pasos encontraríamos que el ingreso per cápita para los EE. UU. es de 75.5. Si hubiéramos calculado la media simple ¡el resultado hubiera sido solo 73.6!. Dos años son una gran diferencia en términos de estimaciones poblacionales.
+
+Este ejemplo usó lo que se llama una media ponderada, la formula es simple:
+
+$$\overline x = \frac{w_{1}x_{1} + w_{1}x_{1} + ... + w_{n}x_{n}}{w_{1} + w_{2} + ... w_{n}} = \frac{\sum_{i=1}^n w_{i}x_{i}}{\sum_{i=1}^n w_{i}}$$ 
+
+
+
+## Histogramas
+Cuando tenemos muestras grandes y varaibles cuantitativas suele ser útil graficar cada caso como perteneciendo a un contenedor o a un "agrupamiento". Por ejemplo, en la EPH podríamos crear una tabla de conteos para los ingresos laborales (personas de 0 a $1000 años, de $1001 a $5000, etc.). Las observaciones que caen en el límite de un agrupamiento se asignan al contenedor inferior. Luego, a partir de este podemos generar un histograma:
 
 ```{r echo=FALSE}
 df %>%
-        group_by(CODUSU, NRO_HOGAR) %>%
-        mutate(cant_miembros=n()) %>%
-        ungroup() %>%
-        group_by(REGION) %>%
-        summarise(ifpc_medio = weighted.mean(IPCF, w=PONDIH),
-                  edad_media = weighted.mean(CH06, w=PONDERA),
-                  cantidad_miembros = weighted.mean(cant_miembros, w=PONDERA)) %>%
-        arrange(desc(ifpc_medio)) %>%
-        gt::gt() %>%
-        gt::fmt_currency(
-          columns = ifpc_medio,
-          decimals=2
-        ) %>%
-        gt::fmt_number(
-                columns=c(edad_media, cantidad_miembros),
-                decimals = 2)
+  mutate(P21 = as.numeric(as.character(P21))) %>%
+  mutate(P21 = case_when(
+    P21 >= 75000 ~ 75000, 
+    P21 < 75000 ~ P21)) %>%
+  filter(P21 > 0) %>%
+  ggplot() +
+    geom_histogram(aes(x=P21), color='white', fill='lightblue', bins = 50) +
+    scale_x_continuous(breaks=seq(0,75000, 8000)) +
+    theme_minimal() +
+    labs(x='Ingresos laborales',
+         y='Frec.')
+
 ``` 
 
+Los histogramas proporcionan una vista de la densidad de datos. Las barras más altas representan dónde los datos son relativamente más comunes. Por ejemplo, hay muchos más préstamos con ingresos hasta \$8000 que ingresos mayores a \$24000. Las barras facilitan ver cómo cambia la densidad de los datos en relación con los ingresos.
 
-> ¿Cuáles son las variables que están en juego acá? ¿Qué nivel de medición tiene cada una de ellas?
+Los histogramas son especialmente convenientes para comprender la forma de la distribución de datos. La figura anterior sugiere que la mayoría de las personas tenían en 2016 ingresos laborales menores a \$16000, mientras que solo unas pocas personas tienen ingresos superiores al \$32000. Cuando la distribución de una variable se desvía hacia la derecha de esta manera y tiene una cola derecha más larga, se dice que la forma está sesgada a la derecha.
 
-Se observa que la Patagonia es la región que mayores ingresos per cápita muestra y de las de menores hogares. En contraste, la zona del Nordeste y Noroeste son las que menores ingresos per cápita familiares presentan y que mayores tamaños medios de hogar presentan.
+La figura siguiente muestra un gráfico de densidad que es un histograma suavizado. Los detalles técnicos sobre cómo dibujar gráficos de densidad (precisamente cómo suavizar el histograma) están más allá del alcance de esta materia. Pero se nota que la forma, la escala y la dispersión de las observaciones se muestran de manera similar en un histograma que en un gráfico de densidad.
 
+
+
+
+
+Se dice que las variables con la característica inversa (una cola larga y más delgada hacia la izquierda) están sesgadas (o son asimétricas) a la izquierda. También decimos que tal distribución tiene una larga cola izquierda. Las variables que muestran un final aproximadamente igual en ambas direcciones se denominan simétricas.
+
+Además de observar si una distribución es asimétrica o simétrica, los histogramas se pueden usar para identificar modas. Una moda está representada por un pico prominente en la distribución. ¿Cuántos picos hay en la distribución de ingresos?
+
+Se observa un pico prominente. Este tipo de distribuciones se denominan unimodal. Cualquier distribución con más de dos picos prominentes se denomina multimodal. 
+
+Buscar modas no se trata de encontrar una respuesta clara y correcta sobre la cantidad de modas en una distribución, razón por la cual la noción de "prominente" no se define rigurosamente en este libro. La parte más importante de este examen es comprender mejor los datos.
+
+## Varianza y desvío estándar
+La media se introdujo como un método para describir el centro de una variable. Ahora bien, la variabilidad en los datos también es importante. Aquí presentamos dos medidas de variabilidad: la varianza y la desviación estándar. Ambos son muy útiles en el análisis de datos, aunque sus fórmulas son un poco tediosas para calcularlas a mano. La desviación estándar es la más fácil de comprender de las dos, ya que describe aproximadamente qué tan lejos está la observación típica de la media.
+
+Llamamos a la distancia de una observación de su media su desviación. A continuación se muestran las desviaciones de los ingresos laborales para el cinco casos muestreados aleatoriamiente de la base de la EPH:
+
+$$ edad_{1} - \overline x_{edad} = 17 - 34.22 =  -17.22$$
+$$ edad_{2} - \overline x_{edad} = 50 - 34.22 =  15.78$$
+$$ ... $$
+$$ edad_{59550} - \overline x_{edad} = 22 - 34.22 =  -12.22$$
+
+Si elevamos al cuadrado estos valores y los promediamos el resultado es igual a la varianza muestral, denotada como $s^2$:
+
+$$ s^2 = \frac{(-12.22)^20 + 15.78^2 + ... + (-12.22)^2 +}{59550-1} = 496.29$$
+
+Dividimos por $n-1$ en lugar de hacerlo por $n$ porque se trata de la varianza muestral (un estimador de la varianza poblacional). Es importante notar que elevar al cuadrado hace dos cosas: 
+
+- elimina los valores negativos
+- hace los valores grandes más grandes aún en términos relativos
+
+La desviación estándar de la muestra se puede calcular como la raíz cuadrada de la suma de la distancia al cuadrado de cada valor desde la media dividida por el número de observaciones menos uno:
+
+$$ s = \sqrt \frac{\sum_{i=1}(x_{i}^n - \overline x)^2}{n-1}$$
+En nuestro caso, el desvío estándar es igual a 
+
+$$s_{edad} = \sqrt 496.29  = 22.28$$
+Aunque a menudo se omite, un subíndice de la variable en cuestión puede agregarse a la notación de la varianza y el desvío estándar como recordatorio de que estas son la varianza y la desviación estándar de las observaciones representadas por cierta varaible (en nuestro caso, la edad)
+
+### Varianza y desviación estándar
+La varianza es la distancia promedio al cuadrado de la media. La desviación estándar es la raíz cuadrada de la varianza. La desviación estándar es útil cuando se considera qué tan lejos se distribuyen los datos de la media.
+
+La desviación estándar representa la desviación típica de las observaciones de la media. A menudo, alrededor del 68 % de los datos estarán dentro de una desviación estándar de la media y alrededor del 95 % estarán dentro de dos desviaciones estándar. Sin embargo, estos porcentajes no son reglas estrictas.
+
+Al igual que la media, los valores de población para la varianza y la desviación estándar tienen símbolos especiales: $\sigma^2$  por la varianza y $\sigma$ para la desviación estándar.
+
+
+## Boxplots, cuantiles y mediana
+
+Un boxplot resume un dataset usando cinco números, cinco estadísticos.
+```{r echo=FALSE}
+df %>%
+  mutate(P21 = as.numeric(as.character(P21))) %>%
+  mutate(P21 = case_when(
+    P21 >= 75000 ~ 75000, 
+    P21 < 75000 ~ P21)) %>%
+  filter(P21 > 0) %>%
+  ggplot() +
+    geom_boxplot(aes(x=P21)) +
+    theme_minimal() +
+    labs(x='Ingresos laborales')
+```
+
+La línea oscura dentro del cuadro representa la _mediana_, que divide los datos por la mitad. El 50% de los datos caen por debajo de este valor y el 50% por encima. Dado que en el conjunto de datos de préstamo50 hay 50 observaciones (un número par), la mediana se define como el promedio de las dos observaciones centrales. Cuando hay un número impar de observaciones, habrá exactamente una observación que divide los datos en dos mitades y, en tal caso, esa observación es la mediana (no se necesita un promedio).
+
+Si los datos están ordenados de menor a mayor, la mediana es la observación justo en el medio. Si hay un número par de observaciones, habrá dos valores en el medio y la mediana se tomará como su promedio.
+
+El segundo paso en la construcción de un boxplot es dibujar un rectángulo para representar el 50% medio de los datos. La longitud de la caja se llama rango intercuartílico (o IQR por sus siglas en inglés para abreviar). Al igual que la desviación estándar, es una medida de la variabilidad de los datos. Cuanto más variables sean los datos, mayor será la desviación estándar y el IQR. Los dos límites de la caja se denominan primer cuartil (es decir, el valor que deja por debajo el 25% de los datos) y el tercer cuartil (es decir, el 75% de los datos caen por debajo de este valor), y estos a menudo se etiquetan $Q1$ $Q3$ respectivamente.
+
+El rango intercuartílico $IQR$ es la longitud de la caja en un diagrama de caja. se calcula como $Q3-Q1$. Un $\alpha$ percentil es un número con $\alpha$\% de observaciones por encima y $100 - \alpha$\% de observaciones por debajo. Por ejemplo, el 90 avo. percentil de puntajes SAT es el valor del puntaje SAT con el 90% de los estudiantes por debajo de ese valor y el 10% de los estudiantes por encima de ese valor.
+
+Extendiéndose desde la caja, los bigotes intentan capturar los datos fuera de la caja. Los bigotes de un diagrama de caja alcanzan los valores mínimo y máximo de los datos, a menos que haya puntos que se consideren inusualmente altos o inusualmente bajos, que el diagrama de caja identifica como posibles valores atípicos. Estos están etiquetados con un punto en el diagrama de caja. El propósito de etiquetar los puntos periféricos, en lugar de extender los bigotes a los valores mínimos y máximos observados, es ayudar a identificar cualquier observación que parezca inusualmente distante del resto de los datos. Hay una variedad de fórmulas para determinar si un punto de datos en particular se considera un valor atípico, y diferentes software estadísticos usan fórmulas diferentes. Una fórmula comúnmente utilizada es que cualquier observación más allá $1.5 \times IQR$ lejos del primer o tercer cuartil se considera un valor atípico. En cierto sentido, la caja es como el cuerpo del diagrama de caja y los bigotes son como sus brazos que intentan alcanzar el resto de los datos, hasta los valores atípicos.
+
+Un _valor atípico_ es una observación que parece extrema en relación con el resto de los datos. Examinar los datos en busca de valores atípicos tiene muchos propósitos útiles, que incluyen
+
+- identificando un fuerte sesgo en la distribución,
+- identificar posibles errores de recopilación o ingreso de datos, y
+- proporcionando información sobre propiedades interesantes de los datos.
+
+Tenga en cuenta, sin embargo, que algunos conjuntos de datos tienen un sesgo naturalmente largo y los puntos periféricos no representan ningún tipo de problema en el conjunto de datos.
+
+## Estadística robusta
+
+## Transformando los datos
 

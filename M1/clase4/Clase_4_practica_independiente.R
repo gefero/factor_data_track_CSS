@@ -1,35 +1,56 @@
-### 1. Importe las librerías tidyverse y eph.
-
+### 1. Importar las liberías eph y tidyverse
+library(tidyverse)
+library(eph)
 ### 2. Importe la base de datos individual  del segundo trimestre de 2021.
-### Etiquete las variables REGION y ESTADO como character. 
-### Etiquete la variable NIVEL_ED como factor. 
+individuo <- get_microdata(2021, trim=2)
+individuo <- individuo %>% organize_labels()
 
-df <- get_microdata(year = 2021, trimester = 2, type = "individual")
+### 3. En base a la variable PP08D1, ¿cuánto cobra por mes la media de asalariados? ¿Y la mediana? 
 
-df <- organize_labels(df=df, type='individual') 
+individuo %>%
+        summarise(media_asal = mean(PP08D1, na.rm=TRUE),
+                  mediana_asal = median(PP08D1, na.rm = TRUE))
 
-df <- df %>% mutate_at(vars(REGION, ESTADO), ~as.character(.))%>%
-             mutate_at(vars(NIVEL_ED), ~as.factor(.))
+summary(individuo$PP08D1, na.rm=TRUE)
 
-### 3. Cree:
-### a. Una tabla de frecuencias simple de la variable REGION usando r base
-### b. Una tabla de frecuencias simple de la variable REGION usando tidyverse
-### c. Una tabla de frecuencias en porcentajes de la variable REGION usando r base
-### b. Una tabla de frecuencias en porcentajes de la variable REGION usando tidyverse
+### 4. ¿Cuánto gana mensualmente el percentil 30 de los asalariados?
+### ¿Qué puede hacer con esta variable para que los outliers no afecten la respuesta?
 
-### 4. ¿Qué región se lleva la mayor cantidad de casos? 
+quantile(individuo$PP08D1, probs=seq(0,1,0.1), na.rm = TRUE)
 
-### 5. Realice un gráfico que exprese lo mismo que las tablas del punto 3. 
-### Filtre los casos que crea correspondientes.
-### Coloque título, subtítulo, epígrafe y nombre correctamente los ejes. 
 
-### 6. Realice un gráfico que cruce las variable de nivel educativo por estado ocupacional. 
-### Filtre los casos que crea correspondientes.
-### Coloque título, subtítulo, epígrafe y nombre correctamente los ejes. 
-### TIP: Si las categorías del eje x se superponen, prueben agregar el atributo theme(axis.text.x = element_text(angle = 90)) o coord_flip()
+individuo %>%
+        filter(PP08D1 > 0) %>%
+        summarise(p30 = quantile(PP08D1, probs = 0.3))
 
-### 7. ¿Qué puede decir a partir de ese gráfico? 
+### 5. Cree un boxplot que muestre el ingreso mensual de los asalariados por región. 
+### ¿Qué puede observar a partir del gráfico? 
 
-### 8. Cruce estas dos variables por la región. 
+individuo %>%
+        filter(!is.na(PP08D1) | PP08D1 > 0) %>%
+        ggplot(aes(x=PP08D1, y=as.character(REGION))) +
+                geom_boxplot()
 
-### 9. ¿Qué puede decir a partir de este gráfico?
+
+### 6. ¿Cuál es la moda de la variable PP08D1? Responda a partir de los valores que vea en un histograma. 
+individuo %>%
+        filter(!is.na(PP08D1) & PP08D1 > 0) %>%
+        ggplot(aes(x=PP08D1)) +
+                geom_histogram(bins=200)
+
+individuo %>%
+        filter(!is.na(PP08D1) & PP08D1 > 0) %>%
+        group_by(PP08D1) %>%
+        summarise(n=n()) %>%
+        arrange(desc(n))
+
+
+### 7. Cree un gráfico que cruce la variable PP08D1 por DECIFR (el decil del total de ingresos familares).
+### ¿Qué puede decir a partir de este gráfico? 
+
+individuo %>%
+        filter(!is.na(PP08D1) & PP08D1 > 0) %>%
+        filter(DECIFR != 12) %>%
+        ggplot(aes(x=PP08D1, y=(DECIFR))) +
+                geom_boxplot()
+        
