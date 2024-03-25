@@ -5,7 +5,7 @@ output:
   html_document:
     toc: TRUE
     toc_float: TRUE
-author: "Germán Rosati y Laia Domenech Burin"
+author: "Germán Rosati"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 theme: Boadilla
 ---
@@ -167,9 +167,8 @@ df %>%
                 decimals = 2)
 ``` 
 
-
-> ¿Cuáles son las variables que están en juego acá? ¿Qué nivel de medición tiene cada una de ellas?
+### Para discutir...
+- ¿Cuáles son las variables que están en juego acá? 
+- ¿Qué nivel de medición tiene cada una de ellas?
 
 Se observa que la Patagonia es la región que mayores ingresos per cápita muestra y de las de menores hogares. En contraste, la zona del Nordeste y Noroeste son las que menores ingresos per cápita familiares presentan y que mayores tamaños medios de hogar presentan.
-
-

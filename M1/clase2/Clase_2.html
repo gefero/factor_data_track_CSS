@@ -1480,7 +1480,7 @@ border-radius: 0px;
 
 <h1 class="title toc-ignore">Clase 2</h1>
 <h4 class="author">Germán Rosati y Laia Domenech Burin</h4>
-<h4 class="date">18 marzo, 2024</h4>
+<h4 class="date">25 marzo, 2024</h4>
 
 </div>
 
@@ -1908,18 +1908,19 @@ mutate_2 %&gt;% select(sexo)</code></pre>
 ## 10 Mujer
 ## # ℹ 48,325 more rows</code></pre>
 <ul>
-<li>Con <code>mutate_at</code> podemos editar varias variables al mismo
-tiempo:
+<li>Podemos combinar <code>mutate</code> y <code>across()</code> para
+editar varias variables al mismo tiempo:
 <ul>
-<li>le pasamos el parámetro <code>vars()</code> donde indicamos el
-conjunto de columnas que queremos modificar</li>
+<li>dentro de la función <code>mutate()</code> pasamos una segunda
+función <code>across()</code> donde indicamos el conjunto de columnas
+que queremos modificar</li>
 <li>para aplicar una función hay que introducirla con el símbolo
 <code>~</code></li>
-<li>usamos el punto <code>.</code> para referirnos a la selección de
+<li>usamos el punto <code>.x</code> para referirnos a la selección de
 variables anterior</li>
 </ul></li>
 </ul>
-<pre class="r"><code>df &lt;- df %&gt;% mutate_at(vars(CH03, sexo, CH07:CAT_INAC), ~as.character(.))
+<pre class="r"><code>df &lt;- df %&gt;% mutate(across(c(CH03, sexo, CH07:CAT_INAC), ~as.character(.x)))
 
 df %&gt;% select(CH03:CAT_INAC)</code></pre>
 <pre><code>## # A tibble: 48,335 × 20

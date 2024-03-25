@@ -5,7 +5,7 @@ output:
   html_document:
     toc: TRUE
     toc_float: TRUE
-author: "Laia Domenech Burin y Germán Rosati"
+author: "Santiago Núñez y Germán Rosati"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 theme: Boadilla
 ---

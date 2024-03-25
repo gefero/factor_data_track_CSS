@@ -89,6 +89,7 @@ df$CAT_OCUP%>%
 ```{r}
 ###
 ```
+
 ---
 
 
@@ -246,16 +247,17 @@ mutate_1 <- df %>% mutate(columna_ejemplo = "EPH 2do trim 2020")
 head(mutate_1)
 ```
 - También podemos "editar" una columna ya existente. Por ejemplo, podemos pasar a `string` la columna de sexo para que aparezca la etiqueta en lugar de números:
+
 ```{r}
 mutate_2 <- df %>% mutate(sexo = as.character(sexo))
 mutate_2 %>% select(sexo)
 ```
-- Con `mutate_at` podemos editar varias variables al mismo tiempo:
-  + le pasamos el parámetro `vars()` donde indicamos el conjunto de columnas que queremos modificar
+- Podemos combinar `mutate` y `across()` para editar varias variables al mismo tiempo:
+  + dentro de la función `mutate()` pasamos una segunda función `across()` donde indicamos el conjunto de columnas que queremos modificar
   + para aplicar una función hay que introducirla con el símbolo `~`
-  + usamos el punto `.` para referirnos a la selección de variables anterior
+  + usamos el punto `.x` para referirnos a la selección de variables anterior
 ```{r}
-df <- df %>% mutate_at(vars(CH03, sexo, CH07:CAT_INAC), ~as.character(.))
+df <- df %>% mutate(across(c(CH03, sexo, CH07:CAT_INAC), ~as.character(.x)))
 
 df %>% select(CH03:CAT_INAC)
 ```
