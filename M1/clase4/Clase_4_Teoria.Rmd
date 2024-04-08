@@ -260,8 +260,3 @@ Un _valor atípico_ es una observación que parece extrema en relación con el r
 - proporcionando información sobre propiedades interesantes de los datos.
 
 Tenga en cuenta, sin embargo, que algunos conjuntos de datos tienen un sesgo naturalmente largo y los puntos periféricos no representan ningún tipo de problema en el conjunto de datos.
-
-## Estadística robusta
-
-## Transformando los datos
-
