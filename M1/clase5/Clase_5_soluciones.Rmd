@@ -36,11 +36,20 @@ eph2020 <- get_microdata(year=2020,
                          trim=3)
 eph2020 <- eph2020 %>% organize_labels()
 
+eph2020 <- eph2020 %>% mutate(across(c(CH04, ESTADO), ~as.character(.x)))
+
+eph2020 <- eph2020 %>%
+        mutate(estado_r = if_else(
+                ESTADO == "Entrevista individual no realizada (no respuesta al cuestionario individual)" | ESTADO == "Menor de 10 anios.", "Inactivo", ESTADO)
+        )
+
+table(eph2020$ESTADO, eph2020$estado_r)
+
 eph2020 %>%
-        filter(ESTADO > 0 ) %>%
-        group_by(CH04, ESTADO) %>%
+        group_by(CH04, estado_r) %>%
         summarise(n=n()) %>%
         mutate(por = n/sum(n)*100) %>%
+        filter(estado_r == "Ocupado" | estado_r == "Inactivo") %>%
         pivot_wider(names_from = CH04,
                     values_from = c(n, por))
 ```
@@ -48,12 +57,13 @@ eph2020 %>%
 Tasas de desocupación
 ```{r}
 eph2020 %>%
-        filter(ESTADO > 0 & ESTADO < 3) %>%
-        group_by(CH04, ESTADO) %>%
+        filter(estado_r != "Inactivo") %>%
+        group_by(CH04, estado_r) %>%
         summarise(n=n()) %>%
         mutate(prop = n/sum(n)*100) %>%
         pivot_wider(names_from = CH04,
-                    values_from =c(prop,n))
+                    values_from =c(prop,n)) %>%
+        filter(estado_r=="Desocupado")
 ```
 
 
@@ -66,23 +76,69 @@ eph2020 %>%
 
 ```{r}
 eph2020 %>%
+        filter(CH06 >=18 & CH06 <=35) %>%
+        group_by(CH04) %>%
+        summarise(media_P21 = mean(P21, na.rm=TRUE)) %>%
+        pivot_wider(names_from=CH04,
+                    values_from=media_P21) %>%
+        mutate(brecha = Mujer/Varon*100)
+```
+
+
+```{r}
+eph2020 %>%
         filter(CH06 >= 36 & CH06 <= 70) %>%
         group_by(CH04) %>%
         summarise(media_inglab = mean(P21)) %>%
         pivot_wider(names_from = CH04,
                     values_from = media_inglab) %>%
         mutate(brecha = Mujer/Varon*100)
+```
 
+```{r}
+eph2020 %>%
+        mutate(grupo_edad = case_when(
+                CH06 >= 36 & CH06 <= 70 ~ '36 a 70',
+                CH06 >= 18 & CH06 <= 35 ~ '18 a 35',
+                TRUE ~ 'Otros')
+        ) %>%
+        group_by(grupo_edad, CH04) %>%
+        summarise(media_inglab = mean(P21)) %>%
+        pivot_wider(names_from = CH04,
+                    values_from = media_inglab) %>%
+        mutate(brecha = Mujer/Varon)
 ```
 
 5. ¿Qué región presenta los mayores niveles de desocupación? Calcularla para el III trimestre de 2021
-
 ```{r}
-### 
+eph2020 <- eph2020 %>% mutate(REGION = as.character(REGION))
+eph2020 <- eph2020 %>%
+        mutate(REGION = if_else(REGION == "44", "Patagonia", REGION))
+
+
+eph2020 %>%
+        filter(estado_r == "Desocupado" | estado_r == "Ocupado") %>%
+        group_by(REGION, estado_r) %>%
+        summarise(n=n()) %>%
+        mutate(prop = n/sum(n)*100) %>%
+        filter(estado_r=="Desocupado") %>%
+        arrange(desc(prop))
 ```
 
 6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? Calcularla para el III trimestre de 2021
 ```{r}
-### 
+eph2020 %>%
+        group_by(REGION, estado_r) %>%
+        summarise(n=n()) %>%
+        mutate(pob_total_region=sum(n)) %>%
+        ungroup() %>%
+        filter(estado_r=="Desocupado" | estado_r == "Ocupado") %>%
+        mutate(pea_region = sum(n)) %>%
+        mutate(        
+                tasa_desoc = n/sum(pea_region)*100,
+                tasa_act = pea_region / pob_total_region * 100) %>%
+        select(REGION, tasa_desoc, tasa_act, n, pea_region, pob_total_region)
+        
+ 
 ```
 
