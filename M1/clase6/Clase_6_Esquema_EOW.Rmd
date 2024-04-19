@@ -253,7 +253,9 @@ df <- df %>%
     (cat_ocup == 'Cuenta propia' | cat_ocup=='Trabajador familiar sin remuneración') 
     & (v196 == 'No contrata' | is.na(v196)) ~ 'Pequeña burguesía',
     
-    TRUE ~ 'Inactivo, desocupado o menor'
+    #estado == "Desocupado" ~ 'Desocupado',
+    
+    TRUE ~ 'Sin dato/ menor de edad'
     )
 ) 
 ```
@@ -322,7 +324,7 @@ está constituida por todos aquellos autónomos que no contratan asalariados en 
 ### Pregunta
 ¿Qué significa esta línea en el código?
 ```
-    TRUE ~ 'Inactivo, desocupado o menor'
+    TRUE ~ 'Sin dato/ menor de edad'
 ```
 
 De esta forma, podemos tener una primera aproximación a la distribución de clases sociales según el esquema de Erik Olin Wright:
