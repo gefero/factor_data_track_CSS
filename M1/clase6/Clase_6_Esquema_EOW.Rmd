@@ -176,13 +176,7 @@ Generen una variable que cree cuatro grupos de edad (a partir de la variable `v1
 - más de 65
 
 ```{r}
-df <- df %>%
-        mutate(edad = case_when(
-          v108 <= 13 ~ '0-13',
-          v108 > 13 & v108 < 36 ~ '13-35',
-          v108 >= 36 & v108 < 65 ~ '36-65',
-          v108 >= 65 ~ '65 y +')
-        )
+###
 ```
 
 # Introducción al esquema de clases
@@ -253,13 +247,10 @@ df <- df %>%
     (cat_ocup == 'Cuenta propia' | cat_ocup=='Trabajador familiar sin remuneración') 
     & (v196 == 'No contrata' | is.na(v196)) ~ 'Pequeña burguesía',
     
-    #estado == "Desocupado" ~ 'Desocupado',
-    
-    TRUE ~ 'Sin dato/ menor de edad'
+    TRUE ~ 'Sin datos y menores'
     )
 ) 
 ```
-
 
 ### Empleadores
 Para la construcción de la categoría **empleadores** (ver esquena de Wright 1974 pp. 242-247) se siguieron los siguientes criterios
@@ -324,14 +315,39 @@ está constituida por todos aquellos autónomos que no contratan asalariados en 
 ### Pregunta
 ¿Qué significa esta línea en el código?
 ```
-    TRUE ~ 'Sin dato/ menor de edad'
+    TRUE ~ 'Sin datos y menores'
 ```
+
+### Desocupados sin datos
+Vamos a hacer una última modificación: queremos que dentro de `class_eow` podamos identificar a los desocupados que no presentan información suficiente:
+
+```{r}
+df <- df %>%
+        mutate(class_eow = case_when(
+                estado == "Desocupado" & class_eow == "Sin datos y menores" ~ "Desocupado s/d",
+                TRUE ~ class_eow
+        ))
+```
+
 
 De esta forma, podemos tener una primera aproximación a la distribución de clases sociales según el esquema de Erik Olin Wright:
 
 ```{r}
-
 df %>%
+  group_by(class_eow) %>%
+  summarise(n=n()) %>%
+  mutate(prop = n/sum(n)) %>%
+  ggplot() +
+    geom_col(aes(x=reorder(class_eow, prop), y=prop)) + 
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45,hjust=1)) +
+    labs(y='%',
+         x='Clase EOW')
+```
+Ahora, filtremos los "sin dato" pero quedémonos solamente con los desocupados
+```{r}
+df %>%
+filter(class_eow!="Sin datos y menores") %>%
   group_by(class_eow) %>%
   summarise(n=n()) %>%
   mutate(prop = n/sum(n)) %>%
@@ -343,6 +359,7 @@ df %>%
          x='Clase EOW')
 
 ```
+
 
 ```{r}
 write_rds(df, './data/ENES_Personas_M1_EOW.rds')
