@@ -262,12 +262,32 @@ load_embeddings <- function(path=NULL, type=c("w2v", "ft")){
 
 embedding <- load_embeddings(path = "../../../../WordEmbeddings/Word2Vec/sbw_vectors.bin",
                              type = "w2v")
+
+#embedding<-embedding %>% rename(token=word)
 ```
  
 Como puede verse, es necesario previamente descargar el archivo .bin (con la información en formato binario) del embedding para poder cargarlo . La función también permite cargar (si quisieran hacerlo) un .bin entrenado mediante [FastText](https://fasttext.cc/docs/en/crawl-vectors.html).
 
 ### Tokenización y construcción de features mediante el embedding
 Si bien existe un método `step_word_embeddings()` análogo al `step_tfidf()` que realizaría la vectorización, vamos a hacer "a mano" para tratar de entender qué pasa (y porque además, el método tiene algunos comportamientos raros).
+
+
+```{r}
+reviews_rec_embed <- recipe(stars ~ ., data = train_embed) %>% # definimos las variables y sus roles
+        update_role("review_id", new_role = "ID") %>% # actualizamos el rol del ID
+        step_tokenize(review_body) %>% #Tokenizamos
+        step_word_embeddings(review_body, embeddings=embedding,
+                             aggregation = "mean")
+```
+
+
+### REVISAR DESDE ACÁ
+
+```{r}
+tictoc::tic()
+rev_embed <- reviews_rec_embed %>% prep() %>% bake(train_embed)
+tictoc::toc()
+```
 
 La secuencia de operaciones que vamos a realizar es la siguiente:
 
