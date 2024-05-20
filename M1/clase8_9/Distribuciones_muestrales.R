@@ -1,5 +1,20 @@
 library(googlesheets4)
-datos <- read_sheet("https://docs.google.com/spreadsheets/d/14YHOQfrteEB0Qjg_8TwLuy8DLoL6J4SCD_B7ZID9oCQ/edit#gid=0")
+library(tidyverse)
+datos <- read_sheet("https://docs.google.com/spreadsheets/d/1qbe64Q5w2K1qxyv39sYCA3DNLddz-MaijC8OQOFErO4/edit?resourcekey#gid=1177396456")
+
+datos <- datos %>%
+        rename(timestap = `Marca temporal`,
+               mail = `Dirección de correo electrónico`,
+               nombre = `¿Cuál es tu nombre?`,
+               edad = `¿Qué edad tenés?`,
+               trabajo = `¿Trabajaste la semana pasada (al menos una hora?`,
+               horas_trabajo = `¿Cuántas horas trabajaste la semana pasada?`,
+               carrera = `¿De qué carrera sos?`,
+               materias = `¿Cuántas materias tenés aprobada a la fecha?`
+               ) 
+
+datos %>%
+        mutate()
 
 # Definimos un tamaño de muestra
 n <- 2
@@ -10,7 +25,9 @@ estimaciones <- datos %>%
                 size = n,
                 media_edad = mean(edad),
                 prop_trabaja = mean(trabaja),
-                media_horas = mean(Horas_trabajo_semanales))
+                media_horas = mean(horas_trabajo),
+                media_materias = mean(materias)
+                )
 
 estimaciones
 
@@ -24,7 +41,8 @@ for (r in 1:100){
                         size = n,
                         media_edad = mean(edad),
                         prop_trabaja = mean(trabaja),
-                        media_horas = mean(Horas_trabajo_semanales)
+                        media_horas = mean(horas_trabajo),
+                        media_materias = mean(materias)
                 )
         
         muestras[[r]] <- estimaciones
@@ -51,8 +69,11 @@ for (n_ in ns){
                                 sample = r,
                                 size = n_,
                                 media_edad = mean(edad),
-                                prop_trabaja = mean(trabaja))
-                
+                                prop_trabaja = mean(trabaja),
+                                media_horas = mean(horas_trabajo),
+                                media_materias = mean(materias)
+                        )
+                                
                 muestras[[it]] <- estimaciones
                 }
 }
