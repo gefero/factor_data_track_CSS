@@ -147,8 +147,8 @@ for (i in 1:reps){ # Loop que itera a través de las reps repeticiones
   # Extraemos una muestra aleatoria
   boot <- gba %>%
             select(nocues, f_calib3, class_eow) %>%
-            sample_n(
-                size=nrow(gba), 
+            slice_sample(
+                n=nrow(gba), 
                 weight_by = f_calib3, 
                 replace = TRUE
                 )  
@@ -173,17 +173,17 @@ Veamos el primer bloque de código:
 ```
    boot <- gba %>%
             select(nocues, f_calib3, class_eow) %>%
-            sample_n(
-                size=nrow(gba), 
+            slice_sample(
+                n=nrow(gba), 
                 weight_by = f_calib3, 
                 replace = TRUE
                 )  
    
 ```
 
-Aquí, en primer lugar se seleccionan las columnas que se van a usar. Luego, se utiliza la función `sample_n()`^[Esta función puede llegar a ser reemplazada por slice_sample() que realiza la misma tarea. De hecho, en la documentación de tidyverse `sample_n()` figura como “superseeded”, lo cual implica que la idea es que esta función no será mejorada en futuros desarrollos y es probable que en algún momento quede deprecada. No obstante, la usaremos porque `slice_sample()` no permite hacer sampleo de grupos con diferentes tamaños, que es lo que haremos en los próximos ejemplos.] que es la que realiza la selección de los casos. Esta función toma varios argumentos, pero vamos a centrarnos en tres: 
+Aquí, en primer lugar se seleccionan las columnas que se van a usar. Luego, se utiliza la función `slice_sample()` que es la que realiza la selección de los casos. Esta función toma varios argumentos, pero vamos a centrarnos en tres: 
 
-- `size = nrow(gba)`: define el tamaño de la muestra (en este caso, como marca el método bootstrap el tamaño será del mismo tamaño que la muestra original del GBA)
+- `n = nrow(gba)`: define el tamaño de la muestra (en este caso, como marca el método bootstrap el tamaño será del mismo tamaño que la muestra original del GBA)
 - `weight_by = f_calib3`: recordemos que nos encontramos ante una muestra ponderada; esto implica que los pesos nos aproximan a la importancia que cada caso tiene en la población; por eso, remuestramos con ese peso
 - `replace = TRUE`: le pedimos que haga muestreo con reposición
 
@@ -249,15 +249,18 @@ Por esto, vamos a modificar ligeramente el código para poder aproximarnos a est
 ```{r}
 reps <- 2000
 props_region <- tibble()
-set.seed(258)
+set.seed(777)
 
 for (i in 1:reps){
   boot <- df %>%
-          select(nocues, region, f_calib3, class_eow) %>%
-          group_by(region) %>%
-          mutate(n_sample = n()) %>%
-          sample_n(n_sample[1],  weight = f_calib3, replace=TRUE)
-         
+        select(nocues, region, f_calib3, class_eow) %>%
+        group_by(region) %>%
+        mutate(n_sample = n()) %>%
+        sample_n(
+              n_sample[1],
+              replace = TRUE
+              )  %>%
+        ungroup()
 
     p <- boot %>%
         group_by(class_eow) %>%
@@ -342,6 +345,7 @@ Por último, en el objeto `prop_region_1` tenemos todas las categorías de clase
 
 ```{r}
 props_region_1 %>%
+  filter(class_eow != 'Inactivo, desocupado o menor') %>%
   group_by(region, class_eow) %>%
   summarise(lim_inf = quantile(prop, probs=0.025),
             estimate = quantile(prop, probs=0.5),

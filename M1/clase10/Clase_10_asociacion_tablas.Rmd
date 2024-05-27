@@ -50,7 +50,6 @@ df <- read_rds('./data/ENES_Personas_M1_EOW.rds')
 ```
 
 Primero, agregamos la variable de clase a dos valores: trabajadores y no trabajadores.
-
 ```{r}
 df <- df %>%
   mutate(
@@ -59,8 +58,6 @@ df <- df %>%
 ```
 
 Veamos el cruce, entonces:
-
-
 ```{r}
 tab1 <- df %>%
     group_by(class_eow_agg, v139) %>%
@@ -69,12 +66,15 @@ tab1 <- df %>%
   
 tab1 %>%
 ggplot(aes(x=class_eow_agg, y=prop, fill=v139)) +
-    geom_col() + 
-    theme_minimal()
+        geom_col() +
+        geom_text(aes(label=round(prop, 2))) +
+        labs(x="Clase EOW",
+             y="Prop.",
+             fill="Tiempo desde últ. ctrl. médico") +
+        theme_minimal()
 ```
 
 Pareciera que las mayores diferencias se concentran en la categoría "Menos de un año". Vamos, entonces a dicotomizar la variable de visitas al médico:
-
 ```{r}
 df <- df %>%
   mutate(
@@ -86,8 +86,6 @@ df <- df %>%
 ```
 
 Finalmente, vamos a realizar una modificación en la escala de la ponderación. En lugar de que "expanda" los casos al total de la población vamos a buscar que lo haga al total de casos de la encuesta (27.610) pero manteniendo la estructura de las calibraciones realizadas. Más adelante veremos por qué hacemos esta operación.
-
-
 ```{r}
 df <- df %>%
   mutate(
@@ -96,7 +94,6 @@ df <- df %>%
 ```
 
 Y repetimos el gráfico:
-
 ```{r}
 tab2 <- df %>%
     group_by(class_eow_agg, v139_agg) %>%
@@ -105,8 +102,12 @@ tab2 <- df %>%
   
 tab2 %>%
 ggplot(aes(x=class_eow_agg, y=prop, fill=v139_agg)) +
-    geom_col() + 
-    theme_minimal()
+        geom_col() + 
+        geom_text(aes(label=round(prop, 2))) +
+        labs(x="Clase EOW",
+             y="Prop.",
+             fill="Tiempo desde últ. ctrl. médico") +
+        theme_minimal()
 ```
 
 Si bien no esperaríamos que el tiempo desde la última consulta y los casos en cada categoría sea exactamente el mismo en las tres clases de preguntas, las proporciones parecen bien diferentes entre las diferentes clases. Parece haber una diferencia entre ambas variables: los trabajadores han ido al médico en el último año en menor proporción que los no trabajadores: 0.679 contra 0.781. ¿Es significativa esta diferencia? Esto nos lleva de nuevo al terreno de las pruebas de hipótesis.
@@ -133,13 +134,10 @@ Veamos las frecuencias observadas:
 ```{r}
 chi$observed %>% as_tibble()
 ```
-
 Veamos, ahora, las esperadas:
-
 ```{r}
 chi$expected %>% as_tibble()
 ```
-
 La idea será comparar estas tablas mediante una prueba de hipótesis. La idea es comparar nuestra distribución observada con las frecuencias esperadas (bajo supuesto de independencia) con las frecuencias observadas (las que obtuvimos en nuestra muestra).
 
 # Test de chi cuadrado
@@ -150,28 +148,23 @@ $$\chi^2 = \sum_{j}\sum_{i} \frac{(frec\ observada - frec\ esperada)^2}{frec\ es
 ```{r, echo=FALSE}
 chi$observed %>% as_tibble() - chi$expected %>% as_tibble()
 ```
-
 2. Eleva cada celda al cuadrado
 ```{r echo=FALSE}
 (chi$observed %>% as_tibble() -
 chi$expected %>% as_tibble())^2
 ```
-
-
 3. Calcula la relación (en cada celda) con la frecuencia esperada
 ```{r echo=FALSE}
 (chi$observed %>% as_tibble() -
 chi$expected %>% as_tibble())^2 / chi$expected %>% as_tibble()
 ```
-
 4. Suma a lo largo de todas las celdas.
-
 ```{r echo=FALSE}
 sum((chi$observed %>% as_tibble() -
 chi$expected %>% as_tibble())^2 / chi$expected %>% as_tibble())
 ```
-Lógicamente, hay una función que nos permite resolver esto de forma más simple sin tener que andar haciendo los cálculos a mano. `chisq.test()` espera un objeto tabla o matriz. Es por eso que tenemos que hacer algunos pequeños cambios al formato de nuestra `tab2` original. Primero, eleminamos la columna prop. Luego, pivoteamos para que nos quede la variable clase en las columnas y por último, eliminamos la columna con las categorías de `v139_agg`.
 
+Lógicamente, hay una función que nos permite resolver esto de forma más simple sin tener que andar haciendo los cálculos a mano. `chisq.test()` espera un objeto tabla o matriz. Es por eso que tenemos que hacer algunos pequeños cambios al formato de nuestra `tab2` original. Primero, eleminamos la columna prop. Luego, pivoteamos para que nos quede la variable clase en las columnas y por último, eliminamos la columna con las categorías de `v139_agg`.
 ```{r}
 chi <- tab2 %>%
   select(-prop) %>% 
@@ -250,8 +243,9 @@ V de Cramer es una normalización de $\chi^2$ por el tamaño de muestra ($n$) y 
 - es cero cuando no hay asociación
 - dado que es una transformación de $\chi^2$ tiene la misma distribución muestral (bajo la hipótesis nula)
 
-Dado que no se encuentra implementado en R de forma simple, hemos escrito un función muy simple para hacer el cálculo. La misma toma como input una tabla (al ogu)
+Dado que no se encuentra implementado en R de forma simple, hemos escrito un función muy simple para hacer el cálculo. La misma toma como input una tabla. 
 
+La misma la generamos de la forma en que ya sabemos hacerlo: `group_by() + summarise()` y luego, aplicamos un `pivot_wider()` para pasarla del formato tidy-apilado a un formato de filas y columnas más similar a una tabla de contingencia clásica. 
 ```{r}
 cramerv <- function(table){
   chi <-  chisq.test(table, correct=FALSE)

@@ -13,8 +13,21 @@ datos <- datos %>%
                materias = `¿Cuántas materias tenés aprobada a la fecha?`
                ) 
 
-datos %>%
-        mutate()
+
+datos <- datos %>%
+        mutate(trabajo = if_else(trabajo == "Sí", 1, 0))
+
+
+# Parámetros
+paramtros <- datos %>%
+        summarise(
+                size = n,
+                media_edad = mean(edad),
+                prop_trabaja = mean(trabaja),
+                media_horas = mean(horas_trabajo),
+                media_materias = mean(materias)
+        )
+
 
 # Definimos un tamaño de muestra
 n <- 2
