@@ -26,7 +26,6 @@ Este texto se basa en los siguientes materiales:
 - Capítulo 4 del libro [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) de Richard McElreath
 - Capitulo 3 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
 
-
 ***
 
 ## Introducción
@@ -37,7 +36,7 @@ La regresión lineal es una técnica estadística muy poderosa. Muches estamos a
 
 
 ## De ajustes, residuos y correlacion
-Al considerar la regresión lineal, es útil pensar profundamente en el proceso de ajuste de línea. Vamos a definir la forma de un modelo lineal, exploramos los criterios de lo que hace un buen ajuste e introducimos una nueva métrica llamda "correlación lineal".
+Al considerar la regresión lineal, es útil pensar en el proceso de ajuste de línea. ¿Qué signifca "ajustar" una recta a una nube de puntos? Vamos a definir la forma de un modelo lineal. Luego, vamos a tratar de explorar los criterios para definir que un ajuste es "bueno". Y vamos a introducir una nueva métrica llamda "correlación lineal".
 
 ### Ajustando una línea a los datos
 El gráfico siguiente muestra dos variables. Podemos modelar esa relación entre ambas de forma **perfecta** con una línea recta. La ecuación de esa recta es
@@ -57,7 +56,13 @@ ggplot(aes(x,y)) +
         theme_minimal()
 ```
 
-¿Qué quiere decir esa idea de **relación perfecta**? Básicamente que podemos predecir **sin error** el valor de $y$ conociendo el valor de $X$. Obviamente, esto es un ejemplo de juguete y estas relaciones perfectas no existen casi en ninguna situación de la vida real. Por ejemplo, si tomamos el ingreso familiar de una persona ($X$) este valor seguramente proporcione una buena cantidad de información útil sobre el monto que un banco le ofrecerá a esta persona si quisiera acceder a cierto tipo de instrumentos crediticios. Sin embargo, si quisiéramos hacer una predicción del monto prestado en base $X$ esa predicción no va a ser perfecta. ¿Por qué?
+¿Qué quiere decir esa idea de **relación perfecta**? Básicamente que podemos predecir **sin error** el valor de $y$ conociendo el valor de $X$. Obviamente, esto es un ejemplo de juguete y estas relaciones perfectas no existen práctiamente en ninguna situación de la vida real. Por ejemplo, si tomamos el ingreso familiar de una persona ($X$) este valor seguramente proporcione una buena cantidad de información útil sobre el monto que un banco le ofrecerá a esta persona si quisiera acceder a cierto tipo de instrumentos crediticios. Sin embargo, si quisiéramos hacer una predicción del monto prestado en base $X$ esa predicción no va a ser perfecta. 
+
+---
+
+**Pensemos... ¿por qué?**
+
+---
 
 La regresión lineal es un método estadístico que se usa para ajustar una línea a los datos donde la relación entre dos variables, $X$ e $y$ puede ser modelada como si fuera una línea recta tolerando algún grado de error.
 
@@ -84,15 +89,16 @@ El último gráfico muestra una relación negativa (a la baja) muy débil en los
 
 En cada gráfico podríamos preguntarnos, ¿deberíamos mover la línea un poco hacia arriba o hacia abajo? ¿Deberíamos inclinarla más o menos? La primera pregunta nos remite a $\beta_{0}$. La segunda, a $\beta_{1}$. Dado que cada una controla un aspecto de una recta, entonces, estas cuestiones nos plantean la existencia de una cierta incertidumbre con respecto a nuestras estimaciones de los parámetros del modelo. Vamos a ir avanzando sobre esto.
 
-También hay casos en los que ajustar una línea recta a los datos, incluso si existe una relación clara entre las variables, no es útil. No funciona. Uno de estos casos se muestra en la figura siguiente. x
+También hay casos en los que ajustar una línea recta a los datos, incluso si existe una relación clara entre las variables, no es útil. No funciona. Uno de estos casos se muestra en la figura siguiente.
+
 ![](./img/notGoodAtAllForALinearModel-1.png)
 
 
 Se vé una relación perfecta entre las variables, aunque la misma no es lineal. ¿Qué tipo de relación se les ocurre que podría funcionar aquí? Por ahora vamos a centrarnos en los modelos lineales.
 
-### Usando regresión lineal para predecir el peso de una población
+## Usando regresión lineal para predecir el peso de una población
 
-Vamos a trabajar con un dataset que proviene del [siguiente repositorio](https://github.com/rmcelreath/rethinking). Son datos de un censo parcial censales parciales de un área de Botswana y, específicamente, de la etnia !Kung San. Son datos compilados a partir de e entrevistas realizadas por Nancy Howell a fines de la década de 1960. Los datasets completos (para les antropólogues que les interese) pueden ser recuperados desde [acá](https://tspace.library.utoronto.ca/handle/1807/10395).
+Vamos a trabajar con un dataset que proviene del [siguiente repositorio](https://github.com/rmcelreath/rethinking). Son datos censales parciales de un área de Botswana y, específicamente, de la etnia !Kung San. Son datos compilados a partir de e entrevistas realizadas por Nancy Howell a fines de la década de 1960. Los datasets completos (para les antropólogues que les interese) pueden ser recuperados desde [acá](https://tspace.library.utoronto.ca/handle/1807/10395).
 
 Vamos a trabajar con un recorte de estos datos, particularmente, con datos de edad, sexo, altura y peso.
 
@@ -119,7 +125,11 @@ df %>%
                 theme_minimal()
 ```
 
-¿Qué pueden decir de esta relación?
+---
+
+**Pregunta: ¿qué pueden decir de esta relación?**
+
+---
 
 Ahora bien, por ahora, vamos a restringirnos a la población adulta (mayores de 18 años). Básicamente, porque la edad y la altura están muy correlacionadas entre si hasta finalizada la adolescencia.
 
@@ -187,13 +197,14 @@ Traten de replicar este mismo gráfico con les menores de 18 años.
 ```{r}
 ###
 ```
+
 ***
 
-### Residuos
+## Residuos
 Los residuos son la variación restante en los datos después de tener en cuenta el ajuste del modelo:
 
 $$ Datos\ observados = Modelo\ ajustado + Residuos $$
-Vamos a poder calcular para cada observación un residuo. En el gráfico siguiente vemos tres que calculamos para la recta de regresión de nuestro dataset. Si una observación está por encima de la línea de regresión, entonces su residuo, la distancia vertical desde la observación hasta la línea, es positiva. Las observaciones debajo de la línea tienen residuos negativos. Uno de los objetivos de elegir el modelo lineal correcto es que estos residuos sean lo más pequeños posible.
+Vamos a poder calcular para cada observación un residuo. En el gráfico siguiente vemos tres que calculamos para la recta de regresión de nuestro dataset. Si una observación está por encima de la línea de regresión, entonces su residuo (la distancia vertical desde la observación hasta la línea) es positiva. Las observaciones debajo de la línea tienen residuos negativos. Uno de los objetivos al momento de estimar un modelo lineal es que estos residuos sean _lo más pequeños posible_.
 
 
 ```{r include=FALSE}
@@ -212,12 +223,22 @@ df_mayores %>%
                 theme_minimal()
 ```
 
-En este gráfico tenemos mucha información: los datos observados, la recta de regresión, los residuos y el valor de los residuos. Cuanto más amarillo es el color de los puntitos, más positiva será la diferencia entre el valor observado y el valor predicho por el modelo. Es decir, el modelo "sub-estima" la observación. A la inversa, cuanto más azul sea el color del puntito, más negativa será la diferencia entre ambos. Es decir, el modelo "sobre-estima".
+En este gráfico tenemos mucha información: 
 
-¿Cuál es el punto más sobre-estimado?
+- los datos observados
+- la recta de regresión
+- los residuos y 
+- el valor de los residuos. 
+
+Cuanto más amarillo es el color de los puntitos, más positiva será la diferencia entre el valor observado y el valor predicho por el modelo. Es decir, el modelo "sub-estima" la observación. A la inversa, cuanto más azul sea el color del puntito, más negativa será la diferencia entre ambos. Es decir, el modelo "sobre-estima".
 
 ---
-Residuos: la diferencia entre lo observado y lo predicho
+
+**Pregunta: ¿Cuál es el punto más sobre-estimado?**
+
+---
+
+### Residuos: la diferencia entre lo observado y lo predicho
 
 El residuo de la i-ésima observación $(x_{i}, y_{i})$ es la diferencia entre el valor observado ($y_{i}$) y el valor que predice el modelo ($\hat{y_{i}}$):
 
@@ -237,7 +258,10 @@ $$\hat{wei} = 52.3162 + 0.6294 \times height = 52.3162 + 0.6294 \times 139.7 = 3
 Luego, computamos la diferencia entre el valor observado y el predicho:
 $$\epsilon = \hat{wei} - wei = 50.3 - 35.61 = 14.7$$
 
-¿Cómo interpretamos ese valor?
+---
+
+**Pregunta: ¿Cómo interpretamos ese valor?**
+
 ---
 
 Los residuos son útiles para evaluar qué tan bien se ajusta ("fitea") un modelo lineal a un conjunto de datos. Es común representarlos en un gráfico como el que sigue.
@@ -266,11 +290,11 @@ El segundo conjunto de datos muestra un patrón bien claro en los residuos. Hay 
 El último gráfico muestra muy poca tendencia al alza y los residuos tampoco muestran patrones evidentes. Es razonable tratar de ajustar un modelo lineal a los datos. Sin embargo, no está claro si hay evidencia de que el parámetro de pendiente sea diferente de cero. La estimación puntual del parámetro de pendiente $\beta_{1}$ no es cero, pero podríamos preguntarnos si esto podría deberse al azar. Esto nos lleva a la cuestión de la inferencia sobre los parámetros de un modelo lineal. Volveremos sobre esto en unas 5 o 6 clases.
 
 
-### Describiendo relaciones lineales con correlaciones
+## Describiendo relaciones lineales con correlaciones
 
 Hemos visto gráficos con relaciones lineales fuertes y otras con relaciones lineales muy débiles. Sería útil si pudiéramos cuantificar la fuerza de estas relaciones lineales con alguna métrica o estadístico.
 
-#### Correlación: fuerza de una relación lineal.
+### Correlación: fuerza de una relación lineal.
 
 El coefiiente de correlación lineal (R de Pearson) siempre toma valores entre -1 y 1 y describe la fuerza y dirección de la relación lineal entre dos variables. Denotamos la correlación por $r$.
 
@@ -307,7 +331,7 @@ En el gráfico A, el peso se mide en kilogramos (kg) y la altura en centímetros
 ![](./img/bdims-units-1.png)
 
 
-### Implementando una regresión lineal simple
+## Implementando una regresión lineal simple
 
 Hasta aquí la aproximación conceputal a una regresión lineal simple. Vamos a ver ahora el código para implementarla en R. La función que vamos a usar se llama `lm()` por linear models. Pueden consultar la ayuda de la función para más detalles pero aquí por ahora vamos a continuar con nuestro ejemplo de pesos y alturas. 
 
@@ -371,86 +395,4 @@ df_mayores %>%
 
 Esto nos devuelve la matriz de correlaciones. Es una matriz cuadrada (tiene la misma cantidad de filas que de columnas). En este caso como tiene solamente dos variables, es una matriz 2x2. En cada celda tenemos la correlación de pearson ($r$) para la variable en fila y la variable en la columna. De esta forma, para los mayores de 18 años $r=0.754$.
 
-
-
-***
-
-### Actividades
-
-#### Conceptuales
-
-- Cada uno de los gráficos de dispersión que se muestran a continuación tiene una línea de regresión impuesta. Si tuviéramos que construir una gráfica de residuos (residos versus $X$) para cada uno, describa con palabras cómo se verían cada una.
-
-![](./img/ej1.png)
-
-- Para cada uno de las seis gráficas, identifique la fuerza de la relación (p. ej., débil, moderada o fuerte) en los datos y si sería razonable ajustar un modelo lineal.
-
-![](./img/ej3.png)
-
-- Los dos diagramas de dispersión a continuación muestran la relación entre el promedio general del curso y dos exámenes parciales (Examen 1 y Examen 2) registrados para 233 estudiantes durante varios años para un curso de estadística en una universidad.
-
-![](./img/ej5.png)
-- ¿Cuál de los dos exámenes tiene una mayor correlación con la nota final?
-- ¿Se te ocurre una explicación de por qué se produce esta relación?
-
-
-#### Prácticos
-- Calcular los residuos de la regresión anterior. Agregarlos como columna en el dataset original.
-
-```{r}
-
-df_mayores <- df_mayores %>%
-  mutate(weight_pred = predict(lm_1, df_mayores),
-         weight_resid = weight - weight_pred)
-
-```
-
-- Hacer un residual plot. Recuerden, los residuos van en el eje $y$ y los valores predichos según el modelo de la variable dependiente van en el eje $x$
-
-```{r}
-df_mayores %>%
-  ggplot() +
-    geom_point(aes(x=weight_pred, y=weight_resid)) +
-    theme_minimal()
-
-```
-
-- Ahora tomen los menores de 18 años y realicen un gráfico de dispersión entre `heigth` (como variable independiente) y `weight` como dependiente. ¿Qué pueden decir al respecto? ¿Cómo se imaginan que sería el valor del $r$ en relación a los que surgen de los mayores de 18 años . Calcúlenlos.
-
-```{r}
-df_menores <- df %>% filter(age < 18)
-
-df_menores %>%
-  ggplot() +
-    geom_point(aes(x=height, y=weight, color=age)) +
-    scale_color_viridis_c() +
-    theme_minimal()
-```
-
-- Estimen una regresión lineal entre las mismas variables. ¿Cómo son los $\bteta_{1}$ en relación los de la regresión con los mayores de 18 años?
-
-```{r}
-lm_2 <- lm(weight ~ height, data = df_menores)
-summary(lm_2)
-```
-
-```{r}
-cor(df_mayores$height, df_mayores$weight)
-```
-
-```{r}
-cor(df_menores$height, df_menores$weight)
-```
-
-
-
-- ¿Qué pueden decir de los residuos?
-
-```{r}
-df_menores %>%
-  ggplot(aes(x=height, y=weight)) +
-    geom_point() +
-    geom_smooth(method='lm', se=FALSE, color="red") +
-    theme_minimal()
-```
-***
+Vamos a la práctica...
