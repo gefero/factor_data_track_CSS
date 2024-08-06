@@ -243,7 +243,11 @@ Cuanto más amarillo es el color de los puntitos, más positiva será la diferen
 El residuo de la i-ésima observación $(x_{i}, y_{i})$ es la diferencia entre el valor observado ($y_{i}$) y el valor que predice el modelo ($\hat{y_{i}}$):
 
 $$\epsilon_{i} = y_{i} - \hat{y_{i}}$$
-Veamos el punto de máximo residuo: es el que tiene `height=``df_mayores[which.max(df_mayores$resid),"height"]`
+```{r, include=FALSE}
+max_resid <- df_mayores[which.max(df_mayores$resid),"height"]
+```
+
+Veamos el punto de máximo residuo: es el que tiene `height=``r max_resid`
 
 ¿Cómo lo calculamos?
 
@@ -379,8 +383,8 @@ De esta forma, podemos generar una columna en el dataframe original y calcular a
 
 ```{r}
 df_mayores <- df_mayores %>%
-        mutate(height_predicted = predict(lm_1, df_mayores)) %>%
-        mutate(height_resid = height - height_predicted)
+        mutate(weight_predicted = predict(lm_1, df_mayores)) %>%
+        mutate(weight_resid = weight - weight_predicted)
 
 head(df_mayores)
 ```
