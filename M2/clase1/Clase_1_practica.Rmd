@@ -28,7 +28,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 
 ## Prácticos
-- Calcular los residuos de la regresión anterior. Agregarlos como columna en el dataset original.
+- Calcular los residuos de la regresión que vimos en clase (`weight~height`). Agregarlos como columna en el dataset original.
 
 ```{r}
 ###
