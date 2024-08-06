@@ -43,12 +43,13 @@ El gráfico siguiente muestra dos variables. Podemos modelar esa relación entre
 
 $$y = 5 + 64.96 X$$
 
-
-```{r echo=FALSE}
-set.seed(1)
+```{r, echo=FALSE}
+set.seed(1234)
 data = tibble(x = 1:13+ runif(13),
               y = 5 + 64.96 * x)
+```
 
+```{r echo=FALSE}
 data %>%
 ggplot(aes(x,y)) +
         geom_line(color="black") + 
@@ -206,8 +207,7 @@ Los residuos son la variación restante en los datos después de tener en cuenta
 $$ Datos\ observados = Modelo\ ajustado + Residuos $$
 Vamos a poder calcular para cada observación un residuo. En el gráfico siguiente vemos tres que calculamos para la recta de regresión de nuestro dataset. Si una observación está por encima de la línea de regresión, entonces su residuo (la distancia vertical desde la observación hasta la línea) es positiva. Las observaciones debajo de la línea tienen residuos negativos. Uno de los objetivos al momento de estimar un modelo lineal es que estos residuos sean _lo más pequeños posible_.
 
-
-```{r include=FALSE}
+```{r, include=FALSE}
 df_mayores$predicted <- predict(lm_1)
 df_mayores$resid <- residuals(lm_1)
 ```
@@ -243,22 +243,18 @@ Cuanto más amarillo es el color de los puntitos, más positiva será la diferen
 El residuo de la i-ésima observación $(x_{i}, y_{i})$ es la diferencia entre el valor observado ($y_{i}$) y el valor que predice el modelo ($\hat{y_{i}}$):
 
 $$\epsilon_{i} = y_{i} - \hat{y_{i}}$$
-Veamos el punto de máximo residuo:
-
-```{r}
-df_mayores[which.max(df_mayores$resid),"height"]
-```
+Veamos el punto de máximo residuo: es el que tiene `height=``df_mayores[which.max(df_mayores$resid),"height"]`
 
 ¿Cómo lo calculamos?
-
 
 Primero, calculamos el valor predicho: 
 $$\hat{wei} = 52.3162 + 0.6294 \times height = 52.3162 + 0.6294 \times 139.7 = 35.61$$
 
 Luego, computamos la diferencia entre el valor observado y el predicho:
-$$\epsilon = \hat{wei} - wei = 50.3 - 35.61 = 14.7$$
+$$\epsilon = wei - \hat{wei}= 50.3 - 35.61 = 14.7$$
 
 ---
+
 
 **Pregunta: ¿Cómo interpretamos ese valor?**
 
@@ -268,14 +264,17 @@ Los residuos son útiles para evaluar qué tan bien se ajusta ("fitea") un model
 
 ```{r}
 df_mayores %>%
-  ggplot(aes(x=predicted, y=resid)) +
+  ggplot(aes(x=predicted, y=resid)) + # Puede verse cómo calcular la variable resid más abajo...
     geom_point() +
     geom_hline(yintercept=0, linetype='dashed') +
     theme_minimal() +
     labs(x='Valores predichos de height',
          y="Residuos")
 ```
-
+```{r, include=FALSE}
+df_mayores <- df_mayores %>%
+        select(-resid, -predicted)
+```
 
 A menudo los mostramos en un diagrama de dispersión como el anterior. Los residuos en el eje y se grafican con el valor predicho por el modelo en el eje horizontal. Crear un residual es algo así como volcar el gráfico de dispersión para que la línea de regresión sea horizontal, como lo indica la línea discontinua. ¿Cuál sería el valor de máximo residuo?
 
@@ -335,7 +334,7 @@ En el gráfico A, el peso se mide en kilogramos (kg) y la altura en centímetros
 
 Hasta aquí la aproximación conceputal a una regresión lineal simple. Vamos a ver ahora el código para implementarla en R. La función que vamos a usar se llama `lm()` por linear models. Pueden consultar la ayuda de la función para más detalles pero aquí por ahora vamos a continuar con nuestro ejemplo de pesos y alturas. 
 
-Vamos a usar `height` como variable predictora ($X$) y `weight` como variable dependiente ($y$). La sintaxis básica de `lm()` es la siguiente: `lm(x~y, data)`, donde `x` es la variable independiente e `y` la dependiente y `data` la tibble o dataframe con datos.
+Vamos a usar `height` como variable predictora ($X$) y `weight` como variable dependiente ($y$). La sintaxis básica de `lm()` es la siguiente: `lm(y~x, data)`, donde `x` es la variable independiente e `y` la dependiente y `data` la tibble o dataframe con datos.
 
 En nuestro caso, vamos a guardar los resultados en un objeto llamado `lm_1`.
  
@@ -376,11 +375,12 @@ predict(lm_1, df_mayores) %>%
   head()
 ```
 
-De esta forma, podemos generar una columna en el dataframe orignal:
+De esta forma, podemos generar una columna en el dataframe original y calcular a mano los residuos:
 
 ```{r}
 df_mayores <- df_mayores %>%
-  mutate(predicted = predict(lm_1, df_mayores))
+        mutate(height_predicted = predict(lm_1, df_mayores)) %>%
+        mutate(height_resid = height - height_predicted)
 
 head(df_mayores)
 ```
