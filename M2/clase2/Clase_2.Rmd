@@ -222,7 +222,7 @@ A $R^2$ también se le llama **coeficiente de determinación**.
 
 ---
 
-**Coeficiente de determinación: proporción de la variabilidad en la variable resultado explicada por el modelo.**
+**Coeficiente de determinación $R^2$: proporción de la variabilidad en la variable resultado explicada por el modelo.**
 
 Ya que $r$ siempre está entre -1 y 1, $R^2$ siempre estará entre 0 y 1. Esta métrica se llama coeficiente de determinación y mide la proporción de variación en la variable de resultado $y$, que puede ser explicado por el modelo lineal con predictor $X$.
 
@@ -250,7 +250,7 @@ $$SSE =  (y_{1} - \hat{y_{1}})^2 + (y_{2} - \hat{y_{2}})^2 + ... + (y_{n} - \hat
 
 El coeficiente de determinación puede ser calculado como:
 
-$$R2 = \frac{SST - SSE}{SST} = 1 - \frac{SSE}{SST} $$
+$$R^2 = \frac{SST - SSE}{SST} = 1 - \frac{SSE}{SST} $$
 
 ---
 
@@ -300,9 +300,9 @@ Es importante entender que las interpretaciones de la intersección y la pendien
 
 ---
 
-**Encontrando al $R2$**
+**Encontrando al $R^2$**
 
-Esta es una salida típica de regresión. ¿Dónde está el $R2$?
+Esta es una salida típica de regresión. ¿Dónde está el $R^2$?
 ```{r}
 summary(lm)
 ```
