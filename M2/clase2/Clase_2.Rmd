@@ -1,6 +1,6 @@
 ---
 title: "Introducción a la regresión lineal simple (II)"
-subtitle: "Estimación por MCO y outliers"
+subtitle: "MCO y outliers"
 output: 
   html_document:
     toc: TRUE
@@ -22,17 +22,19 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 ```
 
 ***
+
 Este texto se basa en los siguientes materiales:
 
 - Capítulo 7 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
 - Capítulo 4 del libro [Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/) de Richard McElreath
 - Capitulo 3 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
 
-
 ***
 
 ## Introducción
-Hasta acá hemos venido trabajando ajustando "a ojo" líneas de regresión y tratando de interpretar algunas propiedades. Pero dado que por una nube de puntos pueden pasar infinitas líneas ¿cómo elegimos (o más preciamente, estimamos) los parámetros de esa recta ($(\beta_{0}, \beta_{1})$? En esta clase vamos a trabajar sobre el método Mínimos Cuadrados Ordinarios (MCO) como un enfoque para este problema.
+Hasta acá hemos venido trabajando ajustando "a ojo" líneas de regresión y tratando de interpretar algunas propiedades. Pero dado que por una nube de puntos pueden pasar infinitas líneas ¿cómo elegimos (o más precisamente, ¿cómo estimamos?) los parámetros de esa recta ($(\beta_{0}, \beta_{1})$? En esta clase vamos a trabajar sobre el método de Mínimos Cuadrados Ordinarios (MCO) como un enfoque para este problema.
+
+Volvamos (hoy, por última vez) a nuestros datos sobre la etnia !Kung San.
 
 ```{r message=FALSE, warning=FALSE}
 df <- read_delim('https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/Howell1.csv', delim=";")
@@ -52,10 +54,11 @@ df_mayores %>%
                 geom_smooth(method='lm', se=FALSE) +
                 theme_minimal()
 ```
-Volvemos a nuestros datos sobre la etnia !Kung San.
 
 ## Una medida objetiva para encontrar la mejor línea
-Comenzamos pensando en lo que queremos decir con la línea "mejor". En términos matemáticos, queremos una línea que tenga residuos pequeños. Pero, más allá de las razones matemáticas, quisiéramos que también tenga sentido en términos intuitivos: que los residuos sean pequeños quiere decir que los puntos estén lo más cerca posible de la recta. Otra manera de pensarlo es que queremos elegir la línea que pasa lo más cerca de todos los puntos. Una primera opción es minimizar la suma de las magnitudes residuales (de sus valores absolutos sin signos):
+Comenzamos pensando en qué significa eso de "la mejor línea". En términos matemáticos, queremos una línea que tenga residuos pequeños. Pero, más allá de las razones matemáticas, quisiéramos que también tenga sentido en términos intuitivos, que sea interpretable: que los residuos sean pequeños quiere decir que los puntos estén lo más cerca posible de la recta. 
+
+Otra manera de pensarlo -quizás más gráfica- es que queremos elegir la línea que pasa lo más cerca de todos los puntos. Una primera opción es minimizar la suma de las magnitudes residuales (de sus valores absolutos sin signos):
 
 $$|\epsilon_{1}| + |\epsilon_{2}| + ... + |\epsilon_{n}|$$
 que podríamos realizar sin problemas con un poco de código en R.
@@ -76,7 +79,6 @@ Las dos primeras razones son en gran parte por tradición y conveniencia; las ra
 
 
 ### La recta de mínimos cuadrados
-
 Para los datos de Botswana podemos escribir ahora la ecuacion de regresión:
 
 $$\hat{wei} =  -52.3162 + 0.6294 \times height$$
@@ -97,17 +99,27 @@ El resultado del modelo nos dice que el intercepto es aproximadamente -52.32 y l
 
 Pero, ¿qué significan estos valores? La interpretación de los parámetros en un modelo de regresión suele ser uno de los pasos más importantes del análisis.
 
-Interpretar el parámetro de pendiente es útil en casi cualquier aplicación. Por cada cm. (es importante prestar atención a la escala de la variable) adicionales altura (`height`), esperaríamos que una persona de esta etnia tenga 0.629 kg. más. Nótese que a mayor altura corresponde mayor peso porque el coeficiente es positivo en el modelo. Debemos ser cautelosos en esta interpretación: si bien existe una asociación real, no podemos interpretar una conexión causal entre las variables porque estos datos son observacionales. 
+Interpretar el parámetro de pendiente es útil en casi cualquier aplicación. Por cada cm. (es importante prestar atención a la escala de la variable) adicional de altura (`height`), esperaríamos que una persona de esta etnia tenga 0.629 kg. más. Nótese que a mayor altura corresponde mayor peso porque el coeficiente es positivo en el modelo. Debemos ser cautelosos en esta interpretación: si bien existe una asociación real, no podemos interpretar una conexión causal entre las variables porque estos datos son observacionales. 
+
+---
+
+**Para pensar tranquiles...**
+
+¿Qué queremos decir con que son datos "observacionales"? ¿Y por qué no podemos inferir causalidad de este tipo de datos? ¿Qué tipo de datos necesitaríamos para poder inferir causalidad?
+
+---
 
 El intercepto estimado es negativo. En este caso, no tiene demasiado valor de interpretación, en tanto, no podemos afirmar que existe un peso negativo. Pero existen situaciones en las que es posible interpretar este parámetro como el promedio de la variable dependiente si la independiente fuese cero.
 
 ---
+
 **Interpretación de parámetros estimados por mínimos cuadrados.**
-La pendiente describe la diferencia estimada en el resultado promedio pronosticado de $y$
- si la variable predictora $X$  pasó a ser una unidad más grande. El intercepto describe el resultado promedio de $y$ si $X=0$ y el modelo lineal es válido hasta el cero. En muchas situaciones (como en este caso) la variable $X$ no puede tener valor cero.
+
+La pendiente describe la diferencia estimada en el resultado promedio pronosticado de $y$ si la variable predictora $X$  pasó a ser una unidad más grande. El intercepto describe el resultado promedio de $y$ si $X=0$ y el modelo lineal es válido hasta el cero. En muchas situaciones (como en este caso) la variable $X$ no puede tener valor cero.
+
 ---
 
-Una forma alternativa de calcular los valores de la intersección y la pendiente de una línea de mínimos cuadrados es haciendo cuentas a mano mediante fórmulas. Si bien los estadísticos en ejercicio y los científicos de datos no suelen utilizar los cálculos manuales, es útil trabajar de esta forma una primera vez sobre la línea de mínimos cuadrados y el modelado en general. 
+Una forma alternativa de calcular los valores de la intersección y la pendiente de una línea de mínimos cuadrados es haciendo cuentas a mano mediante fórmulas. Si bien los estadísticos en ejercicio y los científicos de datos no suelen utilizar los cálculos manuales, es útil pensar de esta forma una primera vez sobre la línea de mínimos cuadrados y el modelado en general. 
 
 Estas fórmulas se basan en el método de mínimos cuadrados. Si les interesa alguna nota histórica al respecto pueden consultar este [link en Wikipedia](https://es.wikipedia.org/wiki/M%C3%ADnimos_cuadrados). La historia del método es interesante y está en el centro de una pelea entre Gauss y Legendre (dos matemáticos) respecto de la autoría del mismo.
 
@@ -165,11 +177,9 @@ mean(df_mayores$weight) - mean(df_mayores$height) * b1
 
 
 ### Las extrapolaciones pueden ser engañosas
+Los modelos lineales se pueden utilizar para aproximar la relación entre dos variables. Sin embargo, como cualquier modelo, tienen limitaciones. La regresión lineal es simplemente una hipótesis simplificadora. La verdad es casi siempre mucho más compleja que una simple línea. Por ejemplo, no sabemos cómo se comportarán los datos fuera de nuestra ventana limitada.
 
-Los modelos lineales se pueden utilizar para aproximar la relación entre dos variables. Sin embargo, como cualquier modelo, tienen limitaciones reales. La regresión lineal es simplemente una hipótesis simplificadora. La verdad es casi siempre mucho más compleja que una simple línea. Por ejemplo, no sabemos cómo se comportarán los datos fuera de nuestra ventana limitada.
-
-La aplicación de una estimación del modelo a valores fuera del ámbito de los datos originales se denomina extrapolación. Generalmente, un modelo lineal es solo una aproximación de la relación real entre dos variables. Si extrapolamos, estamos haciendo una apuesta poco fiable de que la relación lineal aproximada será válida en lugares donde no ha sido analizada.
-
+La aplicación de una estimación del modelo a valores fuera del ámbito de los datos originales se denomina _extrapolación_. Generalmente, un modelo lineal es solo una aproximación de la relación real entre dos variables. Si _extrapolamos_ estamos haciendo una apuesta poco fiable de que la relación lineal aproximada será válida en lugares donde no ha sido analizada.
 
 ---
 
@@ -179,12 +189,10 @@ Pueden tomar 5 minutos para calcularlo.
 
 ---
 
-
 ### Describir la fuerza de un ajuste
+Evaluamos la fuerza de la relación lineal entre dos variables anteriormente usando la correlación, $r$. Sin embargo, es más común explicar la fuerza de un ajuste lineal usando $R^2$, llamado R-cuadrado. Si estamos trabajando con un modelo lineal, va a ser sumamente útil poder describir qué tan cerca se agrupan los datos alrededor del ajuste lineal.
 
-Evaluamos la fuerza de la relación lineal entre dos variables anteriormente usando la correlación, $r$. Sin embargo, es más común explicar la fuerza de un ajuste lineal usando $R2$, llamado R-cuadrado. Si estams trabajando con un modelo lineal, va a ser sumamente útil poder describir qué tan cerca se agrupan los datos alrededor del ajuste lineal.
-
-Por ejemplo, volvamos a nuestros datos de altura y peso. La varianza de la variable dependiente (`weight`) es aproximadamente $s^2_{weight} = 41.68908$. Sin embargo, si aplicamos la recta de regresión por mínimos cuadrados, entonces, el modelo reduce la incerteza (podemos pensar a las medidas de dispersión como una aproximación a la incerteza) que tenemos en predecir el peso de una persona (porque ya conocemos su altura). La variabilidad en los residuos describe qué parte de la incerteza (de la variabilidad) total seguimos teniendo una vez que entrenamos el modelo. 
+Por ejemplo, volvamos a nuestros datos de altura y peso. La varianza de la variable dependiente (`weight`) es aproximadamente $s^2_{weight} = 41.68908$. Sin embargo, si aplicamos la recta de regresión por mínimos cuadrados, entonces, el modelo reduce la incerteza (podemos pensar a las medidas de dispersión como una aproximación a esa incerteza) que tenemos en predecir el peso de una persona (porque ya conocemos su altura). La variabilidad en los residuos describe qué parte de la incerteza (de la variabilidad) total seguimos teniendo una vez que entrenamos el modelo. 
 
 Podemos calcular ese valor de la siguiente forma, calculando la varianza de los residuos:
 
@@ -192,13 +200,13 @@ Podemos calcular ese valor de la siguiente forma, calculando la varianza de los 
 var(residuals(lm))
 ```
 
-Es decir, elevamos los residuos al cuadrado y calculamos su media: $S^2_{res} = 17.89016$
+Es decir, elevamos los residuos al cuadrado y calculamos su media: $S^2_{res} = 17.94113$
 
 En resumen, hubo una reducción de
 
 $$\frac{41.68908 - 17.94113}{41.68908} = 0.56964 \approx 0.57$$
 
-aproximadmante el 57% de la variación de la variable de resultado al usar información sobre el ingreso familiar para predecir la ayuda usando un modelo lineal. Resulta que $R2$ corresponde exactamente al valor al cuadrado de la correlación:
+aproximadmante el 57% de la variación de la variable dependiente (`wei`) al usar información sobre la `height` y modelando su relación de forma lineal. Resulta que $R^2$ corresponde exactamente al valor al cuadrado de la correlación:
 
 ```{r}
 cor(df_mayores$height, df_mayores$weight)
@@ -208,19 +216,20 @@ cor(df_mayores$height, df_mayores$weight)
 cor(df_mayores$height, df_mayores$weight)**2
 ```
 
-$$ r = 0.7547479 → R2 = 0.5696444$$
+$$ r = 0.7547479 → R^2 = 0.5696444$$
 
-A $R2$ también se le llama **coeficiente de determinación**.
+A $R^2$ también se le llama **coeficiente de determinación**.
 
 ---
 
 **Coeficiente de determinación: proporción de la variabilidad en la variable resultado explicada por el modelo.**
 
-Ya que $r$ siempre está entre -1 y 1, $R2$ siempre estará entre 0 y 1. Esta métrica se llama coeficiente de determinación y mide la proporción de variación en la variable de resultado $y$, que puede ser explicado por el modelo lineal con predictor $X$.
+Ya que $r$ siempre está entre -1 y 1, $R^2$ siempre estará entre 0 y 1. Esta métrica se llama coeficiente de determinación y mide la proporción de variación en la variable de resultado $y$, que puede ser explicado por el modelo lineal con predictor $X$.
 
 ---
 
-Más generalmente, $R2$ se puede calcular como una relación entre la variabilidad alrededor de la línea dividida la variabilidad total.
+Más generalmente, $R^2$ se puede calcular como una relación entre la variabilidad alrededor de la línea dividida la variabilidad total.
+
 
 ---
 
@@ -228,12 +237,11 @@ Más generalmente, $R2$ se puede calcular como una relación entre la variabilid
 
 Podemos medir la variabilidad en los valores de $y$ en función de cuán lejos de su media $\overline{y}$ tienden a caer.
 
-Definimos este valor como la suma total de cuadrados (SST), calculada usando la siguiente fórmula, donde
-$y_{i}$ representa a cada valor de $y$ (es decir, cada registro de $y$ en el dataset) y $\overline{y}$ representa la media de todos los valores de $y$ en el dataset.
+Definimos este valor como la suma total de cuadrados (SST), calculada usando la siguiente fórmula, donde $y_{i}$ representa a cada valor de $y$ (es decir, cada registro de $y$ en el dataset) y $\overline{y}$ representa la media de todos los valores de $y$ en el dataset.
 
 $$SST = (y_{1} - \overline{y})^2 + (y_{2} - \overline{y})^2 + ... + (y_{n} - \overline{y})^2 = \sum_{i=1}^n (y_{i} - \overline{y})^2$$
 
-La variabilidad que resta en los valroes de $y$ conociendo $X$ se puede medir por la suma de los errores al cuadrado, o la suma de los residuos al cuadrado (SSE), calculada usando la fórmula a continuación, donde $\hat{y_{i}}$ representa el valor predicho de $y_{i}$ (es decir el valor predicho en cada caso del dataset) usando la recta de regresión.
+La variabilidad que resta en los valores de $y$ conociendo $X$ se puede medir por la suma de los errores al cuadrado, o la suma de los residuos al cuadrado (SSE), calculada usando la fórmula a continuación, donde $\hat{y_{i}}$ representa el valor predicho de $y_{i}$ (es decir el valor predicho en cada caso del dataset) usando la recta de regresión.
 
 $$SSE =  (y_{1} - \hat{y_{1}})^2 + (y_{2} - \hat{y_{2}})^2 + ... + (y_{n} - \hat{y_{n}})^2 \\
 = e^2_{1} + e^2_{2} + ... + e^2_{n} \\
@@ -246,23 +254,11 @@ $$R2 = \frac{SST - SSE}{SST} = 1 - \frac{SSE}{SST} $$
 
 ---
 
-
----
-
-**Encontrando al $R2$**
-
-Esta es una salida típica de regresión. ¿Dónde está el $R2$?
-```{r}
-summary(lm)
-```
-
----
-
 ## Predictores categóricos con dos niveles
-
 Las variables categóricas también son útiles para predecir resultados. Aquí consideramos un predictor categórico con dos niveles (recuerde que un nivel es lo mismo que una categoría). Tenemos un predictor cualitativo en este dataset: la variable `male`.
 
 El gráfico siguiente muestra la distribución de los pesos según `male`, junto con la recta de regresión.
+
 ```{r}
 df_mayores %>%
   ggplot(aes(x=male, y=weight)) + 
@@ -271,7 +267,7 @@ df_mayores %>%
     theme_minimal()
 ```
 
-Para incorporar la variable de condición del juego en una ecuación de regresión, debemos convertir las categorías en una forma numérica. Lo haremos usando una variable indicadora llamada male_int, que toma valor 1 cuando el registro es varón y 0 cuando es mujer Usando esta variable indicadora, el modelo lineal se puede escribir como
+Para incorporar la variable `sex` en una ecuación de regresión, debemos convertir las categorías en una forma numérica. Lo haremos usando una variable indicadora llamada `male`, que toma valor 1 cuando el registro es varón y 0 cuando es mujer. Usando esta variable indicadora, el modelo lineal se puede escribir como
 
 $$\hat{wei}_{i} = \beta_{0} + \beta_{1} \times male_{i}$$
 
@@ -287,7 +283,9 @@ tidy(lm_2)
 La ecuación quedaría escrita
 
 $$\hat{wei}_{i} = 41.81 + 6.778 \times male_{i}$$
-El intercepto ($\beta_{0}$) en este caso es el peso promedio cuando `male==0`; es decir, el peso promedio cuando el caso NO es varón. La pendiente ($\beta_{1}$) significa que si el caso es varón entonces, debo sumarle al promedio 6.778 kg. Es decir, que los varones son en promedio 6.77kg. más pasados que les no varones.
+El intercepto ($\beta_{0}$) en este caso es el peso promedio cuando `male==0`; es decir, el peso promedio cuando el caso NO es varón. 
+
+La pendiente ($\beta_{1}$) puede ser interpreatada de la siguiente manera: si el caso es varón entonces, debemos sumarle al promedio del peso 6.778 kg. Es decir, que los varones son en promedio 6.77kg. más pasados que les no varones.
 
 
 ---
@@ -300,10 +298,19 @@ El intercepto estimado es el valor de la variable de resultado para la primera c
 
 Es importante entender que las interpretaciones de la intersección y la pendiente no cambian cuando se modelan variables categóricas con dos niveles. 
 
+---
+
+**Encontrando al $R2$**
+
+Esta es una salida típica de regresión. ¿Dónde está el $R2$?
+```{r}
+summary(lm)
+```
+
+---
 
 ## Valores atípicos en regresión lineal
-
-En esta sección, identificamos criterios para determinar qué valores atípicos son importantes e influyentes. Los valores atípicos en la regresión son observaciones que caen lejos de la nube de puntos. Estos puntos son especialmente importantes porque pueden tener una fuerte influencia en la recta de mínimos cuadrados.
+Un punto importante, como podrán intuir en un modelo de regresión, es la existencia de valores atípicos o outliers. En esta sección, identificamos criterios para determinar qué valores atípicos son importantes e influyentes. En el contexto de una regresión lineal los valores atípicos pueden ser pensados como observaciones que caen muy lejos de la nube de puntos. Estos puntos son especialmente importantes porque pueden tener una fuerte influencia en la recta de mínimos cuadrados.
 
 **Ejemplo 1**
 Hay tres gráficos que se muestran en la figura siguiente junto con la línea de mínimos cuadrados correspondiente y gráficos residuales. Para cada par de gráficos de dispersión y gráficos residuales, identifique los valores atípicos y observe cómo influyen en la línea de mínimos cuadrados. Recuerde que un valor atípico es cualquier punto que no parece pertenecer a la gran mayoría de los otros puntos.
@@ -346,13 +353,8 @@ Un punto (o un grupo de puntos) que sobresale del resto de los datos se denomina
 
 Es tentador proceder a eliminar los valores atípicos sin demasiada más reflexión que mirar un boxplot. En general, no es una buena idea haerlo sin una buena razón. Los modelos que ignoran casos excepcionales (e interesantes) a menudo funcionan mal. Por ejemplo, si una empresa financiera ignorara las oscilaciones más grandes del mercado, los "valores atípicos", pronto quebraría debido a inversiones mal pensadas.
 
-## Ejercicios
-
-
 
 ## Resumen 
-
-Hemos descrito los matices del modelo lineal. Hemos aprendido a crear un modelo lineal con variables explicativas que son numéricas y categóricas. 
+Hemos trabajado sobre ciertos matices del modelo lineal. Hemos aprendido a crear un modelo lineal con variables explicativas que son numéricas y categóricas. 
 
 Los residuos en un modelo lineal son una métrica importante que se utiliza para comprender qué tan bien se ajusta un modelo; los puntos de alto apalancamiento, los puntos influyentes y otros tipos de valores atípicos pueden afectar el ajuste de un modelo. La correlación de Pearson es una medida de la fuerza y la dirección de la relación lineal de dos variables, sin especificar qué variable es la explicativa y cuál es el resultado. 
-
