@@ -53,7 +53,7 @@ Marx y Engels escribieron en "La ideología alemana":
 
 > La división del trabajo dentro de una nación se traduce, ante todo, en la separación del trabajo industrial y comercial con respecto al trabajo agrícola y, con ello, en la separación de la ciudad y el campo y en la contradicción de los intereses entre una y otro. Su desarrollo ulterior conduce a la separación del trabajo comercial del industrial. (...) Las diferentes fases de desarrollo de la división del trahajo son otras tantas formas distintas de la propiedad; o, dicho en otros términos, cada etapa de la división del trabajo determina también las relaciones de los individuos entre sí, en lo tocante al material, el instrumento y el producto del trabajo...
 
-Entonces, existe una relación entre el desarrollo capitalista y la división del trabajo. Podemos intentar una primera medición de esta relación a partir de la información del dataset. Para ello, vamos a analziar la relación entre la proporción de población ocupada en la rama agro (`SL.AGR.EMPL.ZL`) y la proporción de asalariados (`SL.EMP.WORK.ZS`).
+Entonces, existe una relación entre el desarrollo capitalista y la división del trabajo. Podemos intentar una primera medición de esta relación a partir de la información del dataset. Para ello, vamos a analziar la relación entre la proporción de población ocupada en la rama agro (`SL.AGR.EMPL.ZS`) y la proporción de asalariados (`SL.EMP.WORK.ZS`).
 
 **Importante:** notar el formato de la tabla y pensar cómo debería formatearla para poder trabajarla de forma correcta.
 

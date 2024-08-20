@@ -55,7 +55,8 @@ Entonces, existe una relación entre el desarrollo capitalista y la división de
 ```{r}
 df <- df %>%
   pivot_wider(id_cols = c(iso3c, iso2c, country),
-              names_from = indicatorID,
+              names_from = c(indicatorID, date),
+              names_sep = ".",
               values_from = value)
 ```
 
