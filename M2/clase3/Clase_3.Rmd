@@ -23,16 +23,16 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 ***
 Este texto se basa en los siguientes materiales:
 
-- Capítulo 7 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
-- Capítulos 5 del libro [Class Structure and Income Determination](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing) de Erik Olin Wright.
+- Capítulo 8 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/model-mlr) de Mine Çetinkaya-Rundel y Johanna Hardin 
+- Capítulo 5 del libro [Class Structure and Income Determination](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing) de Erik Olin Wright.
 - Capitulo 3 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
 
 ***
 
 ## Introducción: regresión múltiple para investigar la determinación de ingresos
-Sobre lo que estuvimos viendo acerca de una regresión lineal simple, ahora vamos a trabajar con una familia de modelos que se llaman "regresión lineal múltiple"; es decir que vamos a tener dos o más variables predictoras. Al considerar cómo interactúan las diferentes variables explicativas, podemos descubrir relaciones complicadas entre las variables predictoras y la variable de respuesta. Un desafío para trabajar con varias variables es que a veces es difícil saber cuáles variables son las más importantes para incluir en el modelo. La construcción de modelos es un tema extenso y complicado. Aquí vamos a dar una breve introducción al tema a partir del uso del R2.
+En base a lo que estuvimos viendo acerca de una regresión lineal simple, ahora vamos a trabajar con una familia de modelos que se llaman "regresión lineal múltiple"; es decir que vamos a tener dos o más variables predictoras. Al considerar cómo interactúan las diferentes variables explicativas, podemos descubrir relaciones complicadas entre las variables predictoras y la variable de respuesta. Un desafío para trabajar con varias variables es que a veces es difícil saber cuáles variables son las más importantes para incluir en el modelo. La construcción de modelos es un tema extenso y complicado. Aquí vamos a dar una breve introducción al tema a partir del uso del $R^2$.
  
-La regresión múltiple extiende la idea de la regresión variable de predictor único al caso que todavía tiene una respuesta pero muchos predictores (denotados $X_{1}, X_{2}, ..., X_{p}$). El método está motivado por escenarios en los que muchas variables pueden conectarse simultáneamente a una misma variable resultado.
+La regresión múltiple extiende la idea de la regresión de predictor único. Todavía tenemos una variable de respuesta pero, ahora, nos encontramos con varios predictores (denotados $X_{1}, X_{2}, ..., X_{p}$). La idea (más o menos obvia) es que existen situaciones en las que muchas variables pueden conectarse simultáneamente a una misma variable resultado.
 
 En este caso, vamos a trabajar con problema bien clásico en las ciencias sociales: el proceso de determinación de ingresos. ¿Cuáles son las variables y los procesos que gobiernan la determinación de las remuneraciones que perciben los distintos sectores de una sociedad?
 
@@ -135,8 +135,7 @@ Como podemos ver el output de la regresión anterior muestra dos filas para dos 
 
 Podemos escribir la ecuación como si fuera un modelo de regresión (de hecho, lo es) con dos predictores
 
-$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times educ\_medio + 3367.7 \times nivel\_ed\_agg\_alto$$
-
+$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times nivel\_ed\_agg_{1\_medio}+ 3367.7 \times nivel\_ed\_agg_{2\_alto}$$
 Usamos la notación $variable_{\ nivel}$ para representar variables dummies cuando la variable categórica toma un valor particular. Por ejemplo, $nivel\_ed\_agg_{alto}$ va a tomar un valor 1 cuando el nivel educativo sea alto y cero en caso contrario. Igualmente, $nivel\_ed\_agg_{medio}$ va a tomar valor 1 cuando el registro presente un nivel educativo medio y cero si tomara cualquier otro valor.
 
 Ahora bien, ¿cómo usamos e interpretamos este esquema de codificación? Veamos un ejemplo: vamos a calcular el ingreso promedio (usando nuestro modelo) para personas de nivel educativo bajo. Cuando el $nivel\_ed\_agg$ toma un valor "bajo", las dos variables indicadoras o dummies del modelo lineal, se setean en cero.
@@ -203,13 +202,13 @@ $$
                          \beta_{8} \times clase\_eow\_agg_{trabaj}
 $$
 
-Esta ecuación representa un enfoque holístico para modelar todas las variables simultáneamente. Observen que hay dos coeficientes para `niv_ed_agg` y tres coeficientes para `class_eow_agg`, ya que ambas son variables categóricas de 2 y 3 niveles, respectivamente.
+Esta ecuación representa un enfoque para modelar todas las variables simultáneamente. Observen que hay dos coeficientes para `niv_ed_agg` y tres coeficientes para `class_eow_agg`, ya que ambas son variables categóricas de 2 y 3 niveles, respectivamente.
 
 Calculamos $\beta_{0}, \beta_{1}, ..., \beta_{8}$ de la misma manera que hicimos en el caso de un modelo con un solo predictor. Seleccionamos valores que minimizan la suma de los cuadrados de los residuos:
 
 $$SSE = e_{1}^2 + e_{2}^2 + ... + e_{12135}^2 = \sum_{i=1}^{12135} e_{i}^2 = \sum_{i=1}^{12135} (y_{i} -\hat{y_{i}})^2$$
 
-dónde $y_{i}$ y $\hat{y_{i}}$ representan los ingresos de la ocupación principal y sus valores predichos  según el modelo, respectivamente. Se calculan 12.135 residuales, uno para cada observación de personas ocupadas. Es importante tener en cuenta que estos valores son estadísticos muestrales y, en el caso de que los datos observados sean una muestra aleatoria de una población objetivo sobre la que estamos interesados en hacer inferencias, son estimaciones de los parámetros de la población.. Discutiremos la inferencia basada en modelos lineales más adelante, por ahora nos centraremos en calcular estadísticas de muestra.
+dónde $y_{i}$ y $\hat{y_{i}}$ representan los ingresos de la ocupación principal y sus valores predichos  según el modelo, respectivamente. Se calculan 12.135 residuales, uno para cada observación de personas ocupadas. Es importante tener en cuenta que estos valores son estadísticos muestrales y, en el caso de que los datos observados sean una muestra aleatoria de una población objetivo sobre la que estamos interesados en hacer inferencias, son estimaciones de los parámetros de la población. Discutiremos la inferencia basada en modelos lineales en unas clases más. Por ahora nos centraremos en calcular estadísticos muestrales sin mayores complicaciones.
 
 Por lo general, usamos una computadora para minimizar la suma de los cuadrados y calcular las estimaciones puntuales:
 
@@ -218,7 +217,6 @@ lm2 <- df %>% filter(estado == 'Ocupado') %>% lm(v213b ~ t_hogar +  v108 + v109 
 
 tidy(lm2)
 ```
-
 
 Si contamos el número de coeficientes predictores, obtenemos el número efectivo de predictores en el modelo; hay 8 predictores "efectivos". Es importante notar que los predictores categóricos cuentan de forma diferente: la variable `v109` (género) supone introducir un predictor efectivo, dado que es dicotómica. En cambio, `nivel_ed_agg` y `clase_eow_agg` introducen dos y 3 predictores efectivos, respectivamente: uno  cada uno de los dos niveles que se muestran en el modelo. En general, un predictor categórico con $p$ diferentes niveles estarán representados por $p - 1$ términos en un modelo de regresión múltiple. 
 
@@ -264,14 +262,14 @@ donde hay $k$ predictores. Siempre vamos a calcular los $\beta_{i}$ mediante alg
 ---
 
 
-## R2 ajustado
-Ya hemos usamos R2 en el contexto de una regresión simple para determinar la cantidad de variabilidad en la respuesta explicada por el modelo:
+## $R^2$ ajustado
+Ya hemos usamos $R^2$ en el contexto de una regresión simple para determinar la cantidad de variabilidad en la respuesta explicada por el modelo:
 
 $$R^2 = 1 - \frac{variabilidad\ en\ residuos}{variabilidad\ en\ variable\ dependiente} = 1 - \frac{Var(e_{i})}{Var(y_{i})}$$
 
 donde $e_{i}$ representa los residuos del modelo e $y_{i}$ los valores observados. Esta relación sigue siendo válida en el marco de regresión múltiple, pero una pequeña mejora puede hacerla aún más informativa al comparar modelos.
 
-Esta estrategia para estimar R2 es aceptable cuando hay una sola variable. Sin embargo, se vuelve menos útil cuando hay muchas variables. El R2 "común" es una estimación sesgada de la cantidad de variabilidad explicada por el modelo cuando se aplica a un modelo con más de un predictor. Para obtener una mejor estimación, usamos el R2 ajustado.
+Esta estrategia para estimar $R^2$ es aceptable cuando hay una sola variable. Sin embargo, se vuelve menos útil cuando hay muchas variables. El $R^2$ "común" es una estimación sesgada de la cantidad de variabilidad explicada por el modelo cuando se aplica a un modelo con más de un predictor. Para obtener una mejor estimación, usamos el $R^2$ ajustado.
 
 
 ---
@@ -286,16 +284,19 @@ dónde $n$ es el número de observaciones utilizadas para ajustar el modelo y $k
 
 ---
 
-Dado que $k$ nunca es negativo, el R2 ajustado siempre será más pequeño, a menudo un poco más pequeño, que el R2 no ajustado. El razonamiento está en los grados de libertad asociados con cada varianza, que es igual a $n − k − 1$ en el contexto de la regresión múltiple. Si tuviéramos que hacer predicciones para nuevos datos usando nuestro modelo actual, encontraríamos que el R2 tendería a ser un poco demasiado optimista, mientras que el ajustado R2 fórmula ayuda a corregir este sesgo.
+El $R^2$ sin ajustar siempre aumenta o, en el peor de los casos, se mantiene igual cuando se agregan más variables al modelo, incluso si esas variables no aportan significativamente al ajuste. Esto puede dar una falsa impresión de que el modelo está mejorando. 
 
+Dado que $k$ nunca es negativo, el $R^2$ ajustado siempre será más pequeño, a menudo un poco más pequeño, que el $R^2$ no ajustado. El razonamiento está en los grados de libertad asociados con cada varianza, que es igual a $n − k − 1$ en el contexto de la regresión múltiple. Si tuviéramos que hacer predicciones para nuevos datos usando nuestro modelo actual, encontraríamos que el $R^2$ tendería a ser un poco demasiado optimista, mientras que el ajustado $R^2$ fórmula ayuda a corregir este sesgo.
+
+Dicho de forma más simple: el $R^2$ ajustado penaliza, de cierta forma, la inclusión de variables innecesarias, lo que lo hace más confiable para evaluar si una nueva variable realmente mejora el modelo.
 
 ---
 
 **Actividad**
 
-Supongamos que agregamos otro predictor al modelo, pero la varianza de los errores $Var(e_{i})$ no baja. ¿Qué pasaría con el R2 sin ajustar? ¿Qué pasaría con el R2 ajustado?
+Supongamos que agregamos otro predictor al modelo, pero la varianza de los errores $Var(e_{i})$ no baja. ¿Qué pasaría con el $R^2$ sin ajustar? ¿Qué pasaría con el $R^2$ ajustado?
 
 
 ---
 
-También podríamos haber usado el R2 ajustado cuando trabajamos con una regresión de un solo predictor. Sin embargo, cuando sólo hay $k = 1$ predictores, R2 ajustado suele estar muy cerca del R2 sin ajustar, por lo que este matiz no suele ser importante cuando el modelo solo tiene un predictor.
+También podríamos haber usado el $R^2$ ajustado cuando trabajamos con una regresión de un solo predictor. Sin embargo, cuando sólo hay $k = 1$ predictores, $R^2$ ajustado suele estar muy cerca del $R^2$ sin ajustar, por lo que este matiz no suele ser importante cuando el modelo solo tiene un predictor.
