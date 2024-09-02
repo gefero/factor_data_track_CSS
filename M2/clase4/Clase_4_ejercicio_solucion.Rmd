@@ -168,14 +168,21 @@ plot(lm_1)
 ###
 ```
 
+### Consigna 9. Colinealdad
+¿Hay multicolinealidad en el modelo? ¿De qué grado? ¿Es un problema?
+```{r}
+###
+```
+
+
 ## Análisis de resultados
-### Consigna 9. 
+### Consigna 10. 
 ¿Cuál es el ajuste del modelo?
 ```{r}
 summary(lm_1)$adj.r.squared
 ```
 
-### Consigna 10. 
+### Consigna 11. 
 ¿Cómo interpreta los resultados del modelo? ¿Cuál es, en su opinion, la variable más importante? 
 ```{r}
 lm_scaled <- final %>%

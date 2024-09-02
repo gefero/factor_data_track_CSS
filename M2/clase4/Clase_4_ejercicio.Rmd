@@ -116,7 +116,7 @@ Realicen un histograma de los residuos. ¿Qué forma tienen?
 ###
 ```
 
-### Consigna 10. Interpretación
+### Consigna 11. Interpretación
 ¿Cómo interpreta los resultados del modelo? ¿Cuál es, en su opinion, la variable más importante? 
 ```{r}
 ###
