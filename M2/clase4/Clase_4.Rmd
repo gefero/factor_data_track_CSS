@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 ***
 Este texto se basa en los siguientes materiales:
 
-- Capítulo 7 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
+- Capítulo 25 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/inf-model-mlr) de Mine Çetinkaya-Rundel y Johanna Hardin 
 - Capítulos 5 del libro [Class Structure and Income Determination](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view?usp=sharing) de Erik Olin Wright.
 - Capitulo 3 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
 
@@ -36,12 +36,11 @@ library(car)
 
 ## Colinealidad entre regresores
 
-Pensemos brevemente en dos de las variables de nuestro modelo: `t_hogar` y `nivel_ed_agg`. ¿Hay correlación entre ambas?
+Pensemos brevemente en dos de las variables de nuestro modelo: `t_hogar` y `nivel_ed_agg`. ¿Hay correlación entre ambas? Es una pregunta releveante.
 
-Esto expresa un  problema común en la regresión múltiple: la correlación entre las variables predictoras. Decimos que las dos variables predictoras son colineales (pronunciadas como colineales) cuando están correlacionadas, y esta multicolinealidad complica la estimación del modelo. Si bien es imposible evitar que surja la multicolinealidad en los datos de observación, los experimentos generalmente se diseñan para evitar que los predictores sean multicolineales.
+Esto expresa un problema potencial bastante común en la regresión múltiple: la correlación entre las variables predictoras. Decimos que las dos variables predictoras son colineales (pronunciadas como colineales) cuando están correlacionadas, y esta multicolinealidad complica la estimación del modelo. Si bien es imposible evitar que surja la multicolinealidad en los datos de observación, los experimentos generalmente se diseñan para evitar que los predictores sean multicolineales.
 
 Volvamos brevemente a nuestro ejemplo antropométrico para ilustrar esta situación de forma más clara.
-
 ```{r}
 df <- read_delim('https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/Howell1.csv', delim=";")
 
@@ -53,7 +52,6 @@ df <- df %>%
 ```
 
 Filtremos los menores de 18 años:
-
 ```{r}
 df_menores <- df %>%
                 filter(age < 18)
@@ -69,40 +67,35 @@ df_menores %>%
 
 En estos casos, cuando dos regresores están altamente correlacionados, utilizamos el término _colinealidad_. La presencia de colinealidad puede plantear problemas en el contexto de regresión, ya que puede ser difícil separar los efectos individuales de las variables colineales en la respuesta. En otras palabras, dado que la edad y la altura  tienden a aumentar o disminuir juntas, puede ser difícil determinar cómo cada uno por separado se asocia con la variable dependiente (peso).
 
-
 Corramos una regresión con todos los predictores. Es decir, vamos a tratar de modelar el peso en función de la edad, la altura y el sexo.
 
 Un problema de la existencia de colinealidad es que hace que las inferencias de los parámetros ($\beta$) sean menos precisas. Ante la presencia de la colinealidad, los errores estándar de las estimaciones se incrementan:
 
 Entrenemos una regresión con las tres variables independientes:
-
 ```{r}
 model1 <- df_menores %>% lm(weight ~ ., data=.)
 tidy(model1)
 ```
-
 Ahora, eliminenos la edad:
 ```{r}
 model2 <- df_menores %>% lm(weight ~ . -age, data=.)
 tidy(model2)
 ```
 
-Noten como los errores estándar (que vamos a definri con precisión más adelante pero que por ahora podemos asociarlos a la incerteza muestral sobre los parámetros) de `height` cambian fuertemente en ambos modelos: en el primer modelo es de 0.025; en el segundo, es 0.001.
+Noten como los errores estándar (que vamos a definir con precisión más adelante pero que por ahora podemos asociarlos a la incerteza muestral sobre los parámetros) de `height` cambian fuertemente en ambos modelos: en el primer modelo es de 0.025; en el segundo, es 0.008.
 
-Para evitar tal situación, es deseable identificar y abordar posibles
-problemas de colinealidad al ajustar el modelo. Una forma sencilla de detectar la colinealidad es observar la matriz de correlación de los predictores. Una celda de esta matriz con valores grandes indica un par de variables altamente correlacionadas. 
+Para evitar tal situación, es deseable identificar y abordar posibles problemas de colinealidad al ajustar el modelo. Una forma sencilla de detectar la colinealidad es observar la matriz de correlación de los predictores. Una celda de esta matriz con valores grandes indica un par de variables altamente correlacionadas. 
 
 Desafortunadamente, no todos los problemas de colinealidad pueden ser
-detectado por inspección de la matriz de correlación: es posible que exista colinealidad entre tres o más variables incluso si no hay un par de variables tiene una correlación particularmente alta. A esta situación la llamamos multicolinealidad. multicolinealidad En lugar de inspeccionar la matriz de correlación, una mejor manera de evaluar la multicolinealidad es calcular el factor de inflación de la varianza (VIF, por sus siglas en inglés).
+detectado por inspección de la matriz de correlación: es posible que exista colinealidad entre tres o más variables incluso si no hay un par de variables tiene una correlación particularmente alta. A esta situación la llamamos _multicolinealidad_. En lugar de inspeccionar la matriz de correlación, una mejor manera de evaluar la multicolinealidad es calcular el factor de inflación de la varianza (VIF, por sus siglas en inglés).
 
-El VIF es el cociente de la varianza de $\beta_{j}$ al ajustar el modelo completo dividido por el varianza de $\beta_{j}$ si se ajusta por sí solo. El valor más pequeño posible para VIF es 1, lo que indica la ausencia total de colinealidad. Típicamente en la práctica hay una pequeña cantidad de colinealidad entre los predictores. como regla aproximada, un valor VIF que excede 5 o 10 indica una cantidad problemática de colinealidad. 
+El VIF es el cociente de la varianza de $\beta_{j}$ al ajustar el modelo completo dividido por el varianza de $\beta_{j}$ si se ajusta por sí solo. El valor más pequeño posible para VIF es 1, lo que indica la ausencia total de colinealidad. Típicamente en la práctica hay una pequeña cantidad de colinealidad entre los predictores. Como regla aproximada, un valor VIF que excede 5 o 10 indica una cantidad problemática de colinealidad. 
 
 El VIF para cada variable se puede calcular usando la fórmula
 
 $$VIF(\beta_{j}) = \frac{1}{1-R^2_{X_{j}|X_{-j}}}$$
 
 donde $R^2_{X_{j}|X_{-j}}$ es el $R^2$ de una regresión de $X_{j}$ contra todos los otros predictores. Si  $R^2_{X_{j}|X_{-j}}$ es cercano a 1, entonces, hay colinealidad, por lo cual $VIF$ será elevado.
-
 ```{r}
 vif(model1)
 ```
@@ -111,10 +104,9 @@ Vemos cómo `height` y `age` tienen valores bastante cercanos a nuestro límite.
 
 Ante el problema de la colinealidad, existen dos soluciones sencillas. La primera es eliminar una de las variables problemáticas de la regresión. Esto generalmente se puede hacer sin mucho compromiso con la regresión. ajuste, ya que la presencia de colinealidad implica que la información que este variable proporciona sobre la respuesta es redundante en presencia de la otras variables.
 
-La segunda solución puede ser combinar las varaibles colineales en un solo predictor.
+La segunda solución puede ser combinar las varaibles colineales en un solo predictor. Una opción es generar alguna tipología o algún índice. Veremos en el módulo 3 algunas formas de reducción de dimensionalidad ([Análisis de Componentes Principales -PCA](https://gefero.github.io/factor_data_track_CSS/M3/clase1/Clase_1.html) o [Análisis de Correspondencias múltiples - MCA](https://gefero.github.io/factor_data_track_CSS/M3/clase2/Clase_2.html)) son formas habituales de lidiar con la multicolinealidad.
 
 ¿Qué pasa en nuestro modelo de determinación de ingresos? ¿Qué variables podrían tener algún grado de colinealidad?
-
 ```{r}
 enes <- read_rds('./data/ENES_Personas_M1_EOW.rds')
 
@@ -149,12 +141,11 @@ enes <- enes %>%
 ```
 
 Estimemos la regresión:
-
 ```{r}
 lm_enes<- enes %>% filter(estado == 'Ocupado') %>% lm(v213b ~ t_hogar + v108 + v109 + nivel_ed_agg + class_eow_agg, data=.)
 ```
 
-Y calculemos el VIF
+Y calculemos el VIF:
 ```{r}
 vif(lm_enes)
 ```

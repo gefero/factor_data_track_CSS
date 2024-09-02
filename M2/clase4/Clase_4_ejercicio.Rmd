@@ -67,7 +67,6 @@ Con el dataset recortado, realice un join para tener todas las variables en una 
 ###
 ```
 
-
 ## Análisis descriptivo
 ### Consigna 4. Correlaciones
 ¿Qué relacion existe (si es que existe) entre el HDI y la proporción de población asalariada? ¿Y entre el HDI y la proporción de población que trabaja en el sector agrario?
@@ -103,8 +102,15 @@ Realicen un histograma de los residuos. ¿Qué forma tienen?
 ###
 ```
 
+### Consigna 9. Colinealdad
+¿Hay multicolinealidad en el modelo? ¿De qué grado? ¿Es un problema?
+```{r}
+###
+```
+
+
 ## Análisis de resultados
-### Consigna 9. Bondad de ajuste
+### Consigna 10. Bondad de ajuste
 ¿Cuál es el ajuste del modelo?
 ```{r}
 ###
