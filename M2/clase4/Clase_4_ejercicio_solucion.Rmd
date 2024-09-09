@@ -108,7 +108,7 @@ Correlación
 
 ```{r}
 final %>%
-  select(SL.AGR.EMPL.ZS,hdi_2019) %>%
+  select(SL.AGR.EMPL.ZS,SL.EMP.WORK.ZS, hdi_2019) %>%
   cor(., method='pearson')
 ```
 
@@ -118,11 +118,11 @@ final %>%
 Queremos construir información sobre la relación entre el PBI per cápita (`gnipc_2019`) y variables relativas a la educación, a la salud y al grado de desarrollo capitalista del país. Entrenar una regresión lineal múltiple con las variables que considere relevantes. 
 
 ```{r}
+final <- final %>%
+                mutate(gnipc_2019_log = log10(gnipc_2019))
+
 lm_1 <- final %>%
-          lm(gnipc_2019 ~ le_2019 + mys_2019 + SL.AGR.EMPL.ZS + SL.SRV.EMPL.ZS + SL.EMP.WORK.ZS, data = .)
-
-lm_1 <- lm(gnipc_2019 ~ le_2019 + mys_2019 + SL.AGR.EMPL.ZS + SL.SRV.EMPL.ZS + SL.EMP.WORK.ZS, data = final)
-
+          lm(gnipc_2019_log ~ le_2019 + mys_2019 + SL.AGR.EMPL.ZS + SL.SRV.EMPL.ZS + SL.EMP.WORK.ZS -gnipc_2019_log, data = .)
 
 summary(lm_1)
 ```
@@ -134,13 +134,13 @@ Chequeen los residuos del modelo. ¿Qué herramienta gráfica pueden usar para e
 ```{r}
 resids <- tibble(
   iso3c = final$iso3c,
-  gnipc = final$gnipc_2019,
-  gnipc_pred = predict(lm_1, final),
-  resid =  gnipc - gnipc_pred
+  gnipc = final$gnipc_2019_log,
+  gnipc_log_pred = predict(lm_1, final),
+  resid =  gnipc - gnipc_log_pred
 ) 
 
 resids %>%
-  ggplot(aes(x=gnipc_pred, y=resid, color=resid)) + 
+  ggplot(aes(x=gnipc_log_pred, y=resid, color=resid)) + 
     geom_point() +
     scale_color_viridis_c() +
     geom_hline(yintercept = 0, linetype='dashed') + 
@@ -186,9 +186,9 @@ summary(lm_1)$adj.r.squared
 ¿Cómo interpreta los resultados del modelo? ¿Cuál es, en su opinion, la variable más importante? 
 ```{r}
 lm_scaled <- final %>%
-        select(gnipc_2019, le_2019, mys_2019, SL.AGR.EMPL.ZS, SL.SRV.EMPL.ZS, SL.EMP.WORK.ZS) %>%
+        select(gnipc_2019_log, le_2019, mys_2019, SL.AGR.EMPL.ZS, SL.SRV.EMPL.ZS, SL.EMP.WORK.ZS) %>%
         mutate(across(everything(), scale)) %>%
-        lm(gnipc_2019 ~ ., data=.)
+        lm(gnipc_2019_log ~ ., data=.)
 ```
 
 ```{r}
