@@ -27,21 +27,17 @@ library(car)
 La idea de este notebook es hacer un ejercicio integrador de los diferentes temas que estuvimos viendo de regresión logística. Para ello, vamos a seguir trabajando con la base de la ENES y nos vamos a seguir preguntando por la autopercepción de clase. La propuesta es que avancen en las siguientes consignas.
 
 
-
 Veamos la forma en que está abordada el problema de la autopercepción de clase:
 
 ![](./imgs/enes_autopercep.jpg)
 
 ### ¿Cómo se pregunta acerca de la autopercepción?
-
-
+Discutamos...
 
 ### Cargamos los datos
 ```{r}
 psh_cony <- read_rds('./data/ENES_psh_cony.rds')
 ```
-
-
 
 Tal y como hicimos la semana pasada, tenemos que recodificar las variables de percecpión de clase `MS_v260` y `MS_v261` a una sola variable que vamos a llamar `percep_clase` y luego a esta, dicotomizarla. A su vez, vamos a tratar de replicar el esquema que utilizó Rodolfo Elbert en [este artículo](https://www.jstor.org/stable/j.ctv1gn3t2q.8#metadata_info_tab_contents). Allí, realizó una desagregación de los trabajadores por cuenta propia en dos categorías: 
 
@@ -105,7 +101,6 @@ psh_cony <- psh_cony %>%
    )
 
 ```
-
 
 ### ¿Hay consistencia entre la autopercepción medida como "una escalera" (pregunta 258) y la autopercepción de clase? ¿Cómo abordarían este problema técnicamente? ¿Cómo podrían plantearlo en términos de una regresión logística?
 
@@ -203,8 +198,6 @@ En general, cada casilla de esta matriz tiene un nombre:
 Entonces, los casos correctamente clasificados o "accuracy" se calculan como:
 
 $$Acc = \frac{TP + TN}{TP + TN + FP + FN} = \frac{3586+1219}{3586+1219 + 4633 + 1585} = \frac{4805}{11026} = 0.4359$$
-
-
 Podemos calcular esto bien rápido haciendo:
 
 ```{r}
@@ -217,7 +210,7 @@ Pero también podemos pensar en otras dos métricas (entre muchas otras):
 
 $$Prec = \frac{TP}{TP + FP}$$
 
--**Recall:** También se conoce como Tasa de Verdaderos Positivos (True Positive Rate) ó TP. Es la proporción de casos positivos que fueron correctamente identificadas por el algoritmo.
+- **Recall:** También se conoce como Tasa de Verdaderos Positivos (True Positive Rate) ó TP. Es la proporción de casos positivos que fueron correctamente identificadas por el algoritmo.
 
 $$Recall = \frac{TP}{TP + FN}$$
 
