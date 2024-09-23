@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 ***
 Este texto se basa en los siguientes materiales:
 
-- Capítulos 21 del libro [R para Ciencia de Datos](https://es.r4ds.hadley.nz/) de Hadley Wickham 
+- Capítulos 21 del libro [R para Ciencia de Datos](https://es.r4ds.hadley.nz/21-iteration.html) de Hadley Wickham 
 ***
 
 ```{r}

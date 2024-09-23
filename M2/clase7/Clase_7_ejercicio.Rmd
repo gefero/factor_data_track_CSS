@@ -55,29 +55,13 @@ Copiamos y pegamos el preprocesmiento de los datos:
 df <- read_csv('./data/wb_bank_data_2019.csv')
 hdi <- read_csv('./data/HDI_HDR2020_040722.csv')
 
-df <- df %>%
-     pivot_wider(id_cols = c(iso3c, iso2c, country), names_from = indicatorID, values_from = value)
-
-
-hdi <- hdi %>%
-        select(iso3c, country, contains("_2019"))
-
-
-final <- hdi %>%
-            left_join(
-              df %>% select(-country)
-              )
-
-final <- final %>% drop_na()
-
+## Pueden repetir el procesamiento que hicimos en la clase 4
 ```
 
 Estimar una regresión que tenga como variable dependiente al producto bruto por cápita y como variables predictoras la expectativa de vida, e, la proporción de trabaj
 
 ```{r}
-lm_1 <- final %>%
-          lm(gnipc_2019 ~ le_2019 + mys_2019 + SL.AGR.EMPL.ZS + SL.SRV.EMPL.ZS + SL.EMP.WORK.ZS, data = .)
-summary(lm_1)
+###
 ```
 
 - Genere un intervalo de confianza del 95% mediante boostrap para cada una de las variables 

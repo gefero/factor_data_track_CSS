@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 ***
 Este texto se basa en los siguientes materiales:
 
-- Capítulos 24 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
+- Capítulos 24 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/inf-model-slr) de Mine Çetinkaya-Rundel y Johanna Hardin 
 - Capitulo 4 del libro [Introduction to Statistical Learning](https://www.statlearning.com/) de Gareth James, Daniela Witten, Trevor Hastie y Rob Tibshirani
 
 ***
@@ -33,13 +33,13 @@ library(patchwork)
 
 ```
 ## Introducción 
-Ahora unimos ideas de análisis inferenciales con los modelos descriptivos (regresión lineal y logística). En particular, usaremos la línea de regresión de mínimos cuadrados para probar si existe una relación entre dos variables continuas. Además, construiremos intervalos de confianza que cuantifican la pendiente de la línea de regresión lineal. La idea ahora ahora es predecir una variable de respuesta numérica (para modelos lineales) o una variable de respuesta binaria (para modelos logísticos). Vamos a seguir haciendo preguntas sobre la variabilidad del modelo de una muestra a otra. 
+Las próximas clases vamos a combinar algunas de las ideas y técnicas de estadística inferencial que estuvimos trabajando en el Módulo 1 del trayecto con las técnicas de modelado (regresión lineal y logística) que estuvimos viendo hasta aquí. Hasta aquí estuvimos trabajando de forma "descriptiva" con estos modelos, es decir, que no nos preocupamos por la existencia o no de error muestral. A partir de ahora, sí vamos a tener que tener en consideración este factor. Vamos a construir intervalos de confianza que cuantifican la pendiente de la línea de regresión lineal. 
 
 Muchas de las ideas inferenciales son notablemente similares a las cubiertas en la materia del cuatrimestre pasado. Los supuestos de los modelos lineales suelen evaluarse gráficamente, aunque la independencia de las observaciones sigue siendo de suma importancia.
 
 En general, nos vamos a encontrar que estamos trabajando con datos muestrales. Esto quiere decir que nos vamos a encontrar con el bendito error muestral. Dicho de una forma simple: ya sabemos que la muestra que obtuvimos es solamente una de las muchas muestras posibles. Por lo tanto, todos los estadísticos y métricas que derivemos de esta única muestra 
 
-En la materia anterior, trabajamos con esta idea para promedios, proporciones y tests de asociación entre variables. Pero el mismo razonamiento aplica a un modelo de regresión (o cualquier otro modelo). Así, los $\hat{\beta_{k}}$ de un modelo de regresión lineal son solamente estimaciones puntuales de los verderos $\beta_{k}$ poblacionales. Por lo tanto, va a ser necesario que generemos información sobre el error muestral. Vamos a hacerlo mediante dos instrumentos:
+En la materia anterior, trabajamos con esta idea para promedios y tests de asociación entre variables. Pero el mismo razonamiento aplica a un modelo de regresión (o cualquier otro modelo). Así, los $\hat{\beta_{k}}$ de un modelo de regresión lineal son solamente estimaciones puntuales de los verderos $\beta_{k}$ poblacionales. Por lo tanto, va a ser necesario que generemos información sobre el error muestral. Vamos a hacerlo mediante dos instrumentos:
 
 - intervalos de confianza
 - pruebas de hipótesis
@@ -47,7 +47,7 @@ En la materia anterior, trabajamos con esta idea para promedios, proporciones y 
 ## Boostrap para IC de la pendiente
 Como hemos visto en capítulos anteriores, podemos usar bootstrapping para estimar la distribución muestral del  estadístico de interés (aquí, la pendiente o $\beta_{i}$) sin la suposición nula de no relación. Debido a que nuestro interés está en crear un intervalo de confianza, estrictamente hablando, no hay una hipótesis nula.
 
-Volvamos a nuestro caso inicial. ¿Es la altura un buen predictor del peso?
+Volvamos (ahora sí, por última vez) a nuestro caso inicial. ¿Es la altura un buen predictor del peso?
 
 
 ```{r}
@@ -120,7 +120,7 @@ Si generamos muchas remuestras, vamos a poder generar muchas pendientes y, por e
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 b <- ggplot()
 
-for(i in 1:200){
+for(i in 1:500){
       s <- df_mayores %>%
         slice_sample(n=352, replace=TRUE)
       
@@ -132,7 +132,7 @@ for(i in 1:200){
 print(b)
 ```
 
-Se toman 200 remuestras de tamaño 352 de los datos originales. Cada uno de los modelos lineales estimados en cada una de las muestras bootstrap es ligeramente diferente. Vamos a ver esto con más detalle. Pero antes de eso... vamos a introducir una herramienta que va a ser sumamente útil: [los `for` loops](https://gefero.github.io/factor_data_track_CSS/M2/clase7/Clase_7_loops.html).
+Se toman 500 remuestras de tamaño 352 de los datos originales. Cada uno de los modelos lineales estimados en cada una de las muestras bootstrap es ligeramente diferente. Vamos a ver esto con más detalle. Pero antes de eso... vamos a introducir una herramienta que va a ser sumamente útil: [los `for` loops](https://gefero.github.io/factor_data_track_CSS/M2/clase7/Clase_7_loops.html).
 
 Ok. Ya vimos que es un `for` loop. Vamos a usarlo para hacer bootstrap.
 
@@ -404,25 +404,25 @@ Los supuestos a menudo se recuerdan usando el mnemotécnico LINE. Las condicione
 ### ¿Por qué necesitamos condiciones técnicas?
 Al igual que con otras técnicas inferenciales, si las condiciones técnicas anteriores no se cumplen, entonces no es posible hacer afirmaciones concluyentes sobre la población. Es decir, sin los supuestos, la puntuación T (o puntuación Z) no tendrá la distribución t asumida (o normal estándar). Dicho esto, casi siempre es imposible verificar las condiciones con precisión, por lo que buscamos grandes desviaciones de las condiciones. Si hay grandes desviaciones, no podremos confiar en el valor p calculado o en los puntos finales del intervalo de confianza resultante.
 
-#### El modelo basado en la Linealidad
+#### El modelo basado en la *Linealidad*
 La condición de linealidad es una de las más importantes si su objetivo es comprender un modelo lineal entre $X$ e $y$. Por ejemplo, el valor de la pendiente no tendrá ningún significado si la verdadera relación entre
 $X$ e $y$ es cuadrática. No solo debemos ser cautelosos con la inferencia, sino que el modelo en sí mismo tampoco es una representación precisa de la relación entre las variables.
 
-Antes analizamos las modificaciones del modelo que a menudo pueden conducir a un excelente ajuste de relaciones sólidas distintas de las lineales. Sin embargo, una discusión extensa sobre los diferentes métodos para modelar formas funcionales que no sean lineales está fuera del alcance de este texto.
+Existen algunas modificaciones del modelo que a menudo pueden conducir a un excelente ajuste de relaciones sólidas distintas de las lineales. Sin embargo, una discusión extensa sobre los diferentes métodos para modelar formas funcionales que no sean lineales está fuera del alcance de este curso.
 
-#### La importancia de la Independencia
+#### La importancia de la *Independencia*
 La condición técnica que describe la independencia de las observaciones es a menudo la más crucial pero también la más difícil de diagnosticar. También es extremadamente difícil recopilar un conjunto de datos que sea una verdadera muestra aleatoria de la población de interés. 
 
-Las observaciones dependientes pueden sesgar los resultados de manera que produzcan análisis fundamentalmente defectuosos. Es decir, si medimos el promedio de notas de estudiantes que conocemos, seguramente nuestro modelo lineal no va a ser una representación de todos los estudiantes de su universidad. En el mejor de los casos, es un modelo que describe a los estudiantes que conocemos.
+Las observaciones dependientes pueden sesgar los resultados de manera que produzcan análisis fundamentalmente defectuosos. Es decir, si construimos un modelo para identificar los determinantes del rendimiento académico de estudiantes pero la muestra de estudiantes fue construida a partir de alguna técnica como "bola de nieve", seguramente nuestro modelo lineal no va a ser una representación de todos los estudiantes de su universidad. En el mejor de los casos, es un modelo que describe a los estudiantes a los que pudimos llegar mediante la técnica de selección utilizada.
 
-En lugar de tratar de responder si las observaciones son una verdadera muestra aleatoria, podría centrarse en si cree que sus observaciones son representativas de las poblaciones. Los humanos son notoriamente malos para implementar procedimientos aleatorios, por lo que debe tener cuidado con cualquier proceso que use la intuición humana para equilibrar los datos con respecto, por ejemplo, a la demografía de los individuos en la muestra.
+En lugar de tratar de responder si las observaciones son una verdadera muestra aleatoria, podríamos preguntarnos mejor si las observaciones de dicha muestra logran ser un buen "reflejo" de las poblaciones. Los humanos son notoriamente malos para implementar procedimientos aleatorios, por lo que debe tener cuidado con cualquier proceso que use la intuición humana para equilibrar los datos con respecto, por ejemplo, a la demografía de los individuos en la muestra.
 
-#### Algunas reflexiones sobre la Normalidad
+#### Algunas reflexiones sobre la *Normalidad*
 La condición de normalidad requiere que los puntos varíen simétricamente alrededor de la línea, extendiéndose en forma de campana. Debe considerar que la "campana" de la distribución normal se encuentra en la parte superior de la línea (saliendo del papel en un sentido tridimensional) para indicar que los puntos son densos cerca de la línea y se dispersan gradualmente a medida que se alejan. 
 
-La condición de normalidad es menos importante que la linealidad o la independencia por varias razones. En primer lugar, el ajuste del modelo lineal con mínimos cuadrados seguirá siendo una estimación no sesgada del verdadero modelo de población. Sin embargo, los errores estándar asociados con la variabilidad de la línea no serán bien estimados. Afortunadamente, el teorema del límite central nos dice que la mayoría de los análisis (p. ej., valores p, intervalos de confianza) realizados con el modelo matemático seguirán siendo válidos (incluso si los datos no se distribuyen normalmente alrededor de la línea) siempre que la muestra el tamaño es lo suficientemente grande. Un método de análisis que requiere normalidad, independientemente del tamaño de la muestra, es la creación de intervalos que predicen la respuesta de los resultados individuales en un determinado valor de $X$, utilizando el modelo lineal. Una razón adicional para preocuparse un poco menos por la normalidad es que boostrap no requiere que los datos sean normales alrededor de la línea.
+La condición de normalidad es menos importante que la linealidad o la independencia por varias razones. En primer lugar, el ajuste del modelo lineal con mínimos cuadrados seguirá siendo una estimación no sesgada del verdadero modelo de población. Sin embargo, los errores estándar asociados con la variabilidad de la línea no estarán bien estimados. Afortunadamente, el teorema del límite central nos dice que la mayoría de los análisis (p. ej., valores p, intervalos de confianza) realizados con el modelo matemático seguirán siendo válidos (incluso si los datos no se distribuyen normalmente alrededor de la línea) siempre que la muestra el tamaño es lo suficientemente grande. Un método de análisis que requiere normalidad, independientemente del tamaño de la muestra, es la creación de intervalos que predicen la respuesta de los resultados individuales en un determinado valor de $X$, utilizando el modelo lineal. Una razón adicional para preocuparse un poco menos por la normalidad es que boostrap no requiere que los datos sean normales alrededor de la línea.
 
-#### Igual variabilidad para la predicción en particular
+#### *Igual variabilidad* para la predicción en particular
 Al igual que con la normalidad, la condición de igualdad de variabilidad (que los puntos se distribuyen de manera similar alrededor de la línea para todos los valores de $X$) no causará problemas para la estimación del modelo lineal. Dicho esto, la inferencia sobre el modelo (p. ej., calcular valores p) será incorrecta si la variabilidad alrededor de la línea es heterogénea. Los datos que muestran una varianza desigual en el rango de valores de $X$ tendrán el potencial de estimar erróneamente seriamente la variabilidad de la pendiente, lo que tendrá consecuencias para los resultados de la inferencia (es decir, pruebas de hipótesis e intervalos de confianza).
 
 En general, los resultados de la inferencia mediante boostrap de un intervalo de confianza son robustos a la condición de igualdad de variabilidad, por lo que le brindan al analista métodos para usar cuando los datos son heterocedásticos (es decir, muestran una variabilidad desigual alrededor de la línea de regresión). 
