@@ -141,14 +141,45 @@ summary(glm2)
 
 Pista: Van a tener que usar la función `predict`. Revisen el notebook de la semana pasada
 ```{r}
-###
+
+tibble(class_eow_agg = "Trabajadores",
+       v109 = "Masculino",
+       v111 =  "PSH",
+       v108 = 25) %>%
+        predict(glm2, ., type="response")
+
+
 ```
 
 #### ¿Qué relación existe entre la edad y la autopercepción en escalera?
 Pista: elijan un perfil y hagan variar la edad a lo largo de ese perfil. Luego, van a tener que usar de nuevo `predict`.
 ```{r}
-###
+
+tibble(class_eow_agg = rep("Trabajadores", 62),
+       v109 = rep("Masculino", 62),
+       v111 =  rep("PSH", 62),
+       v108 = 14:75) %>%
+        mutate(proba = predict(glm2, ., type="response")) %>%
+        ggplot() + 
+                geom_line(aes(x=v108, y=proba)) + 
+                ylim(0,1)+
+                theme_minimal()
+
 ```
+
+
+```{r}
+
+class_eow_agg <-  c("Manag./superv.", "Trabajadores", "Propietarias", "TCP informales")
+v109 <- c("Masculino", "No masculino")
+v111 <- c("PSH", "Cónyuge")
+v108 <- 14:75
+
+expand_grid(class_eow_agg, v109, v111, v108) %>%
+        mutate(proba = predict(glm2, ., type="response"))
+
+```
+
 
 
 ### ¿Es "mejor" este modelo que el que estimamos la clase anterior? Introducción a la evaluación de modelos de regresión logística
