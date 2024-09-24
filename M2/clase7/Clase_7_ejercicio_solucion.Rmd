@@ -72,7 +72,7 @@ final <- final %>% drop_na()
 
 ```
 
-Estimar una regresión que tenga como variable dependiente al producto bruto por cápita y como variables predictoras la expectativa de vida, e, la proporción de trabaj
+Estimar una regresión que tenga como variable dependiente al producto bruto por cápita y como variables predictoras la expectativa de vida, el promedio de años de escolaridad, la proporción de trabajadores asalariados, la proporción de personas ocupadas en el sector agropecuario, en el sector servicios .
 
 ```{r}
 lm_1 <- final %>%

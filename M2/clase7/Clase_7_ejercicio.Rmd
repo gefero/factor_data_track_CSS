@@ -58,7 +58,7 @@ hdi <- read_csv('./data/HDI_HDR2020_040722.csv')
 ## Pueden repetir el procesamiento que hicimos en la clase 4
 ```
 
-Estimar una regresión que tenga como variable dependiente al producto bruto por cápita y como variables predictoras la expectativa de vida, e, la proporción de trabaj
+Estimar una regresión que tenga como variable dependiente al producto bruto por cápita y como variables predictoras la expectativa de vida, el promedio de años de escolaridad, la proporción de trabajadores asalariados, la proporción de personas ocupadas en el sector agropecuario, en el sector servicios .
 
 ```{r}
 ###
