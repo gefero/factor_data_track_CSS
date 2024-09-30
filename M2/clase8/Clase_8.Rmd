@@ -33,9 +33,11 @@ library(patchwork)
 
 ```
 ## Introducción 
-En la clase pasada, los p-valores se calcularon en cada uno de los coeficientes del modelo. El valor p da una idea de qué variables son importantes para el modelo; sin embargo, se justifica un tratamiento más extenso de la selección de variables en un curso o libro de texto de seguimiento. Aquí, usamos el error de predicción de validación cruzada para centrarnos en qué variable(s) son importantes para predecir la variable de respuesta de interés. En general, los modelos lineales también se utilizan para hacer predicciones de observaciones individuales. Además de la construcción de modelos, la validación cruzada proporciona un método para generar predicciones que no se ajustan demasiado al conjunto de datos en particular. Continuamos alentándolo a que continúe estudiando el tema de la validación cruzada, ya que se encuentra entre las ideas más importantes en el análisis de datos moderno, y aquí solo podemos arañar la superficie.
+En la clase pasada, los p-valores se calcularon en cada uno de los coeficientes del modelo. El p-valor da una idea acerca de cuáles son las variables importantes para el modelo; sin embargo, quisiéarmos profundizar hoy en el problema de la de la selección de variables en un modelo. 
 
-La validación cruzada es una técnica computacional que elimina algunas observaciones antes de ejecutar un modelo y luego evalúa la precisión del modelo en la muestra reservada. Al eliminar algunas observaciones, nos proporcionamos una evaluación independiente del modelo (es decir, las observaciones eliminadas no contribuyen a encontrar los parámetros que minimizan la ecuación de mínimos cuadrados). La validación cruzada se puede usar de muchas maneras diferentes (como una evaluación independiente), y aquí solo rascaremos la superficie con respecto a una forma en que se puede usar la técnica para comparar modelos. 
+Aquí, usamos el error de predicción de validación cruzada para centrarnos en qué variable(s) son importantes para predecir la variable de respuesta de interés. En general, los modelos lineales también se utilizan para hacer predicciones de observaciones individuales. Además de la construcción de modelos, la validación cruzada proporciona un método para generar predicciones que no se ajustan demasiado al conjunto de datos en particular. 
+
+La validación cruzada es una técnica computacional que elimina algunas observaciones antes de ejecutar un modelo y luego evalúa la precisión del modelo en la muestra reservada. Al eliminar algunas observaciones, nos proporcionamos una evaluación independiente del modelo (es decir, las observaciones eliminadas no contribuyen a encontrar los parámetros que minimizan la ecuación de mínimos cuadrados). La validación cruzada se puede usar de muchas maneras diferentes (como una evaluación independiente), y aquí solo vamos a tocar la superficie: solo vamos a mencionar una de las múltiples forma en que se puede usar la técnica para comparar modelos. 
 
 ![](./imgs/CV.png)
 
@@ -133,7 +135,7 @@ df <- df %>%
 ## Validación cruzada desde cero
 ¿Cómo podemos implementar una validación cruzada? Veamos primero la lógica de este procedimiento. Queremos responder una pregunta similar a la que Erik Olin Wright plantea en el capítulo 5 de [Class structure and income determination](https://drive.google.com/file/d/1_uzxqlkOmx_AG6T1uqILvNZIK9hIS4mN/view), aunque más resumida. ¿Qué predicciones del ingreso son mejores: aquellas en un modelo con variables de "logro" o aquellas que surjen de un modelo con variables de clase? Para ello vamos a entrenar tres modelos diferentes.
 
-- uno que vamos a llamar `model_full`: se va a tratar de un modelo que va a ser "completo", va a tener todas las variables. Podemos escribir su ecuación de la siguiente forma
+- uno que vamos a llamar `model_full`: se va a tratar de un modelo que va a ser "completo", va a tener "todas" las variables. Podemos escribir su ecuación de la siguiente forma
 
 $$\begin{aligned}
 ing\_ocup_{i} = &\beta_{0}\\
@@ -143,13 +145,13 @@ ing\_ocup_{i} = &\beta_{0}\\
 +&\beta_{4} \times clase_{Manag\_superv, i}\\  
 +&\beta_{5} \times clase_{Peq\_burg, i}\\
 +&\beta_{6} \times clase_{Trabajadores, i}\\
-+&\beta_{7} \times calif\_hogar_{Sin\_dato, i}\\ 
++&\beta_{7} \times calif\_hogar_{No\_calif, i}\\ 
 +&\beta_{8} \times calif\_hogar_{Operativa, i}\\
 +&\beta_{9} \times calif\_hogar_{Profesional, i}\\ 
 +&\beta_{10} \times calif\_hogar_{Tecnica, i}
 \end{aligned}$$
 
-La idea en este caso es entrenar un modelo "completo" con todas las variables. A partir de este modelo vamos a tratar de ver qué ocurre si eliminamos algunas de las variables.
+A partir de este modelo vamos a tratar de ver qué ocurre si eliminamos algunas de las variables.
 
 - otro que vamos a llamar `model_sin_clases`
 
@@ -158,7 +160,7 @@ ing\_ocup_{i} = &\beta_{0}\\
 +&\beta_{1} \times edad_{i}\\
 +&\beta_{2} \times ned_{medio,i}\\
 +&\beta_{3} \times ned_{alto,i}\\
-+&\beta_{7} \times calif\_hogar_{Sin\_dato, i}\\ 
++&\beta_{7} \times calif\_hogar_{No\_calif, i}\\ 
 +&\beta_{8} \times calif\_hogar_{Operativa, i}\\
 +&\beta_{9} \times calif\_hogar_{Profesional, i}\\ 
 +&\beta_{10} \times calif\_hogar_{Tecnica, i}
@@ -172,7 +174,7 @@ ing\_ocup_{i} = &\beta_{0}\\
 +&\beta_{4} \times clase_{Manag\_superv, i}\\  
 +&\beta_{5} \times clase_{Peq\_burg, i}\\
 +&\beta_{6} \times clase_{Trabajadores, i}\\
-+&\beta_{7} \times calif\_hogar_{Sin\_dato, i}\\ 
++&\beta_{7} \times calif\_hogar_{No\_calif, i}\\ 
 +&\beta_{8} \times calif\_hogar_{Operativa, i}\\
 +&\beta_{9} \times calif\_hogar_{Profesional, i}\\ 
 +&\beta_{10} \times calif\_hogar_{Tecnica, i}
@@ -186,12 +188,14 @@ df_ocupados <- df %>%
                   drop_na(v213b)
 
 tidy(df_ocupados %>%
-    lm(v213b ~ v108 + nivel_ed_agg + EOW_class_ + MS_CNO_calif , data = .))
+    lm(v213b ~ v108 + nivel_ed_agg + EOW_class_ + MS_CNO_calif, data = .))
 ```
 En el modelo anterior, podemos ver que todos los predictores presentan p-valores bajos. Esto sugiere que sugiere que cada variable es un predictor estadísticamente significativo del ingreso de la ocupación principal. Sin embargo, en esta sección, iremos más allá del uso de p-valores y vamos a tratar de considerar predicciones independientes del ingreso de la ocupacion principal como una forma de comparar diferentes modelos.
 
 ### Comparando modelos (y variables)
-Para comparar modelos diferetnes en términos de su capacidad para predecir el ingreso, necesitamos construir modelos que puedan proporcionar predicciones independientes basadas en las personas en las muestras reservadas creadas por validación cruzada. Para reiterar, cada una de las predicciones que (cuando se combinan) nos permitirán distinguir entre las más pequeñas y las más grandes son independientes de los datos que se usaron para construir el modelo. En este ejemplo, mediante la validación cruzada, eliminamos una quinta parte de los datos antes de ejecutar los cálculos de mínimos cuadrados. Luego, se utiliza el modelo de mínimos cuadrados para predecir el ingreso de los cónyuges y PSH ocupados en la muestra reservada. Aquí usamos una validación cruzada de 4 grupos (lo que significa que una cuarta parte de los datos se elimina cada vez) para producir cuatro versiones diferentes de cada modelo (otras veces puede ser más apropiado usar 2 veces o 10 veces o incluso ejecute el modelo por separado después de eliminar cada punto de datos individual de uno en uno).
+Para comparar modelos diferentes en términos de su capacidad para predecir el ingreso, necesitamos construir modelos que puedan proporcionar predicciones independientes basadas en las personas en las muestras reservadas creadas por validación cruzada. 
+
+Para reiterar, cada una de las predicciones que (cuando se combinan) nos permitirán distinguir entre las más pequeñas y las más grandes son independientes de los datos que se usaron para construir el modelo. En este ejemplo, mediante la validación cruzada, eliminamos una cuarta parte de los datos antes de ejecutar los cálculos de mínimos cuadrados. Luego, se utiliza el modelo de mínimos cuadrados para predecir el ingreso de los cónyuges y PSH ocupados en la muestra reservada. Aquí usamos una validación cruzada de 4 grupos (lo que significa que una cuarta parte de los datos se elimina cada vez) para producir cuatro versiones diferentes de cada modelo (otras veces puede ser más apropiado usar 2 veces o 10 veces o incluso ejecute el modelo por separado después de eliminar cada punto de datos individual de uno en uno).
 
 Aquí está el código completo para realizar la validación cruzada. Enseguida volveremos sobre el mismo. Pero antes es imporante entender qué está pasando en cada iteración a nivel conceptual.
 
@@ -280,6 +284,11 @@ Entonces, en este fold, tenemos que
 errores[4,]
 ```
 
+
+```{r}
+errores[4,]
+```
+
 el modelo full tiene un $CV\_RMSE_{k=4} = \$5758.6$, el modelo sin clases $CV\_RMSE_{k=4} = \$5954.1$ y el modelo sin nivel educativo, de $CV\_RMSE_{k=4} = \$5871.4$. ¿Qué podemos decir al respecto de estos valores?
 
 Ahora bien, repetimos esta operación en cada uno de los 1/4 que vamos dejando "reservados" de forma iterativa. De esta forma, al finalizar el proceso de validación cruzada tenemos 4 estimaciones del error diferentes para cada uno de los modelos:
@@ -296,7 +305,7 @@ errores %>%
 ```
 
 
-El RSSE de validación cruzada es la suma del error cuadrático asociado con las predicciones. Si $\hat{y}_{cv,i}$ es la predicción para la i-ésima observación donde la i-ésima observación formaba parte del "holdout fold" y las otras tres partes fueron las que se usaron para entrenar el modelo, entonces, el $CV\_RMSE$ del modelo completo es $5934.9
+El RMSE de validación cruzada es la suma del error cuadrático asociado con las predicciones. Si $\hat{y}_{cv,i}$ es la predicción para la i-ésima observación donde la i-ésima observación formaba parte del "holdout fold" y las otras tres partes fueron las que se usaron para entrenar el modelo, entonces, el $CV\_RMSE$ del modelo completo es $5944.072
 
 
 ---
@@ -400,4 +409,11 @@ En este pedazo de código genearmos una tibble chiquitita (`err`) que va a conte
 
 ## Comentarios finales
 Hemos proporcionado una descripción general muy breve y un ejemplo utilizando la validación cruzada. La validación cruzada es un enfoque computacional para la construcción y validación de modelos como una alternativa a la confianza en los valores p. Si bien los p-valores tienen un papel que desempeñar en la comprensión de los coeficientes del modelo, a lo largo de este texto hemos seguido presentando métodos computacionales que amplían los enfoques estadísticos para el análisis de datos. La validación cruzada se utilizará nuevamente la clase que viene con regresión logística. La idea es alentar a que puedan evaluar tanto el uso de los métodos inferenciales estándar (como los p-valores) como los enfoques computacionales (como la validación cruzada) a medida que creen y usen modelos multivariables de todas las variedades.
+
+
+## Ejercicio 
+A partir del modelo trabajado en la parte teórica, evalúen la importancia de la variable vinculada al origen social: la claificación del PSH del hogar en que el respondente residía cuando tenía 15 años.
+```{r}
+###
+```
 
