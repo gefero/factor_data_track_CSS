@@ -1,5 +1,5 @@
 ---
-title: "Haciendo entendible una regresión I"
+title: "Haciendo entendible una regresión"
 output: 
   html_document:
     toc: TRUE
@@ -303,6 +303,7 @@ En la práctica, es posible que no utilicemos `predict()` directamente con tanta
 Estos son especialmente útiles cuando su modelo es un poco más complejo y la interpretación de los coeficientes se vuelve más complicada. Esto sucede, por ejemplo, cuando tiene una variable de resultado binaria y necesita convertir los resultados de una regresión logística en probabilidades predichas, o cuando tiene términos de interacción entre sus predicciones. Discutiremos algunas de estas bibliotecas auxiliares en las próximas secciones. Sin embargo, `predict()` y su capacidad para trabajar de forma segura con diferentes clases de modelos sustenta muchas de esas bibliotecas. Por lo tanto, es útil verlo en acción de primera mano para comprender lo que está haciendo..
 
 ---
+
 ### Actividad
 Generar el mismo gráfico pero para América Latina y Asia
 

@@ -5,7 +5,6 @@ output:
     toc: TRUE
     toc_float: TRUE
 author: "Germán Rosati"
-
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
@@ -17,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE, tidy = TRUE)
 ```
 
+
 ---
 
 Este texto se basa en los siguientes materiales:
@@ -24,6 +24,7 @@ Este texto se basa en los siguientes materiales:
 - Capítulos 27 del libro [Introduction to Modern Statistics](https://openintro-ims.netlify.app/index.html) de Mine Çetinkaya-Rundel y Johanna Hardin 
 
 ---
+
 
 ```{r}
 library(tidyverse)
@@ -38,7 +39,7 @@ Al igual que con la regresión lineal múltiple, el aspecto de la inferencia par
 Consideremos nuevamente a la ENES y volvamos sobre el problema de la autopercepción de clase. ¿Cuáles de las variables que hemos seleccionado son importantes para predecir la autopercepción?
 
 Carguemos los datos y repliquemos nuestros procesamientos para empezar...
-```{r}
+```{r proc}
 df <- read_rds('./data/ENES_psh_cony.rds')
 
 df <- df %>%
@@ -109,42 +110,36 @@ df <- df %>%
       v134a %in% c("Obra social", "Prepaga", "Prepaga a través de Obra Social") ~ 'Tiene cobertura',
       TRUE ~  'No tiene cobertura'
       ),
-    
-    percep_obrera = as.factor(case_when(
-            percep_clase == 'Clase baja' | percep_clase == 'Clase obrera' ~ 'Obrera',
+    percep_obrera=as.factor(case_when(
+            percep_clase == "Clase baja" | percep_clase == "Clase obrera" ~ "Obrera",
             is.na(percep_clase) ~ NA_character_,
-            TRUE ~ 'No obrera')),
-    
+            TRUE ~ "No obrera")),
     percep_obrera_orig = as.factor(case_when(
-            MS_v260 == 'Clase baja' | MS_v260 == 'Clase obrera' ~ 'Obrera',
+            MS_v260 == "Clase baja" | MS_v260 == "Clase obrera" ~ "Obrera",
             is.na(MS_v260) ~ NA_character_,
-            TRUE ~ 'No obrera')),
+            TRUE ~ "No obrera")),
     CNO_calif_agg = case_when(
-           CNO_calif == 'Profesional' | CNO_calif == 'Técnica' ~ 'Prof./técn',
-           CNO_calif == 'Operativa' | CNO_calif == 'No calificada' ~ 'Op./no calif.',
+           CNO_calif == "Profesional" | CNO_calif == "Técnica" ~ "Prof./técn",
+           CNO_calif == "Operativa" | CNO_calif == "No calificada" ~ "Op./no calif.",
          ),
     nivel_ed_agg = case_when(
-                  nivel_ed == 'Menores de 5 años' | 
-                  nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
-                  nivel_ed == 'Primaria/EGB incompleto' | 
-                  nivel_ed == 'Primaria/EGB completo' |
-                  nivel_ed == 'Educación especial' | nivel_ed == 'NS/NR'~ '0_Bajo',
-     
-                nivel_ed == 'Secundario/Polimodal incompleto' | 
-                nivel_ed == 'Secundario/Polimodal completo' ~ '1_Medio',
-    
+            nivel_ed == 'Menores de 5 años' |
+                    nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
+                    nivel_ed == 'Primaria/EGB incompleto' |
+                    nivel_ed == 'Primaria/EGB completo' |
+                    nivel_ed == 'Educación especial' | nivel_ed == 'NS/NR'~ '0_Bajo',
+            nivel_ed == 'Secundario/Polimodal incompleto' | 
+                    nivel_ed == 'Secundario/Polimodal completo' ~ '1_Medio',
                 nivel_ed == 'Terciario incompleto' | 
                 nivel_ed == 'Terciario completo' |
                 nivel_ed == 'Universitario incompleto' | 
                 nivel_ed == 'Universitario completo' ~ '2_Alto'),
-         
          class_eow_agg = case_when(
          EOW_class == 'Managers' | EOW_class == 'Supervisores' ~ 'Manag./superv.',
          EOW_class == 'Trabajadores' ~ 'Trabajadores',
          EOW_class == 'Pequeña burguesía' & CNO_calif_agg == 'Prof./técn' ~ 'Propietarias',
          EOW_class == 'Pequeña burguesía' & CNO_calif_agg == 'Op./no calif.' ~ 'TCP informales',
          EOW_class == 'Pequeña burguesía' & is.na(CNO_calif_agg)  ~ 'Propietarias',
-         
          EOW_class == 'Empleadores' ~ 'Propietarias'),
    )
 
@@ -153,7 +148,6 @@ df_ocupados <- df %>% filter(estado == 'Ocupado')
 ```
 
 ## Diagnosticando un modelo de regresión
-
 Antes de ver las pruebas de hipótesis asociadas con los coeficientes (que son muy similares a las de la regresión lineal), es importante comprender las condiciones técnicas que subyacen a la inferencia aplicada al modelo de regresión logística. 
 
 - En general, como ha visto en los ejemplos de modelos de regresión logística, es imperativo que la variable de respuesta sea binaria. 
@@ -161,11 +155,13 @@ Antes de ver las pruebas de hipótesis asociadas con los coeficientes (que son m
 - Además, la condición técnica clave para la regresión logística tiene que ver con la relación entre las variables predictoras ($X_{i}$) y la probabilidad de se produzca el acontemiento modelado (en nuestro caso, que la autopercepción sea obrera). La relación es una forma funcional específica llamada función logit, donde $logit(p) = log_{e}(\frac{p}{1-p})$. La función puede parecer complicada y no es necesario memorizar la fórmula del logit para comprender la regresión logística. Lo que es importante es que la probabilidad de que el resultado se produzca es una función de una combinación lineal de las variables explicativas.
 
 ---
+
 **Condiciones técnicas de la regresión logística**
 Hay dos condiciones clave para ajustar un modelo de regresión logística:
 
 - cada resultado $y_{i}$ es independiente de los otros resultados.
 - cada predictor $X_{i}$ está relacionado linealmente con la función $logit(p)$ si todos los demás predictores se mantienen constantes.
+
 ---
 
 La primera condición del modelo de regresión logística, la independencia de los resultados, es razonable si podemos suponer que las unidades (en nuestro caso, personas y más específicamente jefes y cónyuges) son independientes entre sí respecto a su autopercepción. ¿Qué opinan? ¿Son independientes?
@@ -176,7 +172,7 @@ Primero, reentremos nuestro modelo de la clase 5.
 
 ```{r}
 model1 <- df_ocupados %>%
-    glm(percep_obrera ~ class_eow_agg + v109 + v111 + v108 + nivel_ed_agg , data=., family='binomial')
+    glm(percep_obrera~class_eow_agg + v109 + v111 + v108 + nivel_ed_agg , data=., family='binomial')
 ```
 
 Luego, visualicemos estos datos trazando la verdadera autopercepción de cada persona contra las probabilidades ajustadas del modelo.
@@ -370,9 +366,9 @@ Bien, ahora, para generar las métricas finales vamos a promediar cada métrica 
 errores %>%
   group_by(model, metric) %>%
   summarise(value = mean(value)) %>%
-  pivot_wider(id_cols=metric,
+  pivot_wider(
               names_from=model, 
-              values_fro=value)
+              values_from=value)
 ```
 
 Puede verse que en términos del porcentaje de casos bien clasificados los modelos son prácticamente iguales (un 67%). En cambio, el moelo full es ligeramente superior en f1 y en recall. Este punto es importante porque muestra que no es cierto que agregar variables siempre conduzca a mejores predicciones. Existen variables que solo aportan "ruido" a la predicción y pueden amortiguar la señal de aquellas variables que realmente predicen el estado. 
@@ -388,4 +384,4 @@ df_ocupados %>%
 
 Si miramos la distribución de la variable dependiente (`percep_obrera`) se nota que existe un 66% de casos que se autoperciben como no obrera. Es decir, que si hubiésemos definido un modelo pavote como predecir siempre que la persona va autopercibirse como "no obrera" a hubiésemos obtenido una accuracy similar a nuestros modelos. 
 
-Es por ello que recall y precision son métricas importantes porque nos ayudan a ver hasta qué punto nuestro modelo logra captar todas las personas que se autoperciben obreras (recall), es decir, qué tan "sensible" es nuestro mdoelo. O si de todas las personas a las que nuestro modelo clasifica como "de percepción obrera", tienen efectivamente esa característica. En este punto, este modelo tal y como está hasta aquí no parece demasiado útil.
+Es por ello que recall y precision son métricas importantes porque nos ayudan a ver hasta qué punto nuestro modelo logra captar todas las personas que se autoperciben obreras (recall), es decir, qué tan "sensible" es nuestro mdoelo. O si de todas las personas a las que nuestro modelo clasifica como "de percepción obrera", tienen efectivamente esa característica (precision). En este punto, este modelo tal y como está hasta aquí no parece demasiado útil.
