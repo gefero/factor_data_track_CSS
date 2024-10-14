@@ -293,7 +293,9 @@ Y luego hacemos la validación cruzada. Volveremos sobre el código más adelant
 
 ```{r}
 # Mezclamos los datos
-set.seed(222)
+set.seed(758)
+df_ocupados <- df_ocupados %>%
+        slice_sample(n = nrow(df_ocupados), replace = FALSE)
 
 # Definimos la cantidad de grupos
 k <- 4

@@ -38,102 +38,11 @@ La visualización de datos es más que generar cifras que muestran los números 
 Los modelos estadísticos son una parte central de ese proceso.
 
 ## Objetivos
-- Entender brevemente cómo ggplot puede usar varias técnicas de modelado directamente dentro de geoms.
-- Aprender a usar las bibliotecas broom y margins para extraer y trazar de manera ordenada las estimaciones de los modelos que ajustamos
-
-## Regresiones, geometrías y "smoothers"
-Los histogramas, diagramas de densidad, boxplots y otras `geoms_` calculan números únicos o nuevas variables antes de trazarlos. Como vimos, estos cálculos se realizan mediante funciones `stat_`, cada una de las cuales trabaja mano a mano con su función `geom_` predeterminada, y viceversa. 
-
-Además, a partir de las líneas de suavizado que dibujamos casi en los primeros gráficos que hicimos, hemos visto que las funciones `stat_` pueden realizar una buena cantidad de cálculos e incluso estimaciones de modelos sobre la marcha. La función `geom_smooth()` puede tomar una variedad de argumentos de método para ajustar LOESS, MCO, entre otros.
-
-Tanto las funciones  `geom_smooth()` como `geom_quantile()` también pueden recibir instrucciones para usar fórmulas diferentes para producir sus ajustes.
-```{r}
-p <- ggplot(data = gapminder,
-            mapping = aes(x = log(gdpPercap), y = lifeExp))
-
-p + geom_point(alpha=0.1) +
-    geom_smooth(color = "tomato", fill="tomato", method = MASS::rlm) +
-    geom_smooth(color = "steelblue", fill="steelblue", method = "lm") +
-    theme_minimal()
-```
-
-En el plot superior, accedemos a la función `rlm` de la biblioteca `MASS` para ajustar una línea de regresión robusta.
-
-```{r}
-p + geom_point(alpha=0.1) +
-    geom_smooth(color = "tomato", method = "lm", size = 1.2, 
-                formula = y ~ splines::bs(x, 3), se = FALSE) +
-    theme_minimal()
-```
-
-En el segundo panel, la función bs se invoca directamente desde la biblioteca de splines de la misma manera, para ajustar una curva polinominal a los datos.
-
-Este es el mismo enfoque para acceder directamente a las funciones sin cargar una biblioteca completa que ya hemos usado varias veces cuando usamos funciones de la biblioteca de escalas.
-
-```{r}
-p + geom_point(alpha=0.1) +
-    geom_quantile(color = "tomato", size = 1.2, method = "rqss",
-                  lambda = 1, quantiles = c(0.20, 0.5, 0.85)) +
-    theme_minimal()
-```
-
-Mientras tanto, la función `geom_quantile()` es como una versión especializada de `geom_smooth()` que puede ajustarse a líneas de regresión de cuantiles utilizando una variedad de métodos.
-
-El argumento quantiles toma un vector que especifica los cuantiles en los que se ajustan las líneas.
-
-### Mostrando ajustes diferentes de una sola vez
-Como acabamos de ver en el primer plot, donde graficamos tanto un MCO como una línea de regresión robusta, podemos observar varios ajustes a la vez en el mismo gráfico colocando capas sobre nuevos suavizadores con `geom_smooth()`.
-
-Siempre que establezcamos el color y la estética del `fill` en diferentes valores para cada ajuste, podemos distinguirlos visualmente fácilmente. Sin embargo, `ggplot` no dibujará una leyenda que nos oriente sobre qué ajuste es cuál. Esto se debe a que los suavizadores no están conectados lógicamente entre sí. Existen como capas separadas. ¿Qué pasa si comparamos varios ajustes diferentes y queremos una leyenda que los describa?
-
-Resulta que `geom_smooth()` puede hacer esto a través de un camino raro: 
-
-1. mapear el `color` y el `fill` a una cadena de text que describe el modelo que estamos ajustando, y 
-2. luego usar `scale_color_manual()` y `scale_fill_manual()` para crear la leyenda. 
-
-Primero usamos` brewer.pal ()` de la biblioteca `RColorBrewer` para extraer tres colores cualitativamente diferentes de una paleta más grande. Los colores se representan como valores hexadecimales. Como antes, usamos `::` para usar la función sin cargar toda la biblioteca: 
-
-```{r}
-model_colors <- RColorBrewer::brewer.pal(3, "Set1")
-model_colors
-```
-
-Luego creamos un gráfico con tres smoothers diferentes, mapeando `color` y `fill` dentro de la función `aes()` como el nombre del smoother:
-
-```{r}
-p0 <- ggplot(data = gapminder,
-            mapping = aes(x = log(gdpPercap), y = lifeExp))
-
-p1 <- p0 +
-  geom_point(alpha = 0.2) +
-  geom_smooth(method = "lm", aes(color = "OLS", fill = "OLS")) +
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, df = 3),
-                aes(color = "Cubic Spline", 
-                fill = "Cubic Spline")) +
-  geom_smooth(method = "loess",
-                aes(color = "LOESS", 
-                fill = "LOESS"))
-
-
-p1 + 
-  scale_color_manual(name = "Models", values = model_colors) +
-  scale_fill_manual(name = "Models", values = model_colors) +
-  theme(legend.position = "top") +
-  theme_minimal()
-```
-
-De alguna manera le metimos un poco gato por liebre a `ggplot` aquí para que funcione. 
-
-Hasta ahora, siempre hemos mapeado las `aes()` a los nombres de las variables, no a strings como “OLS” o “Cubic Splines”. De hecho, la clase pasada vimos que pasaban cosas extrañas cuando hacíamos eso. 
-
-Aquí aprovechamos ese comportamiento, creando una nueva variable de valor único para el nombre de cada uno de nuestros modelos. `ggplot` construirá correctamente la leyenda si llamamos `scale_color_manual()` y `scale_fill_manual()`. Recuerden que tenemos que llamar a dos funciones de escala porque tenemos dos mapeos. El resultado es una única leyenda que contiene no solo nuestros tres suavizadores, sino también una leyenda apropiada para guiar al lector.
-
-Estas características de ajuste de modelos hacen que `ggplot` sea muy útil para el trabajo exploratorio y facilitan la generación y comparación de tendencias basadas en modelos y otros resúmenes como parte del proceso de visualización de datos descriptivos. Las diversas funciones `stat_` son una forma flexible de agregar estimaciones resumidas de varios tipos a los gráficos. 
-
-Pero también queremos más que esto, incluida la presentación de resultados de modelos que nos ajustamos a nosotros mismos.
+- Aprender a usar las bibliotecas `broom` y `margins` para extraer y trazar de manera ordenada las estimaciones de los modelos que ajustamos
+- Entender brevemente cómo `ggplot` puede usar varias técnicas de modelado directamente dentro de geoms.
 
 ### Mirando adentro de los objetos
-Cubrir los detalles del ajuste de modelos estadísticos en R está más allá del alcance de este curso. Aquí discutiremos algunas formas de tomar los modelos que estimamos y extraer información con la que es fácil trabajar en `ggplot`. Nuestro objetivo, como siempre, es pasar de la forma en que el objeto está almacenado a una tabla tidy de números que podamos plotear. 
+Aquí discutiremos algunas formas de tomar los modelos que estimamos y extraer información con la que es fácil trabajar en `ggplot`. Nuestro objetivo es pasar de la forma en que el objeto está almacenado a una tabla tidy de números que podamos plotear. 
 
 La mayoría de las clases de modelos estadísticos en R contendrán la información que necesitamos, o tendrán un conjunto especial de funciones o métodos diseñados para extraerla.
 
@@ -141,12 +50,24 @@ Podemos comenzar por aprender un poco más sobre cómo se almacena la salida de 
 
 Hemos trabajado mucho con `tibbles` y `dataframes`. Estos almacenan tablas de datos con columnas con nombre, que quizás constan de diferentes clases de variables, como números enteros, caracteres, fechas o factores. Los objetos modelo vuelven a ser un poco más complicados.
 
+Vamos a usar información de una organización sin fine de lucro llamada [Gapminder](https://www.gapminder.org/). Fundada por Hans Rosling y otros en 2005 ofrece datos y visualizaciones sobre una amplia variedad de temas globales, principalmente relacionados con el desarrollo humano y el progreso social. Entre los temas de información disponible están:
+
+- Salud: indicadores de esperanza de vida, mortalidad infantil, mortalidad materna, acceso a servicios de salud, etc.
+- Economía: PIB per cápita, niveles de pobreza, desigualdad de ingresos, distribución de riqueza, etc.
+- Educación: tasas de alfabetización, acceso a la educación primaria, secundaria y superior.
+- Población: crecimiento poblacional, distribución por edades, migración, urbanización, etc.
+- Medio ambiente: emisiones de CO₂, uso de recursos naturales, acceso a agua potable, biodiversidad.
+- Desigualdades: desigualdades de género, brechas salariales, desigualdad entre países y dentro de ellos.
+- Tendencias históricas: cómo han cambiado estos indicadores a lo largo del tiempo, en diferentes regiones del mundo. 
+
+El paquete [`gapminder`](https://cran.r-project.org/web/packages/gapminder/readme/README.html) es una herramienta que facilita el acceso a un conjunto de datos basado en los indicadores globales de desarrollo recopilados por la organización Gapminder. Contiene datos de 195 países para los años 1952, 1957, 1962, y cada cinco años hasta 2007.
+
 ```{r}
+gapminder <- gapminder
 str(gapminder)
 ```
 
-
-Siempre podemos usar `str()` para ver la estructura de los diferentes objetos con los que nos encontremos. Aquí hay mucha información sobre el objeto como un todo y cada variable que contiene. 
+Siempre podemos usar `str()` para ver la estructura de los diferentes objetos con los que nos encontremos. Aquí hay mucha información sobre el objeto como un todo y cada variable que contiene. Vamos a repasar un poco lo que vimos en las primeras clases de este módulo.
 
 De la misma forma, los modelos estadísticos en R tienen una estructura interna. Pero debido a que los modelos son entidades más complejas que las tablas de datos, su estructura es generalmente más complicada. Hay más elementos y más tipos de información. Toda esta información generalmente se almacena o se puede calcular a partir de partes de un objeto modelo.
 
@@ -173,7 +94,7 @@ summary(out)
 
 Cuando usamos la función `summary()` en `out`, no obtenemos un conjunto de estadísticas de resumen simples. 
 
-En este caso, lo que se imprime en la consola es en parte información que se almacena dentro del objeto del modelo y en parte información que la función `summary()` ha calculado y formateado para mostrarla en la pantalla. 
+En este caso, lo que se imprime en la consola es en parte información que se almacena dentro del objeto del modelo y en parte información que la función `summary()` ha calculado y formateado para mostrarla en la pantalla.
 
 Detrás de escena, `summary()` obtiene ayuda de otras funciones. Los objetos de diferentes clases tienen métodos predeterminados asociados con ellos, de modo que cuando la función de `summary()` genérica se aplica a un objeto de modelo lineal, la función sabe que debe pasar el trabajo a una función más especializada que hace un montón de cálculos y formatea adecuadamente a un objeto de modelo lineal. 
 
@@ -215,13 +136,27 @@ Graficar un modelo está indisolublemente ligado a la estimación del propio mod
 Veamos algunas ideas generales sobre los buenos gráficos basados en modelos y trabajar con algunos ejemplos de cómo `ggplot` y algunas bibliotecas adicionales pueden facilitar la obtención de buenos resultados.
 
 #### 1. Presentar los resultados en términos sustantivos: 
-Los gráficos útiles basados en modelos muestran los resultados de manera sustancialmente significativa y directamente interpretable con respecto a las preguntas que el análisis está tratando de responder. Esto significa mostrar resultados en un contexto en el que otras variables del análisis se mantienen en valores sensibles, como sus medias o medianas. Con variables continuas, a menudo puede ser útil generar valores pronosticados que cubran algún movimiento sustancialmente significativo a través de la distribución, como del percentil 25 al 75, en lugar de un incremento de una sola unidad en la variable de interés. Para las variables categóricas no ordenadas, los valores predichos pueden presentarse con respecto a la categoría modal en los datos, o para una categoría particular de interés teórico. Presentar hallazgos sustancialmente interpretables a menudo también significa usar (y a veces convertir a) una escala que los lectores puedan comprender fácilmente. Si los informes de su modelo dan como resultado log-odds, por ejemplo, convertir las estimaciones en probabilidades predichas facilitará la interpretación. Todos estos consejos son bastante generales. Cada uno de estos puntos se aplica igualmente bien a la presentación de los resultados resumidos en una tabla que en un gráfico. No hay nada distintivamente gráfico en centrarse en el significado sustantivo de sus hallazgos.
+Los gráficos útiles basados en modelos muestran los resultados de manera sustancialmente significativa y directamente interpretable con respecto a las preguntas que el análisis está tratando de responder. Esto significa mostrar resultados en un contexto en el que otras variables del análisis se mantienen en valores sensibles, como sus medias o medianas. 
+
+Con variables continuas, a menudo puede ser útil generar valores pronosticados que cubran algún movimiento sustancialmente significativo a través de la distribución, como del percentil 25 al 75, en lugar de un incremento de una sola unidad en la variable de interés. 
+
+Para las variables categóricas no ordenadas, los valores predichos pueden presentarse con respecto a la categoría modal en los datos, o para una categoría particular de interés teórico. Presentar hallazgos sustancialmente interpretables a menudo también significa usar (y a veces convertir a) una escala que los lectores puedan comprender fácilmente. 
+
+Si los informes de su modelo dan como resultado log-odds, por ejemplo, convertir las estimaciones en probabilidades predichas facilitará la interpretación. Todos estos consejos son bastante generales. Cada uno de estos puntos se aplica igualmente bien a la presentación de los resultados resumidos en una tabla que en un gráfico. No hay nada distintivamente gráfico en centrarse en el significado sustantivo de sus hallazgos.
 
 #### 2. "Blanquear" los niveles de confianza:
-Lo mismo se aplica a la presentación del grado de incertidumbre o confianza que tiene en sus resultados. Las estimaciones del modelo vienen con varias medidas de precisión, confianza, credibilidad o importancia. Presentar e interpretar estas medidas es notoriamente propenso a malas interpretaciones o sobreinterpretaciones, ya que tanto los investigadores como el público exigen más de cosas como los intervalos de confianza y los valores p de lo que estas estadísticas pueden ofrecer. Como mínimo, después de haber decidido una medida adecuada de ajuste del modelo o la evaluación correcta de la confianza, debe mostrar su rango cuando presente sus resultados. Una familia de geoms de `ggplot` relacionadas le permite mostrar un rango o intervalo definido por posición en el eje xy luego un rango `ymin` e `ymax` en el eje y. Estos `geoms` incluyen `geom_pointrange()` y `geom_errorbar()`, que veremos en acción en breve. Un `geom` relacionado, `geom_ribbon()` usa los mismos argumentos para dibujar áreas rellenas y es útil para trazar rangos de valores del eje y a lo largo de algunos ejes x que varían continuamente.
+Lo mismo se aplica a la presentación del grado de incertidumbre o confianza que tiene en sus resultados. Las estimaciones del modelo vienen con varias medidas de precisión, confianza, credibilidad o importancia. Presentar e interpretar estas medidas es notoriamente propenso a malas interpretaciones o sobreinterpretaciones, ya que tanto los investigadores como el público exigen más de cosas como los intervalos de confianza y los valores p de lo que estas estadísticas pueden ofrecer. 
+
+Como mínimo, después de haber decidido una medida adecuada de ajuste del modelo o la evaluación correcta de la confianza, debe mostrar su rango cuando presente sus resultados. Una familia de geoms de `ggplot` relacionadas le permite mostrar un rango o intervalo definido por posición en el eje xy luego un rango `ymin` e `ymax` en el eje y. Estos `geoms` incluyen `geom_pointrange()` y `geom_errorbar()`, que veremos en acción en breve. Un `geom` relacionado, `geom_ribbon()` usa los mismos argumentos para dibujar áreas rellenas y es útil para trazar rangos de valores del eje y a lo largo de algunos ejes x que varían continuamente.
 
 #### 3. (Si es posible) mostrar los datos:
-Trazar los resultados de un modelo multivariado generalmente significa una de dos cosas. Primero, podemos mostrar lo que es en efecto una tabla de coeficientes con medidas de confianza asociadas, quizás organizando los coeficientes en grupos significativos, o por el tamaño de la asociación predicha, o ambos. En segundo lugar, podemos mostrar los valores predichos de algunas variables (en lugar de solo los coeficientes de un modelo) en algún rango de interés. El último enfoque nos permite mostrar los puntos de datos originales si lo deseamos. La forma en que ggplot crea gráficos capa por capa nos permite combinar fácilmente las estimaciones del modelo (por ejemplo, una línea de regresión y un rango asociado) y los datos subyacentes. En efecto, estas son versiones construidas manualmente de los gráficos generados automáticamente que hemos estado produciendo con geom_smooth () desde el comienzo de este libro.
+Trazar los resultados de un modelo multivariado generalmente significa una de dos cosas. 
+
+Primero, podemos mostrar lo que es en efecto una tabla de coeficientes con medidas de confianza asociadas, quizás organizando los coeficientes en grupos significativos, o por el tamaño de la asociación predicha, o ambos. 
+
+En segundo lugar, podemos mostrar los valores predichos de algunas variables (en lugar de solo los coeficientes de un modelo) en algún rango de interés. El último enfoque nos permite mostrar los puntos de datos originales si lo deseamos. 
+
+La forma en que `ggplot` crea gráficos capa por capa nos permite combinar fácilmente las estimaciones del modelo (por ejemplo, una línea de regresión y un rango asociado) y los datos subyacentes. En efecto, estas son versiones construidas manualmente de los gráficos generados automáticamente que hemos estado produciendo con `geom_smooth()` desde el comienzo de este libro.
 
 ## Generar predicciones para graficar
 Entonces, habiendo ajustado un modelo, es posible que deseemos obtener un gráfico de las estimaciones que produce en el rango de alguna variable en particular, manteniendo constantes otras covariables en algunos valores sensibles. 
@@ -263,7 +198,7 @@ pred_out <- predict(object = out,
 head(pred_out)
 ```
 
-Como sabemos que, por diseño, los casos en `pred_df` y `pred_out` corresponden fila por fila, podemos unir los dos `data.frame` por columna. Este método de unir o fusionar tablas definitivamente no se recomienda cuando se trata de datos.
+Como sabemos que, por diseño, los casos en `pred_df` y `pred_out` corresponden fila por fila, podemos unir los dos `data.frame` por columna. Este método de unir o fusionar tablas definitivamente no se recomienda cuando se trata de datos más complejos.
 
 ```{r}
 pred_df <- cbind(pred_df, pred_out)
@@ -275,7 +210,7 @@ El resultado final es un `data.frame` ordenado, que contiene los valores predich
 Ahora podemos graficar los resultados. Debido a que producimos una gama completa de valores predichos, podemos decidir si usarlos o no todos. Aquí subseteamos solo para Europa y África.
 
 ```{r}
-p <- ggplot(data = subset(pred_df, continent %in% c("Europe", "Africa")),
+p <- ggplot(data = pred_df %>% filter(continent %in% c("Europe", "Africa")),
             aes(x = gdpPercap,
                 y = fit, 
                 ymin = lwr, 
@@ -328,13 +263,13 @@ $$log(\frac{p}{1-p}) = \beta_{0} + \beta_{1}edad + \beta_{2}genero_{fem} + \epsi
 
 Los parámetros estimados están en la escala log-odds. Así, más que el signo, no tienen ninguna interpretación útil. En la ecuación anterior, $\beta{1}$ es el efecto de la edad en el logartimo del odds ratio del  resultado, no en la probabilidad, que es a menudo lo que importa estimar.
 
-Una opción para etimar es presentar los odds-ratios. Pero estos pueden ser malinterpretados. Idealmente, queremos entender lo que dice el modelo en el escala de probabilidad y no en la escala de odds-ratio, mucho menos en la escala de estimación, el log-odds.
+Una opción para etimar es presentar los [odds-ratios](https://es.wikipedia.org/wiki/Odds_ratio). Pero estos pueden ser malinterpretados. Idealmente, queremos entender lo que dice el modelo en el escala de probabilidad y no en la escala de odds-ratio, mucho menos en la escala de estimación, el log-odds.
 
 En la escala de probabilidad, todos los efectos son no lineales porque, condicional a los valores de las covariables, la probabilidad debe estar acotada entre 0 y 1. Es por eso que vamos a trabajar con otra forma: efectos marginales. O "post-estimación".
 
 Vamos a utilizar el modelo logístico para introducir efectos marginales. Pero los efectos marginales son aplicables a cualquier otro modelo. Se pueden usar  para interpretar modelos lineales con formas funcionales más difíciles, con interacciones o con modelos de Poisson, GLM.
 
-Vamos a estimar un modelo y vamos a utilizar predicciones para ayudarnos a interpretar el modelo. Durante la última década, estimar y graficar efectos parciales o marginales de un modelo se ha convertido en una forma cada vez más común de presentar predicciones precisas e interpretativamente útiles. Particularmente, en modelos de Machine Learning.
+Vamos a estimar un modelo y vamos a utilizar predicciones para ayudarnos a interpretar el modelo. Durante la última década, estimar y graficar efectos parciales o marginales de un modelo se ha convertido en una forma cada vez más común de presentar predicciones precisas e interpretativamente útiles. Particularmente, en modelos de Machine Learning. Esto ha dado lugar a una área de investigación llamada [Interpretable Machine Learning](https://christophm.github.io/interpretable-ml-book/).
 
 El interés en las gráficas de efectos marginales se estimuló al darse cuenta de que la interpretación de los términos en los modelos de regresión logística, en particular, era más complicada de lo que parecía, especialmente cuando había términos de interacción en el modelo. El paquete `margins` de Thomas Leeper puede ayudarnos mucho.
 
@@ -415,7 +350,7 @@ p + geom_hline(yintercept = 0, color = "gray80") +
     theme_minimal()
 ```
 
-Si solo estamos interesados enn obtener efectos condicionales para una variable en particular, entonces podemos pedir a los métodos de la librería que hagan el trabajo de calcular los efectos por nosotros, pero sin dibujar el gráfico. 
+Si solo estamos interesados en obtener efectos condicionales para una variable en particular, entonces podemos pedir a los métodos de la librería que hagan el trabajo de calcular los efectos por nosotros, pero sin dibujar el gráfico. 
 
 Pueden devolver los resultados en un formato que podemos reusar fácilmente en `ggplot`, y con menos necesidad de limpieza, para la limpieza. Por ejemplo, con `cplot()`:
 
@@ -466,3 +401,97 @@ caba %>%
     labs(title = 'CABA')
 
 ```
+
+
+## Regresiones, geometrías y "smoothers"
+Los histogramas, diagramas de densidad, boxplots y otras `geoms_` calculan números únicos o nuevas variables antes de trazarlos. Estos cálculos se realizan mediante funciones `stat_`, cada una de las cuales trabaja en paralelo a una o varias funciones `geom_` predeterminadas, y viceversa. 
+
+Las funciones `stat_` pueden realizar una buena cantidad de cálculos e incluso estimaciones de modelos sobre la marcha. La función `geom_smooth()` puede tomar una variedad de argumentos de método para ajustar [LOESS](https://es.wikipedia.org/wiki/Regresi%C3%B3n_local), [MCO](https://es.wikipedia.org/wiki/M%C3%ADnimos_cuadrados_ordinarios), entre otros.
+
+Tanto las funciones  `geom_smooth()` como `geom_quantile()` también pueden recibir instrucciones para usar fórmulas diferentes para producir sus ajustes.
+
+```{r}
+p <- ggplot(data = gapminder,
+            mapping = aes(x = log10(gdpPercap), y = lifeExp))
+
+p + geom_point(alpha=0.1) +
+    geom_smooth(color = "tomato", fill="tomato", method = MASS::rlm) +
+    geom_smooth(color = "steelblue", fill="steelblue", method = "lm") +
+    theme_minimal()
+```
+
+En el plot superior, accedemos a la función `rlm` de la biblioteca `MASS` para ajustar una línea de regresión robusta.
+
+```{r}
+p + geom_point(alpha=0.1) +
+    geom_smooth(color = "tomato", method = "lm", size = 1.2, 
+                formula = y ~ splines::bs(x, 3), se = FALSE) +
+    theme_minimal()
+```
+
+En el segundo panel, la función `bs` se invoca directamente desde la biblioteca de `splines` de la misma manera, para ajustar una curva polinominal a los datos.
+
+Este es el mismo enfoque para acceder directamente a las funciones sin cargar una biblioteca completa que ya hemos usado varias veces cuando usamos funciones de la biblioteca de escalas.
+
+```{r}
+p + geom_point(alpha=0.1) +
+    geom_quantile(color = "tomato", size = 1.2, method = "rqss",
+                  lambda = 1, quantiles = c(0.20, 0.5, 0.85)) +
+    theme_minimal()
+```
+
+Mientras tanto, la función `geom_quantile()` es como una versión especializada de `geom_smooth()` que puede ajustarse a líneas de regresión de cuantiles utilizando una variedad de métodos.
+
+El argumento quantiles toma un vector que especifica los cuantiles en los que se ajustan las líneas.
+
+### Mostrando ajustes diferentes de una sola vez
+Como acabamos de ver en el primer plot, donde graficamos tanto un MCO como una línea de regresión robusta, podemos observar varios ajustes a la vez en el mismo gráfico colocando capas sobre nuevos suavizadores con `geom_smooth()`.
+
+Siempre que establezcamos el color y la estética del `fill` en diferentes valores para cada ajuste, podemos distinguirlos visualmente fácilmente. Sin embargo, `ggplot` no dibujará una leyenda que nos oriente sobre qué ajuste es cuál. Esto se debe a que los suavizadores no están conectados lógicamente entre sí. Existen como capas separadas. ¿Qué pasa si comparamos varios ajustes diferentes y queremos una leyenda que los describa?
+
+Resulta que `geom_smooth()` puede hacer esto a través de un camino raro: 
+
+1. mapear el `color` y el `fill` a una cadena de text que describe el modelo que estamos ajustando, y 
+2. luego usar `scale_color_manual()` y `scale_fill_manual()` para crear la leyenda. 
+
+Primero usamos` brewer.pal ()` de la biblioteca `RColorBrewer` para extraer tres colores cualitativamente diferentes de una paleta más grande. Los colores se representan como valores hexadecimales. Como antes, usamos `::` para usar la función sin cargar toda la biblioteca: 
+
+```{r}
+model_colors <- RColorBrewer::brewer.pal(3, "Set1")
+model_colors
+```
+
+Luego creamos un gráfico con tres smoothers diferentes, mapeando `color` y `fill` dentro de la función `aes()` como el nombre del smoother:
+
+```{r}
+p0 <- ggplot(data = gapminder,
+            mapping = aes(x = log10(gdpPercap), y = lifeExp))
+
+p1 <- p0 +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm", aes(color = "OLS", fill = "OLS")) +
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, df = 3),
+                aes(color = "Cubic Spline", 
+                fill = "Cubic Spline")) +
+  geom_smooth(method = "loess",
+                aes(color = "LOESS", 
+                fill = "LOESS"))
+
+
+p1 + 
+  scale_color_manual(name = "Models", values = model_colors) +
+  scale_fill_manual(name = "Models", values = model_colors) +
+  theme(legend.position = "top") +
+  theme_minimal()
+
+```
+
+De alguna manera le metimos un poco gato por liebre a `ggplot` aquí para que funcione. 
+
+Hasta ahora, siempre hemos mapeado las `aes()` a los nombres de las variables, no a strings como “OLS” o “Cubic Splines”. De hecho, en una de las primeras clases del curso vimos que pasaban cosas extrañas cuando hacíamos eso.
+
+Aquí aprovechamos ese comportamiento, creando una nueva variable de valor único para el nombre de cada uno de nuestros modelos. `ggplot` construirá correctamente la leyenda si llamamos `scale_color_manual()` y `scale_fill_manual()`. Recuerden que tenemos que llamar a dos funciones de escala porque tenemos dos mapeos. El resultado es una única leyenda que contiene no solo nuestros tres suavizadores, sino también una leyenda apropiada para guiar al lector.
+
+Estas características de ajuste de modelos hacen que `ggplot` sea muy útil para el trabajo exploratorio y facilitan la generación y comparación de tendencias basadas en modelos y otros resúmenes como parte del proceso de visualización de datos descriptivos. Las diversas funciones `stat_` son una forma flexible de agregar estimaciones resumidas de varios tipos a los gráficos. 
+
+Pero también queremos más que esto, incluida la presentación de resultados de modelos que nos ajustamos a nosotros mismos.
