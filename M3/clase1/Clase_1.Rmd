@@ -48,13 +48,13 @@ Ambos objetivos forman parte de un tipo de problema típico del aprendizaje auto
 - hay cierto grado de correlación entre las mismas
 - no hay demasiados ceros o valores vacíos
 
-La técnica se llama Análisis de Componentes Principales o PCA (por sus siglas en inglés). Cuando nos enfrentamos a un gran conjunto de variables correlacionadas, PCA nos va a permitir "resumir" esas variables en un conjunto menor que permitan explicar la mayor parte de variablidad (información) en esas variables originales. Se trata de un enfoque no supervisado dado que solo va a utilizar un conjunto de variables independientes ($X_{1}, X_{2}, ..., X_{p}$) sin ninguna variable de respuesta asociada. Además de producir variables derivadas para su uso en el aprendizaje supervisado, PCA también sirve como una herramienta para la visualización de datos (visualización de las observaciones o visualización de las variables). También se puede utilizar como un herramienta para la imputación de datos, es decir, para completar los valores faltantes en un matriz.
+La técnica se llama Análisis de Componentes Principales o PCA (por sus siglas en inglés). Cuando nos enfrentamos a un gran conjunto de variables correlacionadas, PCA nos va a permitir "resumir" esas variables en un conjunto menor que permitan explicar la mayor parte de variablidad (información) en esas variables originales. Se trata de un enfoque no supervisado dado que solo va a utilizar un conjunto de variables independientes ($X_1, X_2, ..., X_p$) sin ninguna variable de respuesta asociada. Además de producir variables derivadas para su uso en el aprendizaje supervisado, PCA también sirve como una herramienta para la visualización de datos (visualización de las observaciones o visualización de las variables). También se puede utilizar como un herramienta para la imputación de datos, es decir, para completar los valores faltantes en un matriz.
 
 
 ## Planteo del problema
-Supongamos que deseamos visualizar $n$ observaciones con una serie de $p$ variables medidas en $X1, X2,...,Xp$, como parte de un análisis exploratorio de datos. Podríamos intentar examinando diagramas de dispersión bidimensionales de los datos, cada uno de los cuales contiene las mediciones de $n$ observaciones en dos de los características. Sin embargo, hay $\binom{p}{2} = \frac{p(p-1)}{2}$ gráficos posibles. Por ejemplo, si hubiera 10 variables (un número nada elevado) tendríamos 45 gráficos para analizar. Si $p$ es grande, entonces ciertamente no será posible mirarlos todos; además, lo más probable es que ninguno de ellos ser informativo ya que cada uno contiene solo una pequeña fracción del total información presente en el conjunto de datos. Claramente, se requiere un método mejor. En particular, nos gustaría encontrar una representación de baja dimensión de los datos que capture la mayor parte de la información como sea posible. Por ejemplo, si podemos obtener una representación de esas $p$ variables en dos dimensiones que capturen la mayor parte de la información, entonces podríamos generar un solo gráfico.
+Supongamos que deseamos visualizar $n$ observaciones con una serie de $p$ variables medidas en $X_1, X_2,...,X_p$, como parte de un análisis exploratorio de datos. Podríamos intentar examinando diagramas de dispersión bidimensionales de los datos, cada uno de los cuales contiene las mediciones de $n$ observaciones en dos de los características. Sin embargo, hay $\binom{p}{2} = \frac{p(p-1)}{2}$ gráficos posibles. Por ejemplo, si hubiera 10 variables (un número nada elevado) tendríamos 45 gráficos para analizar. Si $p$ es grande, entonces ciertamente no será posible mirarlos todos; además, lo más probable es que ninguno de ellos ser informativo ya que cada uno contiene solo una pequeña fracción del total información presente en el conjunto de datos. Claramente, se requiere un método mejor. En particular, nos gustaría encontrar una representación  de los datos que tenga una menor dimensionalidad y que capture la mayor parte de la información como sea posible. Por ejemplo, si podemos obtener una representación de esas $p$ variables en dos dimensiones que capturen la mayor parte de la información, entonces podríamos generar un solo gráfico.
 
-PCA proporciona una herramienta para hacer precisamente esto. Encuentra una representación de baja dimensión de un conjunto de datos que contiene la mayor cantidad posible de la información. El supuesto por detrás es que nuestras $n$ observaciones "viven" en un espacio de $p$ dimensiones. Pero la cuestion es que no todas esas dimensiones son igual de relevantes. Entonces, PCA intenta encontrar un conjunto menor a $p$ de dimensiones relevantes. En este caso, la idea de "relevancia" o "información" se define como la variabilidad de información que contienen. Cada una de las dimensiones encontradas por PCA es una combinación lineal de las características $p$. ¿Cómo se estiman esas nuevas dimensiones?
+PCA proporciona una herramienta para hacer precisamente esto. El supuesto por detrás es que nuestras $n$ observaciones "viven" en un espacio de $p$ dimensiones. Pero la cuestion es que no todas esas dimensiones son igual de relevantes. Entonces, PCA intenta encontrar un conjunto de dimensiones relevantes que sea menor a $p$. En este caso, la idea de "relevancia" o "información" se define como la variabilidad de información que contienen. Cada una de las dimensiones encontradas por PCA es una combinación lineal de las características $p$. ¿Cómo se estiman esas nuevas dimensiones?
 
 El primer componente principal (`PC1`) se define como la combinación lineal normalizada de las $p$ variables independientes 
 
@@ -75,9 +75,9 @@ que tenga la mayor varianza (con la restricción $\sum^p_{j=1}\phi_{j1}^2=1$). E
 $$
 \max_{\phi_{11}, ..., \phi_{p1}} = \left\{\frac{1}{n}\sum^n_{i=1} \bigg( \sum^p_{j=1} \phi_{j1}x_{ij} \bigg)^2 \right\} \textrm{sujeto a}  \sum^p_{j=1}\phi^2_{j1} =1
 $$
-De la ecuación previa, podemos reescrbir la anterior como $\frac{1}{n}\sum^n_{i=1}z_{i1}^2$. Dado que $\frac{1}{n}\sum^n_{i=1}x_{ij}=0$ (el promedio es cero porque se asume que las varibales están normalizadas), el promedio de $z_{11},...,z_{n1}$ también va a ser cero. Así, el problema de maximización anterior se convierte en un problema en el que lo se maximiza es la varianza muestral de los $n$ valores de $z_{i2}$. Este problema puede resolverse mediante una técnica llamada _eigen decomposition_, ampliamente utilizada en álgebra de matrices. No obstante, su desarrollo queda por fuera de los objetivos de este curso.
+De la ecuación previa, podemos reescrbir la anterior como $\frac{1}{n}\sum^n_{i=1}z_{i1}^2$. Dado que $\frac{1}{n}\sum^n_{i=1}x_{ij}=0$ (el promedio es cero porque se asume que las varibales están normalizadas), el promedio de $z_{11},...,z_{n1}$ también va a ser cero. Así, el problema de maximización anterior se convierte en un problema en el que lo se maximiza es la varianza muestral de los $n$ valores de $z_{i2}$. Este problema puede resolverse mediante una técnica llamada _eigendecomposition_, ampliamente utilizada en álgebra de matrices. No obstante, el desarrollo de sus detalles queda por fuera de los objetivos de este curso.
 
-Hay una buena interpretación geométrica para el primer componente principal. El vector de carga $\phi_{1}$ con elementos $\phi_{11}, \phi_{21}, ..., \phi_{p1}$  define una dirección en espacio de características a lo largo del cual los datos varían más. Si proyectamos los $n$ datos $x_{1},...,x_{n}$ en esta dirección, los valores proyectados son las puntuaciones del componente principal $z_{11},...,z_{n1}$ en sí mismas.
+Hay una buena interpretación geométrica para el primer componente principal. El vector de pesos $\phi_{1}$ con elementos $\phi_{11}, \phi_{21}, ..., \phi_{p1}$  define una dirección en espacio de características a lo largo del cual los datos varían más. Si proyectamos los $n$ datos $x_{1},...,x_{n}$ en esta dirección, los valores proyectados son las puntuaciones del componente principal $z_{11},...,z_{n1}$ en sí mismas.
 
 El segundo componente principal $Z_{2}$ es una combinación lineal de las variables $X_1,...,X_p$ ´que explica la mayor cantidad de varianza de todas las combinaciones lineales posibles que están descorrelacionadas (son ortogonales, es decir perpendiculares) a $Z_{1}$.
 
@@ -329,18 +329,8 @@ tidy(pca_estimates2, 1, type="variance") %>%
 Comparen (de la forma que crean más conveniente) los resultados de nuestro índice orignal (con las variables escaladas) y el IDH original producido por la ONU (`hdi_2019`). ¿Qué puede decir al respecto'
 
 ```{r}
-idh %>%
-  ggplot(aes(x=hdi_2019, y=PC1, color=region)) +
-    geom_point() +
-    labs(x="IDH original",
-         y="IDH PCA",
-         color="Region") +
-    theme_minimal()
-
-
+###
 ```
-
----`
 
 
 ## Otros usos de PCA
