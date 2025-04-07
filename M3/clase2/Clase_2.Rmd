@@ -39,7 +39,7 @@ La clase pasada habíamos trabajado sobre PCA que operaba sobre variables cuanti
 
 Seguramente, la aplicación más famosa de la técnica que vamos a trabajar sea el siguiente gráfico:
 
-!['Dinámica del espacio social'](./imgs/bourdieu.jpg)
+![](./imgs/bourdieu.jpg)
 
 El famoso mapa de los espacios y capitales sociales que Bourdieu despliega en "La Distinción". Luego podemos discutir sobre si el gráfico es claro o no, pero lo que nos interesa destacar aquí es que el mismo fue construido con el llamado Análisis de Correspondencias Múltiples (o MCA por sus sigrlas en inglés)
 
@@ -118,12 +118,51 @@ Si llamamos $D = diag(z_{.j})$ a la diagonal de los márgenes columna de $\textb
 
 $$ \textbf{S} =     \frac{1}{q} \textbf{Z}^T \textbf{Z} \textbf{D}^{-1} = \frac{1}{q}  \textbf{B} \textbf{D}{^-1}$$
 
+### Un resumen de los pasos para estimar ACM
+**1. Matriz de indicadores (matriz **$Z$**)**
+
+Se construye una matriz **binaria**:
+
+- Filas: individuos.
+- Columnas: cada categoría de cada variable.
+- Celdas: 1 si el individuo pertenece a esa categoría, 0 si no.
+
+**2. Matriz de Burt ($B = Z^t Z$)**
+La **matriz de Burt** es una matriz cuadrada y simétrica:
+
+- La diagonal contiene los totales por categoría.
+- Las submatrices off-diagonal son **tablas de contingencia cruzadas** entre cada par de variables.
+
+**3. Matriz de perfiles y centro**
+Se transforma la matriz para analizar las desviaciones respecto a la independencia:
+
+- Se convierte a frecuencias relativas.
+- Se calculan los perfiles fila y columna.
+- Se centra la matriz restando las expectativas bajo independencia.
+
+**4. Diagonalización / Descomposición en Valores Singulares (SVD)**
+Se aplica un procedimiento de **análisis de componentes principales con métrica chi-cuadrado**:
+
+- Se obtienen **autovalores** (inercia explicada por cada eje).
+- Se obtienen **autovectores** (usados para calcular las coordenadas de las categorías e individuos).
+
+Este paso es lo que permite representar los datos en un espacio reducido.
+
+**5. Cálculo de coordenadas y visualización**
+- Se calculan las **coordenadas** de cada categoría en el nuevo espacio.
+- Se puede representar también a los individuos.
+
+El resultado es un **mapa factorial** donde:
+       
+- Categorías cercanas aparecen frecuentemente juntas.
+- Las distancias reflejan relaciones entre perfiles.
+
 ## Un caso real...
 Basta de abstracciones. Vamos a trabajar con el siguiente problema: queremos a partir de la Encuesta Permanente de Hogares del III trimestre de 2022 poder construir índices que nos hablen de las condiciones contractuales y laborales en que se desarrolla el trabajo de los asalariados ocupados en la semana de referencia.
 
-Si revisamos la documentación y el [diseño de registro](https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_3T2021.pdf)] vemos que hay muchas variables que podrían servir para tal objetivo. En particular, vamos a ver las siguientes:
+Si revisamos la documentación y el [diseño de registro](https://www.indec.gob.ar/ftp/cuadros/menusuperior/eph/EPH_registro_3T2021.pdf) vemos que hay muchas variables que podrían servir para tal objetivo. En particular, vamos a ver las siguientes:
 
-!['Preguntas a utilizar en el índice'](./_imgs/06-form-eph.jpg)
+!['Preguntas a utilizar en el índice'](./imgs/reg_eph_indice.png)
 
 Así, podemos ver que hay cierta estructura en las variables:
 
