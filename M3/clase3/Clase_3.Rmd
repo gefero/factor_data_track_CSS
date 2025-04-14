@@ -37,9 +37,9 @@ library(GDAtools)
 - Donaire, R.; Rosati, G. y Mattera, P. (2021). "obreza y desarrollo capitalista en el mundo, 2005-2015" en XV Congreso ASET. [Descarga artículo](https://aset.org.ar/wp-content/uploads/2022/08/4_DONAIRE_ponencia.pdf).
 
 ## Introducción
-En esta notebook vamos a explorar dos métodos de clusterización vistos en la clase teórica. Los métodos de clusterización que veremos corresponden al rama de ML de aprendizaje no supervisado. Recordemos: la idea principal es encontrar grupos en los datos que sean similares a otros datos del mismo grupo y lo menos similar posible a datos en otros.
+En esta notebook vamos a explorar dos métodos de clusterización vistos en la clase teórica. Corresponden al rama de ML de aprendizaje no supervisado. Recordemos: la idea principal es encontrar grupos en los datos que sean similares a otros datos del mismo grupo y lo menos similar posible a datos en otros.
 
-Hoy vamos a trabajar con K-medias. Vamos a implementarlo con un set de datos ya conocido: un dataset (`.wb_bank_data_2019.csv`) con información construida por el Banco Mundial acerca de la distribución de la población ocupada según grandes sectores de actividad y categoría ocupacional:
+Hoy vamos a trabajar con K-medias. Vamos a implementarlo con un set de datos ya conocido: un dataset (`wb_bank_data_2019.csv`) con información construida por el Banco Mundial acerca de la distribución de la población ocupada según grandes sectores de actividad y categoría ocupacional:
 
 - `SL.AGR.EMPL.ZS`: % total el empleo en agricultura: consistente en las actividades de agricultura, silvicultura, caza y pesca  
 - `SL.IND.EMPL.ZS`: % total de empleo en industria:  en actividades de minas y canteras, manufacturas, construcción y energía, gas y agua.
@@ -75,6 +75,7 @@ Necesitamos, entonces, un algoritmo que nos permita ejecutar esta minimización:
 ---
 
 **Algoritmo K-medias**
+
 1. Asignar aleatoriamente un número, del 1 al K, a cada una de las observaciones. Estos sirven como asignaciones de grupos iniciales para las observaciones.
 
 2. Iterar hasta que las asignaciones de clústeres dejen de cambiar:
@@ -190,23 +191,35 @@ km_2clst <- recipe_km %>%
 
 ¿Qué pasó acá?
 
-1. `recipe_km <-df %>% 
+1. Generamos una receta que va a normaalizar las tres variables a utilizar en el clustering
+
+```{r eval=FALSE}
+recipe_km <-df %>% 
             recipe(~.) %>%
-            step_normalize(c(prop_pob_rel_sal, SL.AGR.EMPL.ZS, SL.SRV.EMPL.ZS))` 
+            step_normalize(c(prop_pob_rel_sal, SL.AGR.EMPL.ZS, SL.SRV.EMPL.ZS))
+```
 
-Generamos una receta que va a normaalizar las tres variables a utilizar en el clustering
+ 
 
-2. `km_2clst <- recipe_km %>%
+2. Preparamos y cocinamos la receta, seleccionamos las variables y estimamos el k-medias. Usamos la función `kmeans` de r-base. La misma tiene dos argumentos centrales:
+
+- `x`: el dataset a clusterizar
+- `centers`: cantidad de centroides (o sea de clústers), es decir, lo que hace un rato llamamos $k$.
+
+```{r eval=FALSE}
+km_2clst <- recipe_km %>%
             prep() %>%
             bake(df) %>%
             select(prop_pob_rel_sal, SL.AGR.EMPL.ZS, SL.SRV.EMPL.ZS) %>%
             kmeans(x=.,
-                   centers=2)`
-                   
-Preparamos y cocinamos la receta, seleccionamos las variables y estimamos el k-medias. Usamos la función `kmeans` de r-base. La misma tiene dos argumentos centrales:
+                   centers=2)
+```
 
-- `x`: el dataset a clusterizar
-- `centers`: cantidad de centroides (o sea de clústers), es decir, lo que hace un rato llamamos $k$.
+La salida es una lista de vectores, donde cada componente tiene una longitud diferente. 
+
+- `cluster` de longitud 187, el mismo que nuestro conjunto de datos original; contiene información sobre cada punto
+- dos elementos de longitud 3 (`withinss` y `tot.withinss`) y `centers` son una matriz con 3 filas; presentan información sobre cada grupo
+- luego están los elementos de longitud 1: `totss`, `tot.withinss`, `betweenss` e `iter`; presentan información sobre el agrupamiento completo.
 
 ```{r}
 km_2clst
@@ -215,12 +228,6 @@ km_2clst
 ```{r}
 summary(km_2clst)
 ```
-
-La salida es una lista de vectores, donde cada componente tiene una longitud diferente. 
-
-- `cluster` de longitud 187, el mismo que nuestro conjunto de datos original; contiene información sobre cada punto
-- dos elementos de longitud 3 (`withinss` y `tot.withinss`) y `centers` son una matriz con 3 filas; presentan información sobre cada grupo
-- luego están los elementos de longitud 1: `totss`, `tot.withinss`, `betweenss` e `iter`; presentan información sobre el agrupamiento completo.
 
 ¿Cuál de estos queremos extraer? No hay respuesta correcta; cada uno de ellos puede ser interesante para un analista. Debido a que comunican información completamente diferente (sin mencionar que no hay una forma sencilla de combinarlos), se extraen mediante funciones separadas. `augment` agrega las clasificaciones de puntos al conjunto de datos original:
 ```{r}

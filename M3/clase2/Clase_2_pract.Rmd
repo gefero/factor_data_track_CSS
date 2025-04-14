@@ -26,12 +26,16 @@ Para ello, deberán elegir las variables adecuadas de la tabla de datos. Los dat
 
 ## Cargar las librerías a utilizar
 ```{r}
-###
+library(patchwork)
+library(tidyverse)
+library(tidymodels)
+library(GDAtools)
+
 ```
 
 ## Cargar los datos
 ```{r}
-###
+df <- read_csv('./data/ENES_Personas_M1_EOW.rds')
 ```
 
 ## Seleccionar las variables relevantes 

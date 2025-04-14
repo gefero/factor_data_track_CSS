@@ -70,8 +70,6 @@ Hay varias formas de medir la distancia entre los conglomerados para decidir las
 - Complete: Máxima disimilitud entre cúmulos. Calcula todas las diferencias por pares entre las observaciones en el conglomerado A y el observaciones en el conglomerado B, y registra el mayor de estos disimilitudes.
 ![](./imgs/complete.jpg)
 
-
-
 - Single: Disimilitud mínima entre clústeres. Calcule todas las diferencias por pares entre las observaciones en el conglomerado A y el observaciones en el conglomerado B, y registre la más pequeña de estas disimilitudes. El enlace único puede dar como resultado un arrastre extendido grupos en los que las observaciones individuales se fusionan una a la vez.
 ![](./imgs/single.jpg)
 
@@ -83,9 +81,7 @@ Hay varias formas de medir la distancia entre los conglomerados para decidir las
 
 - Ward: Se basa en minimizar la suma total de cuadrados dentro del grupo de la fusión de dos grupos. Este método fusiona dos grupos de manera que la fusión da como resultado la suma de cuadrados más pequeña.
 
-Una cuestión importante es la elección de una métrica de distancia a utilizar. Hasta ahora, los ejemplos de este capítulo han utilizado la distancia euclidiana como medida de disimilitud. Pero a veces otras medidas de disimilitud pueden ser preferido: distancias de Minkowski, Manhattan, etc. [Acá pueden encontrar](https://aiaspirant.com/distance-similarity-measures-in-machine-learning/) un pequeño catálogo.
-
-Por ejemplo, distancias basadas en métricas de correlación consideran que dos observaciones son similares si sus características están altamente correlacionadas, aunque la los valores observados pueden estar muy separados en términos de distancia euclidiana. Esto es un uso inusual de la correlación, que normalmente se calcula entre variables; aquí se calcula entre los perfiles de observación para cada par de observaciones. La distancia basada en la correlación se centra en la formas de los perfiles de observación en lugar de sus magnitudes.
+Una cuestión importante es la elección de una métrica de distancia a utilizar. Una medida muy común es la distancia euclidiana. Pero a veces otras medidas de disimilitud pueden ser preferido: distancias de Minkowski, Manhattan, etc. [Acá pueden encontrar](https://aiaspirant.com/distance-similarity-measures-in-machine-learning/) un pequeño catálogo.
 
 La elección de la medida de disimilitud es muy importante, ya que tiene un fuerte efecto sobre el dendrograma resultante. En general, se debe prestar especial atención pagado al tipo de datos que se agrupan y la pregunta científica en cuestión. Estas consideraciones deberían determinar qué tipo de medida de disimilitud se utiliza para la agrupación jerárquica.
 
