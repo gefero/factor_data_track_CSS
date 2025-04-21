@@ -1,6 +1,6 @@
 ---
 title: "Aprendizaje No Supervisado - E3"
-subtitle: "Clustering: Jerárquico"
+subtitle: "Clustering Jerárquico"
 output: 
   html_document:
     toc: TRUE
