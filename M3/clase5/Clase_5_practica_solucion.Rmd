@@ -1,0 +1,87 @@
+---
+title: "Flujo de trabajo Machine Learning"
+subtitle: "Cross Validation. Práctica independiente"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE,}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=FALSE,
+                      fig.width=8)
+```
+
+# Práctica independiente   
+- Levantemos la base de datos reales llamada **base_EAUH_TNR** (tiene un pre-procesamiento de seleccion y recategorización de algunas variables).     
+- Creamos allí la variable dicotómica "nivel de trabajo domestico" que tome los v1alores "Bajo" (menos de 2 horas de trabajo doméstico) y "Alto" (2 horas o más) a partir de la variable original de **TIEMPO_TDNR**. *Recordatorio*: Necesitamos crearla como un factor para modelar   
+- Separamos el dataset en train y test.       
+- Utilizamos el set de training para construir 2 modelos de regresión logistica con 3 variables predictoras cada uno. 
+- Comparamos la **performance** de ambos modelos para predecir en el dataset de testing.    
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(tidymodels)
+
+base_real<- readRDS(file = "./data/base_EAUH_TNR.RDS") %>% 
+  mutate(realiza_trabajo_domestico = factor(
+          case_when(
+                  TIEMPO_TDNR <= 2 ~ 'Bajo',
+                  TIEMPO_TDNR > 2 ~ 'Alto',
+          ),
+    levels = c("Bajo","Alto")))
+
+set.seed(18/12/2022)
+base_spliteada<- initial_split(base_real)
+base_train<- training(base_spliteada)
+base_test<- testing(base_spliteada)
+
+log_model <- logistic_reg() %>% 
+  set_mode("classification") %>%  
+  set_engine("glm")
+
+modelo_1 <- log_model %>% 
+  fit(realiza_trabajo_domestico ~ horas_mercado+menores_hogar+NIVEL_ED,
+      data = base_train)  
+
+modelo_2 <- log_model %>% 
+  fit(realiza_trabajo_domestico ~ horas_mercado+ingreso_indiv+CH04,
+      data = base_train)  
+
+modelo_1 %>% 
+  tidy()
+
+modelo_2 %>% 
+  tidy()
+
+modelsummary::modelsummary(
+  list("modelo 1 " = modelo_1,
+       "modelo 2" = modelo_2)
+  )
+```
+
+Armemos una sola base que tenga las predicciones que hacen los dos modelos. Comienzo por aumentar la base original con las predicciones del modelo 1, las renombro como **"pred_m1"**. Luego con `bind_cols()` voy a añadire a eso las predicciones que hace el modelo 2 y las renombro como **"pred_m2"**.
+
+```{r}
+base_2modelos<- augment(modelo_1,base_test) %>%
+  rename(pred_m1=.pred_class) %>%  
+  bind_cols(predict(modelo_2, base_test)) %>%
+  rename(pred_m2=.pred_class) 
+
+base_2modelos %>% conf_mat(truth = realiza_trabajo_domestico,estimate = pred_m1)
+base_2modelos %>% conf_mat(truth = realiza_trabajo_domestico,estimate = pred_m2)
+```
+
+Veamos ahora las métricas:
+
+```{r}
+base_2modelos %>% accuracy(realiza_trabajo_domestico,pred_m1) %>% 
+        bind_rows(
+                base_2modelos %>% accuracy(realiza_trabajo_domestico,pred_m2)
+        )
+
+```

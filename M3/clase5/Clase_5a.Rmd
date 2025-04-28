@@ -78,11 +78,12 @@ Miremos como se distribuyen las dos métric errores de cada una de las validacio
 ```{r}
 # Valores de validación (mae y rmse) obtenidos en cada partición y repetición.
 metricas_por_fold %>%
-ggplot(aes(x = .metric, y = .estimate, fill = .metric, shape = .metric)) +
-      geom_boxplot(alpha = 0.3) +
-      geom_jitter(aes(color = id),size = 2,width = 0.05) +
-      theme_minimal() +
-      theme()
+ggplot(aes(x = .metric, y = .estimate, fill = .metric)) +
+        geom_boxplot(alpha = 0.3) +
+        geom_jitter(aes(color = id),size = 2,width = 0.05) +
+        scale_color_viridis_d() +
+        theme_minimal() +
+        theme()
 
 ```
 
@@ -92,8 +93,8 @@ Ahora bien, todo esto fue aplicado **sólamente** con un modelo (regresión lín
 Vamos a crear ahora una receta básica de regresión líneal múltiple, para luego agregarle o quitarle cosas a esa receta y comparar como performa el modelo.   
 
 ```{r}
-base_juguete %>%
-        mutate(menores_hogar = as.numeric(menores_hogar))
+#base_juguete %>%
+#        mutate(menores_hogar = as.numeric(menores_hogar))
 
 receta_basica <- recipe(
   horas_trabajo_domestico ~ horas_trabajo_mercado+ingreso_individual+sexo+menores_hogar,
@@ -101,6 +102,7 @@ receta_basica <- recipe(
 
 receta_2 <- receta_basica  %>%
     step_poly(all_numeric_predictors(), degree = 2) # Agrego término al cuadrado para variables numericas
+
 receta_3 <- receta_basica  %>%
     step_rm(c(menores_hogar,ingreso_individual)) # Saco 2 variables a ver que onda
 

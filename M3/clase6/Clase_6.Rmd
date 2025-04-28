@@ -233,7 +233,8 @@ tidy(folds)
 Ahora vamos a probar los posibles valores que puede adoptar el modelo con los distintos parámetros en las muestras con cross-validation.
 
 ```{r eval=TRUE, include=TRUE}
-doParallel::registerDoParallel()
+library(future)
+plan(multisession, workers = 8)
 
 set.seed(345)
 
@@ -245,7 +246,7 @@ tree_rs <- tree_wf %>%
                        recall, f_meas)
 )
 
-write_rds(tree_rs, './data/cart_rs.rds')
+#write_rds(tree_rs, './data/cart_rs.rds')
 ```
 
 Podemos ver los resultados de este objeto con `collect_metrics()`.
@@ -265,13 +266,13 @@ autoplot(tree_rs)
 Parecería que este dataset funciona mejor con un árbol no tan complejo. Podemos seguir examinando el mejor set de parámetros según la métrica que queramos.
 
 ```{r}
-show_best(tree_rs, "roc_auc")
+show_best(tree_rs, metric="roc_auc")
 ```
 
 E incluso podemos elegir el mejor modelo de esas pruebas cross-validation para implementar en el modelo final.
 
 ```{r}
-best_model <- select_best(tree_rs, "roc_auc")
+best_model <- select_best(tree_rs, metric="roc_auc")
 
 final_tree <- finalize_model(tree_spec, best_model)
 
