@@ -40,7 +40,7 @@ base_juguete <- readRDS(file = "data/eut_juguete_clase4.RDS")
 
 ggplot(base_juguete,aes(x = horas_trabajo_mercado,
                          y = ingreso_familiar,
-                         shape = realiza_trabajo_domestico))+
+                         color = realiza_trabajo_domestico))+
   geom_point(size = 3)
 ```
 
@@ -49,6 +49,7 @@ Ahora veamos los pasos necesarios para correr el modelo. Luego, discutamos la in
 
 ## Seteo el tipo de modelo         
 En formato tidy, comienzo especificando el tipo de modelo. En este caso,  **logistic_reg()**. De ser necesario puedo especificar con **set_mode()** el modo del modelo (qué tipo de predicción tiene el outcome, numérica o categórica) Luego,  especifico cual es el sistema que utilizaré para estimar el modelo con la función  **set_engine()** (en muchos casos responde al paquete que voy a usar para correr el modelo). 
+
 ```{r}
 log_model <- logistic_reg() %>% #Defino el tipo de modelo
   set_mode("classification") %>%  #el modo (regresión o clasificación)
@@ -68,7 +69,7 @@ Tomo la especificación anterior y explicito qué variables usaré y de que data
 base_para_modelar <- base_juguete %>% 
   mutate(realiza_trabajo_domestico = factor(realiza_trabajo_domestico))
 
-#Lo entreo con los datos 
+#Lo entreno con los datos 
 log_fiteado <- log_model %>% 
   fit(realiza_trabajo_domestico ~ horas_trabajo_mercado+ingreso_familiar,
       data = base_para_modelar)
@@ -238,4 +239,11 @@ matriz_confusion_test<- conf_mat(data = base_test_con_pred,
                                  estimate =.pred_class)
 
 matriz_confusion_test
+
+
+accuracy(data = base_test_con_pred,
+                                 truth =realiza_trabajo_domestico,
+                                 estimate =.pred_class) %>%
+        bind_rows(specificity(base_test_con_pred,truth = realiza_trabajo_domestico,estimate =  .pred_class)) %>%
+        bind_rows(precision(base_test_con_pred,truth = realiza_trabajo_domestico,estimate =  .pred_class))
 ```

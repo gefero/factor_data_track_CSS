@@ -27,7 +27,7 @@ options(dplyr.summarise.inform = FALSE)
 En este material aplicaremos la técnica de cross-validation para testear distintos modelos. Utilizaremos las herramientas específicas de tidymodels para aprender a comparar modelos.
 
 # Cross-Validation   
-La función ```vfold_cv()``` nos crea un objeto que contiene las particiones en cuestión. Aplicando CV con 10 folds para un solo modelo. Usaremos **K = 10**, lo que implica que pparticionaremos en 10 el dataset, para que cada parte actue como testing de las otras 9 en cada una de las iteraciones  
+La función ```vfold_cv()``` nos crea un objeto que contiene las particiones en cuestión. Aplicando CV con 10 folds para un solo modelo. Usaremos **K = 10**, lo que implica que particionaremos en 10 el dataset, para que cada parte actue como testing de las otras 9 en cada una de las iteraciones  
 
 ```{r}
 base_juguete <- readRDS("data/eut_juguete.RDS")
@@ -70,7 +70,7 @@ Si quiero las métricas por separado, sin promediar. Así veo, por ejemplo que e
 metricas_por_fold <- validacion_fit %>%
   collect_metrics(summarize = FALSE)  
 
-head(metricas_por_fold)
+(metricas_por_fold)
 ```
 
 Miremos como se distribuyen las dos métric errores de cada una de las validaciones cruzadas
@@ -131,7 +131,7 @@ lm_models_fiteados <- lm_models %>%
 Recolecto métricas promedio de los 10 folds, de los 3 modelos al mismo tiempo. Puedo comparar muy fácilmente qué modelo performa mejor en términos de la métrica elegida.
 ```{r}
 collect_metrics(lm_models_fiteados) %>% 
-  filter(.metric == "rmse")
+  filter(.metric == "rsq")
 ```
 
 # Tuneando hiperparametros (super introductorio)       
