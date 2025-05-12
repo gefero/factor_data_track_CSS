@@ -57,22 +57,43 @@ El dataset está tomado del sitio [poblaciones.org](https://mapa.poblaciones.org
 
 El tercer dataset (disponible en `./data/env_eph.csv`) permite identificar qué radio pertenece a cada uno de los aglomerados urbanos relevados por la Encuesta Permanente de Hogares.
 
+El cuarto dataset (`./data/distribucion_establecimientos_productivos.zip`) está comprimido (deberán descomprimirlo para trabajarlo) y tiene como unidad de registro los establecimientos productivos obrantes en los registros administrativos del Sistema Integrado Previsional Argentino (SIPA) y de registros de AFIP, excepto en el caso de las exportaciones que provienen del sistema registral de la Aduana. Contiene las siguientes columnas:
+
+- `cuit`: Identificador - Anonimización del CUIT de la empresa a la que pertenece el establecimiento. 
+- `lat`: Latitud redondeada del establecimiento 
+- `lon`: Longitud redondeada del establecimiento 
+- `provincia_id`: Código de la provincia 
+- `in_departamentos`: Código del departamento 
+- `proporcion_mujeres`: Proporción de mujeres en el establecimiento productivo 
+- `anio`: Año al que refiere la información del establecimiento en cuestión. 
+- `quintil`: Quintil de exportaciones de bienes en el que se ubica la empresa según el nivel de exportaciones del año en cuestión. 
+- `sucursal`: Indicador único por sucursal de cada cuit. El par cuit-sucursal conforma un establecimiento. 
+- `empleo`: Cantidad agrupada de empleo del establecimiento  
+- `clae6`: Actividad de la empresa a nivel de seis dígitos (CLAE6) 
+
+Disponen de mayor inforación metodológica sobre este [dataset en este link](https://cdn.produccion.gob.ar/cdn-cep/establecimientos-productivos/Metodologia_establecimiento_productivos.pdf).
+
 ## Preguntas orientadoras para ir avanzando...
 Será necesario **especificar el problema a abordar**. 
 
 - ¿Cómo definir la "accesibilidad" a servicios de salud? 
 - ¿Cómo medirla de la forma más completa posible con la información disponible?
+- ¿Qué indicadores/dimensiones pueden plantearse como posibles determinantes de la accesibilidad a servicios de salud?
+- ¿Puede el grado de de diversidad económica (o dicho en términos clásicos, la división social del trabajo) de una zona (radio, fracción, departamento, etc.) ser un factor determinante del acceso a servicios de salud? 
+- ¿Existe relación entre la división social del trabajo y el grado de urbanización de una zona dada?
 
-Además, deberemos pensar en las **fuetes de información**
+Además, deberemos pensar en las **fuentes de información**
 
 - ¿Qué información podemos utilizar de los datasets disponibles para la pregunta por los determinantes de dicha accesibilidad?
 - ¿Qué otra información del CNPyV 2010 podemos utilizar para enriquecer el dataset?
 - ¿Cómo podemos diferenciar zonas urbanas de zonas no urbanas? ¿Cómo podemos identificar los grandes aglomerados urbanos?
+- ¿Qué tipo de dato tiene cada una de las fuentes? ¿Tienen el mismo nivel de agregación? ¿Las unidades son las mismas? ¿Cómo podemos compatibilizarlos?
+- ¿Existen otras fuentes que puedan ser útiles para construir posibles determinantes de la salud?
 
 También deberemos abordar el **diseño del análisis y modelado**
 
-- ¿Qué técnicas deberemos utilizar para abordar los objetivos planteados? ¿Cómo identificar los determinantes de la accesibilidad?
-- ¿Se trata de un problema de aprendizaje supervisado (de clasificación o de regresión) o no supervisado? 
+- ¿Qué técnicas deberemos utilizar para abordar los objetivos planteados? ¿Cómo identificar los determinantes de la accesibilidad? ¿Cómo debemos preprocesar los datos?
+- ¿Se trata de un problema de aprendizaje supervisado (de clasificación o de regresión), no supervisado o puede pensarse como una combinación de ambos? 
 - ¿Qué métricas deberemos utilizar para evaluar el problema?
 - ¿Qué diseño de remuestreo será necesario para una correcta estimación de los errores?
 
@@ -87,4 +108,4 @@ Al finalizar el trabajo, cada equipo deberá entregar
 - el código utilizado en formato "reutilizable"
 
 ## Fecha de presentación
-- 26 de Junio de 2023
+- 30 de Junio de 2025
