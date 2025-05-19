@@ -85,6 +85,8 @@ tree_spec
 ```{r}
 tree_wf <- wf %>%
   add_model(tree_spec)
+
+tree_wf
 ```
 
 
@@ -100,7 +102,8 @@ Ahora vamos a probar los posibles valores que puede adoptar el modelo con los di
 
 
 ```{r}
-doParallel::registerDoParallel()
+library(future)
+plan(multisession, workers = 8)
 
 tree_rs <- tree_wf %>% 
   tune_grid(
@@ -126,13 +129,13 @@ autoplot(tree_rs) + theme_light(base_family = "IBMPlexSans")
 Parecería que este dataset funciona mejor con un árbol no tan complejo. Podemos seguir examinando el mejor set de parámetros según la métrica que queramos.
 
 ```{r}
-show_best(tree_rs, "rmse")
+show_best(tree_rs, metric="rmse")
 ```
 
 E incluso podemos elegir el mejor modelo de esas pruebas cross-validation para implementar en el modelo final.
 
 ```{r}
-best_model <- select_best(tree_rs, "rmse")
+best_model <- select_best(tree_rs, metric="rmse")
 
 final_tree <- finalize_model(tree_spec, best_model)
 
@@ -144,7 +147,7 @@ Hasta acá, el modelo está actualizado y finalizado (no lo podemos seguir tunea
 ```{r}
 final_fit <- fit(final_tree, p21 ~ ., eph_train)
 
-final_fit
+
 ```
 
 Este print nos muestra un bloque de texto con los nodos y distintas ramas. Sin embargo, también podemos visualizar las variables más importantes del modelo con el paquete `vip`. Con su función podemos mostrar de forma sencilla la importancia de las variables del modelo en un gráfico de columnas, puntos, boxplot o violin plot.
@@ -165,6 +168,7 @@ eph_test <- final_fit %>%
   predict(eph_test) %>%
   bind_cols(eph_test, .)
 ```
+
 
 ```{r}
 class_metrics <- metric_set(rmse, rsq, ccc)
