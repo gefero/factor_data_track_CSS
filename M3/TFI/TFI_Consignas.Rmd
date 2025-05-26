@@ -71,7 +71,7 @@ El cuarto dataset (`./data/distribucion_establecimientos_productivos.zip`) está
 - `empleo`: Cantidad agrupada de empleo del establecimiento  
 - `clae6`: Actividad de la empresa a nivel de seis dígitos (CLAE6) 
 
-Disponen de mayor inforación metodológica sobre este [dataset en este link](https://cdn.produccion.gob.ar/cdn-cep/establecimientos-productivos/Metodologia_establecimiento_productivos.pdf).
+Disponen de mayor información metodológica sobre este [dataset en este link](https://cdn.produccion.gob.ar/cdn-cep/establecimientos-productivos/Metodologia_establecimiento_productivos.pdf).
 
 ## Preguntas orientadoras para ir avanzando...
 Será necesario **especificar el problema a abordar**. 
