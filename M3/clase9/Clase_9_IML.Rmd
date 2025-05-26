@@ -1,12 +1,13 @@
 ---
 title: "Interpretable Machine Learning"
-author: "Germán Rosati"
-output:
+subtitle: "Una introducción"
+output: 
   html_document:
-    df_print: paged
-editor_options:
-  markdown:
-    wrap: 72
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
 ## Objetivos
