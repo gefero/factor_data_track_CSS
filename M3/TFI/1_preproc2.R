@@ -7,10 +7,21 @@ cond_vida <- read_csv('./TFI/data/radios_hogar.csv') %>% rename(link=radio)
 radios_eph <- read_csv('./TFI/data/env_eph.csv') %>%
         mutate(link = paste0(codprov,coddepto,frac2010,radio2010)) %>%
                        select(id:aglomerado, link)
+estab <- read_csv('./TFI/data/distribucion_establecimientos_productivos_sexo.csv')
+
 
 df <- vuln %>%
         left_join(cond_vida) %>%
         left_join(radios_eph)
+
+
+df <- df %>%
+        st_as_sf(wkt="geometry")
+
+estab <- estab %>% st_as_sf(coords=c("lon", "lat"))
+
+estab <- estab %>%
+        st_join(df)
 
 
 set.seed(123)

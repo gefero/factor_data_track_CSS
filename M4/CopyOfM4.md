@@ -23,6 +23,44 @@ sean capaces de identificar situaciones de aplicación de estas técnicas en sus
 - [Programa de la materia - 2do. cuatrimestre 2025](https://docs.google.com/document/d/1GlcEyFdRJUairxOFrQS8GaGKskHM60p3U29xSWMMrdM/edit?usp=sharing)
 
 ## Contenidos y materiales
+### Clase 9. Taller Trabajo Final Integrador
+- [Explicación - Clasificación - Notebook](./clase9_tp_final/tp_final.html)
+- [Explicación - Clasificación - RMarkdown](./clase9_tp_final/tp_final.Rmd)
+
+[![](./imgs/Download.png)](./clase9_tp_final/clase9_tp_final.zip)
+
+### Clase 8. Clasificación de textos mediante TF-IDF y Word Embeddings
+- [Explicación - Clasificación - Notebook](./clase8/notebooks/clase_8_clasificacion.html)
+- [Explicación - Clasificación - RMarkdown](./clase8/notebooks/notebooks/clase_8_clasificacion.Rmd)
+
+[![](./imgs/Download.png)](./clase8/clase8.zip)
+
+### Clase 7. ¿Cómo vectorizar un corpus E.II? Breve introducción a word embeddings
+- [Diapositivas](./clase7/M4_clase_7.pdf)
+- [Explicación - Word2Vec - Notebook](./clase7/notebooks/clase_7_word2vec.html)
+- [Explicación - Word2Vec - RMarkdown](./clase7/notebooks/notebooks/clase_7_word2vec.Rmd)
+
+[![](./imgs/Download.png)](./clase7/clase7.zip)
+
+### Clase 6. Práctica integradora 1.
+Se entrega 
+- [Consignas - Notebook](./clase6_practica_integradora_1/practica_integradora_c1_c3.html)
+- [Consignas - RMarkdown](./clase6_practica_integradora_1/practica_integradora_c1_c3.Rmd)
+- [Corpus](./practica_integradora_1/data/tango_rock.csv)
+- [Lexicon stopwords](./clase6_practica_integradora_1/data/stop_words_complete.csv)
+
+[![](./imgs/Download.png)](./clase6_practica_integradora_1/practica_integradora_1.zip)
+
+### Clase 5. ¿Cómo detectar temas en un corpus? Dos técnicas de modelado de tópicos
+- [Diapositivas](./clase5/M4_clase_5.pdf)
+- [Explicación - LDA - Notebook](./clase5/notebooks/clase_51_topic_modeling_LDA.html)
+- [Explicación - LDA - RMarkdown](./clase5/notebooks/clase_51_topic_modeling_LDA.Rmd)
+- [Explicación - STM - Notebook](./clase5/notebooks/clase_52_topic_modeling_STM.html)
+- [Explicación - STM - RMarkdown](./clase5/notebooks/clase_52_topic_modeling_STM.Rmd)
+- [Práctica independiente - Notebook](./clase5/notebooks/clase_53_practica_independiente.html)
+- [Práctica independiente - RMarkdown](./clase5/notebooks/clase_53_practica_independiente.Rmd)
+
+[![](./imgs/Download.png)](./clase5/clase5.zip)
 
 ### Clase 4. ¿Cómo recolectar datos de la web? Web scraping y APIS
 - [Diapositivas](./clase4/M4_clase_4.pdf)
@@ -47,6 +85,7 @@ sean capaces de identificar situaciones de aplicación de estas técnicas en sus
 - [Explicación y práctica - TFIDF - RMarkdown](./clase2/notebooks/clase_2_2_tfidf.Rmd)
 
 [![](./imgs/Download.png)](./clase2/clase2.zip)
+
 
 ### Clase 1. ¿Cómo hacer de un corpus de texto crudo algo analizable mediante métodos cuantitativos? Cualitativo y cuantitativo como niveles de estandarización de los datos. Preprocesamiento de texto: stopwords, lemmas y stemming. Concepto general del formato tidytext. 
 - [Diapositivas](./clase1/M4_clase_1.pdf)
