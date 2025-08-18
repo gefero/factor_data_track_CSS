@@ -57,11 +57,11 @@ La función `read_html()` parsea y devuelve una lista que contiene la estructura
 
 ```{r}
 libros <- piglia %>% 
-          html_elements("div.libro-vertical__info") %>% 
+          #html_elements("w-1-x-hidden") %>% 
           html_elements("a") %>%
           html_attr("href")
 
-head(libros)
+libros <- libros[libros %>% str_detect("/libro/")]
 ```
 
 ¿Qué se está haciendo acá? 
@@ -102,14 +102,14 @@ Con `html_text2()` extraemos el texto del elemento.
 
 ```{r}
 libro %>% 
-        html_elements("h1.titulo-libro") %>% 
+        html_elements("h1") %>% 
         html_text2()
 ```
 
 Vamos a hacer lo mismo para el resumen: este lo identificamos porque está en el elemento div con clase textContent. 
 
 ```{r}
-libro %>% html_element("div.textContent") %>%
+libro %>% html_element("div.") %>%
         html_text2() %>%
         str_squish() #Borramos los espacios en blanco de más
 

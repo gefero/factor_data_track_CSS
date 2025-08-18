@@ -207,9 +207,9 @@ Podríamos combinar esto con los enfoques de la clase pasada para revertir los v
 ### Visualización de una Red de Bigramas con `ggraph`
 Podríamos estar interesados en visualizar todas las relaciones entre palabras de manera simultánea, en lugar de solo las principales algunas veces. Como una visualización común, podemos organizar las palabras en una red o "grafo". En este caso, nos referiremos a un "grafo" no en el sentido de una visualización, sino como una combinación de nodos conectados. Un grafo puede construirse a partir de un objeto tidy, ya que tiene tres variables:
 
-*- from*: el nodo desde el cual parte un borde
-*- to*: el nodo hacia el cual se dirige un borde
-*- weight*: un valor numérico asociado con cada borde
+- `from`: el nodo desde el cual parte un borde
+- `to`: el nodo hacia el cual se dirige un borde
+- `weight`: un valor numérico asociado con cada borde
 
 El paquete `igraph` tiene muchas funciones poderosas para manipular y analizar redes. Una forma de crear un objeto igraph a partir de datos tidy es la función `graph_from_data_frame()`, que toma un data frame de bordes con columnas para "from", "to" y atributos de los bordes (en este caso, n):
 
