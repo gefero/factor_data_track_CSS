@@ -1482,7 +1482,7 @@ border-radius: 0px;
 Lenguaje (LLMs)</h1>
 <h3 class="subtitle">Usando Gemini con R</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">08 septiembre, 2025</h4>
+<h4 class="date">15 septiembre, 2025</h4>
 
 </div>
 
@@ -1886,6 +1886,16 @@ fila, vamos a hacer una request a la API de Gemini con dos inputs:</p>
 <li>el <code>prompt</code> que diseñamos más arriba</li>
 <li>el texto de la reseña (<code>review_body</code>)</li>
 </ol>
+<pre class="r"><code>rtas &lt;- list()
+for (i in 1:nrow(df_list)){
+                id &lt;- df_list$review_id[i]
+                Sys.sleep(4.5)
+
+                cat(&quot;Procesando comentario&quot;, i, &quot;de&quot;, nrow(df_list), &quot;\n&quot;)
+                rta &lt;- gemini(paste0(prompt, df_list$review_body[i]))
+                cat(rta)
+                rtas[[id]] &lt;- rta
+                }</code></pre>
 <p>El código anterior itera sobre el dataframe de reseñas de productos
 (almacenadas en <code>df_list</code>), hace la consulta a la API de
 Gemini, usando el <code>prompt</code></p>
@@ -2197,11 +2207,11 @@ sesgos en los datos de entrenamiento.</p>
 <pre><code>## # A tibble: 5 × 2
 ##   review_body                                                           llm_expl
 ##   &lt;chr&gt;                                                                 &lt;chr&gt;   
-## 1 Complicado de montar más de 2 horas, pero al final salió algo bueno.. &quot;El tex…
-## 2 El reloj está muy bien, es muy original,la pega es q en zona oscura,… &quot;La res…
-## 3 El libro es genial, la única pega fue el envío ya que me vino con la… &quot;La res…
-## 4 Muy posible, para combinar con sombreros                              &quot;La res…
-## 5 No trae un cable usb-c para conectarlo a los nuevos dispositivos móv… &quot;La res…</code></pre>
+## 1 Camiseta bonita pero más grande de lo esperado. Pone camiseta 7-8 añ… &quot;La res…
+## 2 El producto correcto, pero la mensajeria vergonzosa. Después de esta… &quot;La res…
+## 3 En general cumple muy bien la necesidad de un manos libres en los co… &quot;La res…
+## 4 falla algo el motor, pero va bien y no es caro                        &quot;La res…
+## 5 Complicado de montar más de 2 horas, pero al final salió algo bueno.. &quot;El tex…</code></pre>
 <p>Ahora, los “falsos positivos”, según la matriz de confusión solamente
 tenemos 4, así que podemos analizarlos todos</p>
 <pre class="r"><code>rtas_df %&gt;%

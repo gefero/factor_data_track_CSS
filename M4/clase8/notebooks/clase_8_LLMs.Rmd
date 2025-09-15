@@ -274,7 +274,7 @@ Y vamos a iterar por cada una de las filas del dataset y para cada fila, vamos a
 1. el `prompt` que diseñamos más arriba
 2. el texto de la reseña (`review_body`)
 
-```{r eval=FALSE, include=FALSE}
+```{r eval=FALSE, include=TRUE}
 rtas <- list()
 for (i in 1:nrow(df_list)){
                 id <- df_list$review_id[i]
