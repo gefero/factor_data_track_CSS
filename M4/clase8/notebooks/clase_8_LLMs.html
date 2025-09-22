@@ -1482,7 +1482,7 @@ border-radius: 0px;
 Lenguaje (LLMs)</h1>
 <h3 class="subtitle">Usando Gemini con R</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">15 septiembre, 2025</h4>
+<h4 class="date">22 septiembre, 2025</h4>
 
 </div>
 
@@ -1839,12 +1839,88 @@ intermediarios que permiten la comunicación e intercambio de datos entre
 diferentes sistemas. Por este motivo, la autenticación es crucial para
 asegurar la seguridad y controlar el acceso a la información.</p>
 <p>Para usar <code>gemini.R</code>, debemos autenticarnos con una clave
-personal que debemos crear en [ <a href="https://makersuite.google.com/app/apikey" class="uri">https://makersuite.google.com/app/apikey</a>]. La función
+personal que debemos crear en [<a href="https://makersuite.google.com/app/apikey" class="uri">https://makersuite.google.com/app/apikey</a>]. La función
 <code>setAPI</code> en <code>gemini.R</code> nos permite configurar esta
 clave.</p>
-<pre class="r"><code>api &lt;- &quot;&quot; ## Acá introducir la api key
+<pre class="r"><code>api &lt;- &quot;&quot; ## Acá introducir la api key 
 setAPI(api)</code></pre>
 <pre><code>## ✖ API key must be a non-empty string.</code></pre>
+<p>Si no quieren que su API key sea pública (cosa que suele ser una
+buena práctica, en general) hay varias formas de hacer esto un poquito
+más seguro. Vamos a ver una muy simple:</p>
+<pre class="r"><code>setAPI(read_lines(&quot;../gemini_credentials.txt&quot;))</code></pre>
+<pre><code>## ℹ API key ...T7Ts is set.</code></pre>
+<pre><code>## → You may try `gemini_chat(&#39;What is CRAN?&#39;)`</code></pre>
+<p>Acá guardamos la key en un archivo de texto y simplemente la cargamos
+mediante <code>read_lines()</code>. De esta forma no se hace visible en
+el script. Hay otros paquetes y otras formas para hacer esto de forma
+más sistemática, pero para los efectos de este ejercicio con esto nos
+alcanza.</p>
+<p>Probemos si ha funcionado:</p>
+<pre class="r"><code>test &lt;- gemini(&quot;¿Cómo puedo escribir un buen prompt?&quot;)</code></pre>
+<pre><code>## Gemini is answering...</code></pre>
+<pre class="r"><code>cat(test)</code></pre>
+<pre><code>## Crear un buen prompt es esencial para obtener los resultados que deseas de un modelo de lenguaje como yo. Aquí te dejo una guía completa con consejos y ejemplos para escribir prompts efectivos:
+## 
+## **Principios Fundamentales:**
+## 
+## *   **Claridad:** El principio más importante.  Debes ser **preciso y específico** en lo que quieres. Evita la ambigüedad.
+## *   **Contexto:** Proporciona suficiente información para que el modelo entienda tu petición.  ¿De qué tema hablas? ¿Cuál es el propósito de la respuesta?
+## *   **Formato:** Indica claramente el formato que esperas en la respuesta (ej. lista, párrafo, código, tabla).
+## *   **Limitaciones:** Define restricciones si las necesitas (ej. número de palabras, tono, estilo).
+## *   **Revisión:** Revisa tu prompt antes de enviarlo.  ¿Podría interpretarse de otra manera? ¿Falta información crucial?
+## 
+## **Estructura de un buen Prompt (Opcional, pero útil):**
+## 
+## Si bien no siempre es necesario, puedes estructurar tus prompts de esta manera para mayor claridad:
+## 
+## 1.  **Rol:** (Opcional)  Indica al modelo que asuma un rol específico (ej. &quot;Actúa como un experto en marketing digital...&quot;) Esto puede influir en el tono y el enfoque de la respuesta.
+## 2.  **Tarea:** Describe la tarea principal que quieres que el modelo realice (ej. &quot;Escribe un anuncio publicitario...&quot;, &quot;Resúmame este artículo...&quot;, &quot;Traduce este texto...&quot;).
+## 3.  **Contexto:** Proporciona información de fondo relevante para la tarea (ej. &quot;para un nuevo producto...&quot;, &quot;el artículo trata sobre...&quot;, &quot;el texto está en inglés...&quot;).
+## 4.  **Instrucciones:**  Detalla las instrucciones específicas que debe seguir el modelo (ej. &quot;usa un tono persuasivo...&quot;, &quot;destaca los beneficios...&quot;, &quot;traduce al español coloquial...&quot;).
+## 5.  **Formato:** Especifica el formato deseado para la respuesta (ej. &quot;en forma de lista...&quot;, &quot;en un párrafo conciso...&quot;, &quot;en formato JSON...&quot;).
+## 6.  **Limitaciones:**  Define cualquier restricción o límite (ej. &quot;no más de 100 palabras...&quot;, &quot;usa un lenguaje sencillo...&quot;, &quot;no incluyas información falsa...&quot;).
+## 7.  **Ejemplo (Opcional pero muy útil):** Proporciona un ejemplo de la respuesta que esperas.  Esto ayuda enormemente a guiar al modelo.
+## 
+## **Técnicas Avanzadas para Mejorar tus Prompts:**
+## 
+## *   **Prompt Engineering:**  La práctica de refinar y experimentar con prompts para obtener mejores resultados.
+## *   **Few-Shot Learning:** Proporcionar al modelo algunos ejemplos de entrada y salida deseada (como en el punto 7 anterior, &quot;Ejemplo&quot;).  Esto le enseña al modelo el patrón que buscas.
+## *   **Chain-of-Thought Prompting:**  Solicitar al modelo que explique su razonamiento paso a paso antes de dar la respuesta final. Esto puede mejorar la precisión y la comprensión. (Ej: &quot;Explica paso a paso cómo resolverías este problema y luego da la solución.&quot;)
+## *   **Temperature Adjustment:** Ajusta el parámetro de &quot;temperatura&quot; (si la plataforma te lo permite). Una temperatura más baja produce respuestas más predecibles y conservadoras, mientras que una temperatura más alta genera respuestas más creativas y aleatorias (pero también potencialmente menos precisas).
+## *   **Iteración:** No te rindas si la primera respuesta no es perfecta.  Refina tu prompt basándote en la respuesta que recibiste.  Añade más contexto, sé más específico, o ajusta el formato.
+## 
+## **Ejemplos de Buenos Prompts vs. Prompts Débiles:**
+## 
+## **Ejemplo 1: Escribir un email**
+## 
+## *   **Débil:** &quot;Escribe un email.&quot; (Demasiado vago)
+## *   **Mejor:** &quot;Actúa como un asistente personal. Escribe un email para mi jefe, [Nombre del Jefe], solicitando una reunión para discutir el progreso del proyecto [Nombre del Proyecto].  Menciona que tengo actualizaciones importantes y que quiero presentar un plan para la siguiente fase.  Propón tres horarios posibles: Lunes a las 10am, Martes a las 2pm, y Miércoles a las 11am.  Mantén un tono profesional y conciso. El email no debe superar los 150 palabras.&quot;
+## 
+## **Ejemplo 2: Resumir un Artículo**
+## 
+## *   **Débil:** &quot;Resume este artículo.&quot; (Falta contexto)
+## *   **Mejor:** &quot;Resume este artículo: [Pegar el artículo aquí].  Quiero un resumen conciso de los puntos principales del artículo, dirigido a un público que no está familiarizado con el tema. Incluye los argumentos clave, las conclusiones principales y cualquier dato relevante. El resumen debe tener entre 200 y 250 palabras.&quot;
+## 
+## **Ejemplo 3: Generar Ideas para un Nombre de Producto**
+## 
+## *   **Débil:** &quot;Dame ideas para un nombre.&quot; (No hay especificidad)
+## *   **Mejor:** &quot;Necesito ideas para el nombre de una nueva aplicación móvil que ayuda a los usuarios a aprender un nuevo idioma de forma divertida y sencilla. El nombre debe ser corto, pegadizo, fácil de recordar y debe transmitir la idea de aprendizaje y diversión.  Por favor, genera 10 opciones diferentes.&quot;
+## 
+## **Ejemplo 4: Generar Código**
+## 
+## *   **Débil:** &quot;Escribe un programa en Python.&quot;
+## *   **Mejor:** &quot;Escribe un programa en Python que tome una lista de números como entrada y devuelva la suma de todos los números pares en la lista. Comenta el código para que sea fácil de entender. Incluye ejemplos de uso.&quot;
+## 
+## **Consejos Adicionales:**
+## 
+## *   **Experimenta:** La mejor manera de aprender a escribir buenos prompts es experimentar. Prueba diferentes enfoques y ve qué funciona mejor para ti.
+## *   **Sé Creativo:** No tengas miedo de probar prompts inusuales o creativos. A veces, las ideas más inesperadas producen los mejores resultados.
+## *   **Sé Paciente:** A veces, lleva varios intentos obtener la respuesta que buscas. No te frustres y sigue ajustando tus prompts.
+## *   **Utiliza Herramientas:** Existen herramientas en línea que te ayudan a crear y refinar prompts. Busca &quot;prompt engineering tools&quot;.
+## *   **Lee la Documentación:** Si estás utilizando una plataforma específica, lee su documentación sobre cómo escribir prompts efectivos.
+## 
+## En resumen, escribir un buen prompt es un arte y una ciencia. Requiere claridad, especificidad, contexto y experimentación.  Cuanto más practiques, mejor te volverás.  ¡Mucha suerte!</code></pre>
 </div>
 <div id="segundo-paso-diseño-del-prompt" class="section level2">
 <h2>Segundo paso, diseño del prompt</h2>
@@ -2207,11 +2283,11 @@ sesgos en los datos de entrenamiento.</p>
 <pre><code>## # A tibble: 5 × 2
 ##   review_body                                                           llm_expl
 ##   &lt;chr&gt;                                                                 &lt;chr&gt;   
-## 1 Camiseta bonita pero más grande de lo esperado. Pone camiseta 7-8 añ… &quot;La res…
-## 2 El producto correcto, pero la mensajeria vergonzosa. Después de esta… &quot;La res…
-## 3 En general cumple muy bien la necesidad de un manos libres en los co… &quot;La res…
-## 4 falla algo el motor, pero va bien y no es caro                        &quot;La res…
-## 5 Complicado de montar más de 2 horas, pero al final salió algo bueno.. &quot;El tex…</code></pre>
+## 1 escribe bien, borra regular, y las gomas se salen, tienen poca tinta  &quot;La res…
+## 2 Me gusta porque es una sorpresa y lo que no me gusta es que no se pu… &quot;La res…
+## 3 Lo que ves en la foto, la calidad se puede ver                        &quot;La fra…
+## 4 Esta bien pero se me hace que no es el mismo que te muestran.         &quot;La res…
+## 5 Esperemos que dure con el tiempo.                                     &quot;La fra…</code></pre>
 <p>Ahora, los “falsos positivos”, según la matriz de confusión solamente
 tenemos 4, así que podemos analizarlos todos</p>
 <pre class="r"><code>rtas_df %&gt;%
@@ -2232,7 +2308,7 @@ tenemos 4, así que podemos analizarlos todos</p>
 <li>Comparar la perfomance de los LLMs con la de los modelos de
 clasificación que vimos la semana pasada. ¿Cuál funciona mejor?</li>
 <li>Pensar cómo podrían reformular el prompt para hacerlo más
-eficiente</li>
+eficiente.</li>
 </ul>
 </div>
 </div>

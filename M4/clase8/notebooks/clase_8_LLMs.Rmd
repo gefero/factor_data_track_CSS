@@ -232,12 +232,29 @@ library(gemini.R)
 ## Primer paso, autenticación
 Como ya hemos visto a lo largo de este curso, las APIs actúan como intermediarios que permiten la comunicación e intercambio de datos entre diferentes sistemas. Por este motivo, la autenticación es crucial para asegurar la seguridad y controlar el acceso a la información.
 
-Para usar `gemini.R`, debemos autenticarnos con una clave personal que debemos crear en [ https://makersuite.google.com/app/apikey]. La función `setAPI` en `gemini.R` nos permite configurar esta clave.
+Para usar `gemini.R`, debemos autenticarnos con una clave personal que debemos crear en [https://makersuite.google.com/app/apikey]. La función `setAPI` en `gemini.R` nos permite configurar esta clave.
 
 ```{r}
-api <- "" ## Acá introducir la api key
+api <- "" ## Acá introducir la api key 
 setAPI(api)
 ```
+
+Si no quieren que su API key sea pública (cosa que suele ser una buena práctica, en general) hay varias formas de hacer esto un poquito más seguro. Vamos a ver una muy simple:
+
+```{r}
+setAPI(read_lines("../gemini_credentials.txt"))
+```
+
+Acá guardamos la key en un archivo de texto y simplemente la cargamos mediante `read_lines()`. De esta forma no se hace visible en el script. Hay otros paquetes y otras formas para hacer esto de forma más sistemática, pero para los efectos de este ejercicio con esto nos alcanza.
+
+Probemos si ha funcionado:
+
+```{r}
+test <- gemini("¿Cómo puedo escribir un buen prompt?")
+cat(test)
+```
+
+
 
 ## Segundo paso, diseño del prompt
 Perfecto. Vamos ahora a diseñar un prompt simple para nuestra tarea.
@@ -471,5 +488,5 @@ rtas_df %>%
 
 ## Actividad
 * Comparar la perfomance de los LLMs con la de los modelos de clasificación que vimos la semana pasada. ¿Cuál funciona mejor?
-* Pensar cómo podrían reformular el prompt para hacerlo más eficiente
+* Pensar cómo podrían reformular el prompt para hacerlo más eficiente.
 
