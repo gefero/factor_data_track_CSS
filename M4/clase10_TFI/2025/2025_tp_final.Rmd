@@ -1,0 +1,135 @@
+---
+title: "Trabajo Final Integrador. NLP y Análisis de Discursos Parlamentarios"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+author: "Germán Rosati"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+## Introducción
+Forman parte de un equipo interdisciplinario de investigación contratado por el Parlamento Europeo. El objetivo de su equipo es analizar los discursos parlamentarios del año 2021 para responder preguntas clave sobre:
+
+- **Diversidad lingüística y representación:** ¿qué tan multilingüe y diverso es el Parlamento y qué sesgos implica analizar solo algunos idiomas?
+- **Temas de debate:** ¿cuáles fueron los principales ejes de discusión en el período?
+- **Identidad partidaria en el discurso:** ¿hasta qué punto el texto de un discurso permite identificar la filiación política?
+
+## Contexto  
+El trabajo se basa en un dataset de discursos del Parlamento Europeo del año 2021. Se han filtrado discursos en idiomas con poca cantidad de casos y temas poco relevantes.  
+
+Cada observación contiene:  
+
+- `TEXTID`: id del texto
+- `CODICT`: id del texto (código)
+- `DATE`: fecha del discurso  
+- `TEXT`: texto completo del discurso (en varios idiomas)  
+- `VOD-START`: timestap de inicio del discurso
+- `VOD-END`: timestap de finalización del discurso
+- `party_final`: orientación ideológica del grupo partidario
+- `politicalGroup`: nombre del grupo político
+- `gender`: género del/la parlamentario/a  
+- `country`: país de nacimiento del parlamentario
+
+Referencia para de la base de datos completa: [Kocoń et al., 2023](https://aclanthology.org/2023.mrl-1.21.pdf)
+
+---
+
+## Objetivo  
+Aplicar las técnicas vistas en clase para procesar y analizar datos textuales a partir de un corpus real. 
+
+El trabajo se realiza en grupos hasta 3 estudiantes.  
+
+---
+
+## Tareas
+Para cada una de las tareas especificadas podrán utilizar cualquiera de las técnicas que cubrimos a lo largo del curso. Podrán (y probablemente deberán) utilizar varias para una misma tarea. Solo por mencionar algunas:
+
+  - Topic modeling (LDA, NMF)  
+  - TF-IDF + clasficación supervisada
+  - Word embeddings + clasificación supervisada
+  - LLMs (zero-shot, few-shot, etc.)
+  - Etcétera
+
+### Tarea 1 (obligatoria): Detección de idioma  
+- Implementar un procedimiento para identificar el idioma de cada discurso.  
+- Comparar al menos dos enfoques (ej.: librerías preentrenadas vs. heurísticas simples basadas en n-gramas).  
+- Validar los resultados sobre una muestra manual pequeña de discursos.  
+- Entregar estadísticas: cantidad de discursos detectados en cada idioma.  
+
+Algunas preguntas orientadoras
+- ¿Qué modelos o métodos presentan mejores performances para la detección de idiomas?
+- ¿De qué forma pueden llevar adelante la tarea de forma relativamente rápida?
+- ¿Cómo validar los resultados? ¿Qué metodología de evaluación puede utilizar? ¿Qué métrica?
+
+
+---
+
+### Tarea 2 (obligatoria): Análisis descriptivo  
+- Realizar un análisis exploratorio general del dataset completo (sin filtrar todavía).  
+- Presentar estadísticas básicas: cantidad de discursos, distribución por idiomas, partidos, género, duración y fechas.  
+- Elaborar al menos dos visualizaciones (ej.: gráfico de barras por idioma, serie temporal por cantidad de discursos).  
+
+Algunas preguntas:
+- ¿Qué grado de diversidad lingüistica e idiomática tiene el dataset? 
+- ¿Qué limitaciones pueden surgir al analizar discursos multilingües? 
+
+---
+
+### Tarea 3 (obligatoria): Filtrado en castellano  
+- Conservar únicamente los discursos en castellano detectados en la Tarea 1.  
+- Definir criterios de limpieza (umbral de confianza, eliminación de falsos positivos, exclusión de textos muy cortos, etc.).  
+- Documentar cuántos discursos quedan tras el filtrado.  
+- Explorar la distribución del subcorpus en castellano por partido, género y fechas.  
+
+- Discutir qué implica trabajar solo con discursos en castellano dentro de un Parlamento multilingüe.  
+
+---
+
+### Tarea 4 (opcional): Detección de temas principales  
+- Identificar los principales temas de los discursos en castellano.  
+- Presentar al menos **dos estrategias comparadas**.
+
+- ¿Qué asuntos dominan el debate parlamentario en español? 
+- ¿Se ven diferencias según partido, fecha y/o género? 
+
+---
+
+### Tarea 5 (opcional): Predicción de partido político  
+- Intentar predecir el grupo partidario a partir del texto del discurso.  
+- Comparar al menos dos estrategias (dos LLMs, un LLM y clasificación mediante word-embedding, etc.)
+- Evaluar con métricas adecuadas (accuracy, F1, matriz de confusión).  
+- ¿Qué tan predecible es la ideología política a partir del lenguaje parlamentario?
+- ¿Cuáles pueden ser los motivos?
+
+---
+
+---
+
+## Cronograma del Trabajo Final Integrador (5 clases)
+
+| Clase | Hitos principales | Productos esperados |
+|-------|------------------|---------------------|
+| **1** | **Tarea 1: Detección de idioma** | - Pipeline inicial de detección de idioma<br>- Estadísticas de distribución por idiomas<br>- Validación manual en una muestra |
+| **2** | **Tarea 2: Análisis descriptivo** (dataset completo, sin filtrar) | - Tablas descriptivas (cantidad de discursos, partidos, género, duración, fechas)<br>- Al menos dos visualizaciones<br>- Discusión de sesgos del dataset |
+| **3** | **Tarea 3: Filtrado en castellano** | - Subcorpus depurado en castellano<br>- Estadísticas descriptivas del subcorpus (partidos, género, fechas)<br>- Reflexión sobre las implicancias de trabajar solo con discursos en español |
+| **4** | **Tarea 4 o 5 (opcional)**: inicio del modelado | - Elección entre análisis temático o predicción de partido<br>- Prototipo inicial de modelo (primeros resultados o métricas) |
+| **5** | **Tarea 4 o 5 (continuación)** + presentación preliminar | - Segundo enfoque probado y comparado<br>- Resultados finales con visualizaciones<br>- Interpretación sociológica<br>- Presentación oral (5–7 min por grupo) y feedback |
+---
+
+## Entregables
+
+1. **Código reproducible** (en R o Python), bien comentado.  
+2. **Informe escrito** (10–12 páginas, formato académico), con:  
+   - Introducción: planteo del problema y justificación sociológica.  
+   - Metodología: decisiones técnicas y justificación de herramientas.  
+   - Resultados: tablas, métricas, visualizaciones.  
+   - Discusión: interpretación sociológica y reflexión crítica.  
+   - Conclusiones: síntesis de hallazgos y limitaciones.  
+3. **Presentación oral (10 min)** al final del curso.  
+
+---
+
+## Fecha de exposición y entrega
+Lunes 10/11/2025 - 18.00 hs.
