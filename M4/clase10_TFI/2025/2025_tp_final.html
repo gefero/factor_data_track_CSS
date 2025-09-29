@@ -1481,7 +1481,7 @@ border-radius: 0px;
 <h1 class="title toc-ignore">Trabajo Final Integrador. NLP y Análisis de
 Discursos Parlamentarios</h1>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">26 septiembre, 2025</h4>
+<h4 class="date">29 septiembre, 2025</h4>
 
 </div>
 
@@ -1534,15 +1534,15 @@ partidario</li>
 <h2>Objetivo</h2>
 <p>Aplicar las técnicas vistas en clase para procesar y analizar datos
 textuales a partir de un corpus real.</p>
-<p>El trabajo se realiza en grupos hasta 3 estudiantes.</p>
+<p>El trabajo se realizará en grupos hasta 3 estudiantes.</p>
 <hr />
 </div>
 <div id="tareas" class="section level2">
 <h2>Tareas</h2>
 <p>Para cada una de las tareas especificadas podrán utilizar cualquiera
 de las técnicas que cubrimos a lo largo del curso. Podrán (y
-probablemente deberán) utilizar varias para una misma tarea. Solo por
-mencionar algunas:</p>
+probablemente deberán) utilizar varias para una misma tarea en alguna
+forma de “pipeline” o secuencia. Solo por mencionar algunas:</p>
 <ul>
 <li>Topic modeling (LDA, NMF)<br />
 </li>
@@ -1557,20 +1557,20 @@ mencionar algunas:</p>
 <li>Implementar un procedimiento para identificar el idioma de cada
 discurso.<br />
 </li>
-<li>Comparar al menos dos enfoques (ej.: librerías preentrenadas
-vs. heurísticas simples basadas en n-gramas).<br />
-</li>
-<li>Validar los resultados sobre una muestra manual pequeña de
-discursos.<br />
+<li>Comparar al menos dos modelos.<br />
 </li>
 <li>Entregar estadísticas: cantidad de discursos detectados en cada
 idioma.</li>
 </ul>
-<p>Algunas preguntas orientadoras - ¿Qué modelos o métodos presentan
-mejores performances para la detección de idiomas? - ¿De qué forma
-pueden llevar adelante la tarea de forma relativamente rápida? - ¿Cómo
-validar los resultados? ¿Qué metodología de evaluación puede utilizar?
-¿Qué métrica?</p>
+<p>Algunas preguntas orientadoras</p>
+<ul>
+<li>¿Qué modelos o métodos presentan mejores performances para la
+detección de idiomas?</li>
+<li>¿De qué forma pueden llevar adelante la tarea de forma relativamente
+rápida?</li>
+<li>¿Cómo validar los resultados? ¿Qué metodología de evaluación puede
+utilizar? ¿Qué métrica?</li>
+</ul>
 <hr />
 </div>
 <div id="tarea-2-obligatoria-análisis-descriptivo" class="section level3">
@@ -1585,9 +1585,13 @@ por idiomas, partidos, género, duración y fechas.<br />
 <li>Elaborar al menos dos visualizaciones (ej.: gráfico de barras por
 idioma, serie temporal por cantidad de discursos).</li>
 </ul>
-<p>Algunas preguntas: - ¿Qué grado de diversidad lingüistica e
-idiomática tiene el dataset? - ¿Qué limitaciones pueden surgir al
-analizar discursos multilingües?</p>
+<p>Algunas preguntas:</p>
+<ul>
+<li>¿Qué grado de diversidad lingüistica e idiomática tiene el
+dataset?</li>
+<li>¿Qué limitaciones pueden surgir al analizar discursos
+multilingües?</li>
+</ul>
 <hr />
 </div>
 <div id="tarea-3-obligatoria-filtrado-en-castellano" class="section level3">
@@ -1657,39 +1661,53 @@ parlamentario?</li>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>1</strong></td>
+<td>06/10</td>
 <td><strong>Tarea 1: Detección de idioma</strong></td>
 <td>- Pipeline inicial de detección de idioma<br>- Estadísticas de
 distribución por idiomas<br>- Validación manual en una muestra</td>
 </tr>
 <tr class="even">
-<td><strong>2</strong></td>
+<td>13/10</td>
 <td><strong>Tarea 2: Análisis descriptivo</strong> (dataset completo,
 sin filtrar)</td>
 <td>- Tablas descriptivas (cantidad de discursos, partidos, género,
 duración, fechas)<br>- Al menos dos visualizaciones<br>- Discusión de
-sesgos del dataset</td>
+sesgos del dataset<br>- Presentación oral (5 min por grupo) y
+feedback</td>
 </tr>
 <tr class="odd">
-<td><strong>3</strong></td>
+<td>20/10</td>
 <td><strong>Tarea 3: Filtrado en castellano</strong></td>
 <td>- Subcorpus depurado en castellano<br>- Estadísticas descriptivas
 del subcorpus (partidos, género, fechas)<br>- Reflexión sobre las
-implicancias de trabajar solo con discursos en español</td>
+implicancias de trabajar solo con discursos en español<br>- Presentación
+oral (5 min por grupo) y feedback</td>
 </tr>
 <tr class="even">
-<td><strong>4</strong></td>
+<td>27/10</td>
 <td><strong>Tarea 4 o 5 (opcional)</strong>: inicio del modelado</td>
 <td>- Elección entre análisis temático o predicción de partido<br>-
-Prototipo inicial de modelo (primeros resultados o métricas)</td>
+Prototipo inicial de modelo (primeros resultados o métricas)<br>-
+Presentación oral (5 min por grupo) y feedback</td>
 </tr>
 <tr class="odd">
-<td><strong>5</strong></td>
+<td>03/11</td>
 <td><strong>Tarea 4 o 5 (continuación)</strong> + presentación
 preliminar</td>
-<td>- Segundo enfoque probado y comparado<br>- Resultados finales con
-visualizaciones<br>- Interpretación sociológica<br>- Presentación oral
-(5–7 min por grupo) y feedback</td>
+<td>- Segundo enfoque probado y comparado<br>- Esbozo de resultados
+finale<br>- Presentación oral (5 min por grupo) y feedback</td>
+</tr>
+<tr class="even">
+<td>10/11</td>
+<td><strong>Presentación final</strong></td>
+<td>- Presentación oral (10 min por grupo) y feedback <br>- Entrega de
+informe final de resultados</td>
+</tr>
+<tr class="odd">
+<td>17/11</td>
+<td><strong>Cierre</strong></td>
+<td>- Cierre de la materia y del track <br>- Entrega de notas <br>-
+¿Brindis (sin alcohol, solo Gatorei)?</td>
 </tr>
 </tbody>
 </table>
@@ -1701,8 +1719,8 @@ visualizaciones<br>- Interpretación sociológica<br>- Presentación oral
 <li><strong>Código reproducible</strong> (en R o Python), bien
 comentado.<br />
 </li>
-<li><strong>Informe escrito</strong> (10–12 páginas, formato académico),
-con:
+<li><strong>Informe escrito</strong> (máximo 14 páginas, formato
+académico), con:
 <ul>
 <li>Introducción: planteo del problema y justificación
 sociológica.<br />
@@ -1724,6 +1742,10 @@ herramientas.<br />
 <div id="fecha-de-exposición-y-entrega" class="section level2">
 <h2>Fecha de exposición y entrega</h2>
 <p>Lunes 10/11/2025 - 18.00 hs.</p>
+</div>
+<div id="cierre-de-la-materia-y-entrega-de-notas" class="section level2">
+<h2>Cierre de la materia y entrega de notas</h2>
+<p>Lunes 17/11/2025 - 18.00 hs.</p>
 </div>
 
 

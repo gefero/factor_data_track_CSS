@@ -39,12 +39,12 @@ Referencia para de la base de datos completa: [Kocoń et al., 2023](https://acla
 ## Objetivo  
 Aplicar las técnicas vistas en clase para procesar y analizar datos textuales a partir de un corpus real. 
 
-El trabajo se realiza en grupos hasta 3 estudiantes.  
+El trabajo se realizará en grupos hasta 3 estudiantes.  
 
 ---
 
 ## Tareas
-Para cada una de las tareas especificadas podrán utilizar cualquiera de las técnicas que cubrimos a lo largo del curso. Podrán (y probablemente deberán) utilizar varias para una misma tarea. Solo por mencionar algunas:
+Para cada una de las tareas especificadas podrán utilizar cualquiera de las técnicas que cubrimos a lo largo del curso. Podrán (y probablemente deberán) utilizar varias para una misma tarea en alguna forma de "pipeline" o secuencia. Solo por mencionar algunas:
 
   - Topic modeling (LDA, NMF)  
   - TF-IDF + clasficación supervisada
@@ -54,11 +54,11 @@ Para cada una de las tareas especificadas podrán utilizar cualquiera de las té
 
 ### Tarea 1 (obligatoria): Detección de idioma  
 - Implementar un procedimiento para identificar el idioma de cada discurso.  
-- Comparar al menos dos enfoques (ej.: librerías preentrenadas vs. heurísticas simples basadas en n-gramas).  
-- Validar los resultados sobre una muestra manual pequeña de discursos.  
+- Comparar al menos dos modelos.  
 - Entregar estadísticas: cantidad de discursos detectados en cada idioma.  
 
 Algunas preguntas orientadoras
+
 - ¿Qué modelos o métodos presentan mejores performances para la detección de idiomas?
 - ¿De qué forma pueden llevar adelante la tarea de forma relativamente rápida?
 - ¿Cómo validar los resultados? ¿Qué metodología de evaluación puede utilizar? ¿Qué métrica?
@@ -72,6 +72,7 @@ Algunas preguntas orientadoras
 - Elaborar al menos dos visualizaciones (ej.: gráfico de barras por idioma, serie temporal por cantidad de discursos).  
 
 Algunas preguntas:
+
 - ¿Qué grado de diversidad lingüistica e idiomática tiene el dataset? 
 - ¿Qué limitaciones pueden surgir al analizar discursos multilingües? 
 
@@ -111,17 +112,19 @@ Algunas preguntas:
 
 | Clase | Hitos principales | Productos esperados |
 |-------|------------------|---------------------|
-| **1** | **Tarea 1: Detección de idioma** | - Pipeline inicial de detección de idioma<br>- Estadísticas de distribución por idiomas<br>- Validación manual en una muestra |
-| **2** | **Tarea 2: Análisis descriptivo** (dataset completo, sin filtrar) | - Tablas descriptivas (cantidad de discursos, partidos, género, duración, fechas)<br>- Al menos dos visualizaciones<br>- Discusión de sesgos del dataset |
-| **3** | **Tarea 3: Filtrado en castellano** | - Subcorpus depurado en castellano<br>- Estadísticas descriptivas del subcorpus (partidos, género, fechas)<br>- Reflexión sobre las implicancias de trabajar solo con discursos en español |
-| **4** | **Tarea 4 o 5 (opcional)**: inicio del modelado | - Elección entre análisis temático o predicción de partido<br>- Prototipo inicial de modelo (primeros resultados o métricas) |
-| **5** | **Tarea 4 o 5 (continuación)** + presentación preliminar | - Segundo enfoque probado y comparado<br>- Resultados finales con visualizaciones<br>- Interpretación sociológica<br>- Presentación oral (5–7 min por grupo) y feedback |
+| 06/10 | **Tarea 1: Detección de idioma** | - Pipeline inicial de detección de idioma<br>- Estadísticas de distribución por idiomas<br>- Validación manual en una muestra|
+| 13/10 | **Tarea 2: Análisis descriptivo** (dataset completo, sin filtrar) | - Tablas descriptivas (cantidad de discursos, partidos, género, duración, fechas)<br>- Al menos dos visualizaciones<br>- Discusión de sesgos del dataset<br>- Presentación oral (5 min por grupo) y feedback |
+| 20/10 | **Tarea 3: Filtrado en castellano** | - Subcorpus depurado en castellano<br>- Estadísticas descriptivas del subcorpus (partidos, género, fechas)<br>- Reflexión sobre las implicancias de trabajar solo con discursos en español<br>- Presentación oral (5 min por grupo) y feedback |
+| 27/10 | **Tarea 4 o 5 (opcional)**: inicio del modelado | - Elección entre análisis temático o predicción de partido<br>- Prototipo inicial de modelo (primeros resultados o métricas)<br>- Presentación oral (5 min por grupo) y feedback |
+| 03/11 | **Tarea 4 o 5 (continuación)** + presentación preliminar | - Segundo enfoque probado y comparado<br>- Esbozo de resultados finale<br>- Presentación oral (5 min por grupo) y feedback |
+| 10/11 | **Presentación final** | - Presentación oral (10 min por grupo) y feedback <br>- Entrega de informe final de resultados |
+| 17/11 | **Cierre** | - Cierre de la materia y del track <br>- Entrega de notas <br>- ¿Brindis (sin alcohol, solo Gatorei)? |
 ---
 
 ## Entregables
 
 1. **Código reproducible** (en R o Python), bien comentado.  
-2. **Informe escrito** (10–12 páginas, formato académico), con:  
+2. **Informe escrito** (máximo 14 páginas, formato académico), con:  
    - Introducción: planteo del problema y justificación sociológica.  
    - Metodología: decisiones técnicas y justificación de herramientas.  
    - Resultados: tablas, métricas, visualizaciones.  
@@ -133,3 +136,6 @@ Algunas preguntas:
 
 ## Fecha de exposición y entrega
 Lunes 10/11/2025 - 18.00 hs.
+
+## Cierre de la materia y entrega de notas
+Lunes 17/11/2025 - 18.00 hs.
