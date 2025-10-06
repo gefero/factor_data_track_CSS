@@ -245,7 +245,7 @@ reviews_embed <- reviews %>%
 ```
 
 ### Carga del embedding
-Vamos a usar un embedding entrenado mediante el algoritmo wor2vec por C. Cardelino. Está entrenado sobre un corpus grande en español. Pueden encontrar los detalles [aquí](https://crscardellino.ar/SBWCE/).
+Vamos a usar un embedding entrenado mediante el algoritmo wor2vec por C. Cardelino. Está entrenado sobre un corpus grande en español. Pueden encontrar los detalles [aquí](https://crscardellino.net/SBWCE/).
 
 Escribamos una función que cargue el embedding y ejecutémosla:
 
