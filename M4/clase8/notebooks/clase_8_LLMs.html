@@ -1482,7 +1482,7 @@ border-radius: 0px;
 Lenguaje (LLMs)</h1>
 <h3 class="subtitle">Usando Gemini con R</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">22 septiembre, 2025</h4>
+<h4 class="date">06 octubre, 2025</h4>
 
 </div>
 
@@ -1831,7 +1831,14 @@ para trabajar con Gemini. Se llama, como no podía ser de otra forma, <a href="h
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-<pre class="r"><code>library(gemini.R)</code></pre>
+<pre class="r"><code>library(gemini.R)
+library(jsonlite)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;jsonlite&#39;
+## 
+## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     flatten</code></pre>
 <div id="primer-paso-autenticación" class="section level2">
 <h2>Primer paso, autenticación</h2>
 <p>Como ya hemos visto a lo largo de este curso, las APIs actúan como
@@ -1860,67 +1867,84 @@ alcanza.</p>
 <pre class="r"><code>test &lt;- gemini(&quot;¿Cómo puedo escribir un buen prompt?&quot;)</code></pre>
 <pre><code>## Gemini is answering...</code></pre>
 <pre class="r"><code>cat(test)</code></pre>
-<pre><code>## Crear un buen prompt es esencial para obtener los resultados que deseas de un modelo de lenguaje como yo. Aquí te dejo una guía completa con consejos y ejemplos para escribir prompts efectivos:
+<pre><code>## Escribir un buen prompt es fundamental para obtener resultados precisos y útiles de modelos de lenguaje como yo. Un prompt bien diseñado guía al modelo para entender la tarea, el contexto y el tipo de respuesta que esperas. Aquí te dejo una guía completa con consejos y ejemplos:
 ## 
-## **Principios Fundamentales:**
+## **I. Componentes Clave de un Buen Prompt:**
 ## 
-## *   **Claridad:** El principio más importante.  Debes ser **preciso y específico** en lo que quieres. Evita la ambigüedad.
-## *   **Contexto:** Proporciona suficiente información para que el modelo entienda tu petición.  ¿De qué tema hablas? ¿Cuál es el propósito de la respuesta?
-## *   **Formato:** Indica claramente el formato que esperas en la respuesta (ej. lista, párrafo, código, tabla).
-## *   **Limitaciones:** Define restricciones si las necesitas (ej. número de palabras, tono, estilo).
-## *   **Revisión:** Revisa tu prompt antes de enviarlo.  ¿Podría interpretarse de otra manera? ¿Falta información crucial?
+## *   **Claridad y Especificidad:**
+##     *   **Sé preciso sobre lo que quieres:** Evita ambigüedades y lenguaje vago.
+##     *   **Define el objetivo:** ¿Qué quieres lograr con la respuesta? (informar, persuadir, crear, etc.)
+##     *   **Especifica el formato:** ¿Necesitas una lista, un párrafo, un código, una tabla?
 ## 
-## **Estructura de un buen Prompt (Opcional, pero útil):**
+## *   **Contexto:**
+##     *   **Proporciona la información de fondo necesaria:** Asegúrate de que el modelo entienda la situación.
+##     *   **Define el rol del modelo (opcional):** Puedes pedirle que actúe como un experto, un personaje, etc.
 ## 
-## Si bien no siempre es necesario, puedes estructurar tus prompts de esta manera para mayor claridad:
+## *   **Instrucciones:**
+##     *   **Usa verbos de acción claros:** &quot;Escribe&quot;, &quot;Resume&quot;, &quot;Compara&quot;, &quot;Traduce&quot;, &quot;Explica&quot;, &quot;Crea&quot;, &quot;Analiza&quot;, etc.
+##     *   **Establece límites y restricciones:** Define la longitud, el tono, el estilo, etc.
+##     *   **Incluye ejemplos (si es necesario):** Un ejemplo de la respuesta deseada puede ser muy útil.
 ## 
-## 1.  **Rol:** (Opcional)  Indica al modelo que asuma un rol específico (ej. &quot;Actúa como un experto en marketing digital...&quot;) Esto puede influir en el tono y el enfoque de la respuesta.
-## 2.  **Tarea:** Describe la tarea principal que quieres que el modelo realice (ej. &quot;Escribe un anuncio publicitario...&quot;, &quot;Resúmame este artículo...&quot;, &quot;Traduce este texto...&quot;).
-## 3.  **Contexto:** Proporciona información de fondo relevante para la tarea (ej. &quot;para un nuevo producto...&quot;, &quot;el artículo trata sobre...&quot;, &quot;el texto está en inglés...&quot;).
-## 4.  **Instrucciones:**  Detalla las instrucciones específicas que debe seguir el modelo (ej. &quot;usa un tono persuasivo...&quot;, &quot;destaca los beneficios...&quot;, &quot;traduce al español coloquial...&quot;).
-## 5.  **Formato:** Especifica el formato deseado para la respuesta (ej. &quot;en forma de lista...&quot;, &quot;en un párrafo conciso...&quot;, &quot;en formato JSON...&quot;).
-## 6.  **Limitaciones:**  Define cualquier restricción o límite (ej. &quot;no más de 100 palabras...&quot;, &quot;usa un lenguaje sencillo...&quot;, &quot;no incluyas información falsa...&quot;).
-## 7.  **Ejemplo (Opcional pero muy útil):** Proporciona un ejemplo de la respuesta que esperas.  Esto ayuda enormemente a guiar al modelo.
+## *   **Entrada (Input):**
+##     *   **Proporciona la información o texto base:** Si necesitas un resumen, análisis, traducción, etc., proporciona el texto original.
+##     *   **Utiliza marcadores claros:** Si tienes varios elementos de entrada, sepáralos con delimitadores (por ejemplo, &quot;***&quot; o &quot;---&quot;).
 ## 
-## **Técnicas Avanzadas para Mejorar tus Prompts:**
+## **II. Estrategias y Técnicas Avanzadas:**
 ## 
-## *   **Prompt Engineering:**  La práctica de refinar y experimentar con prompts para obtener mejores resultados.
-## *   **Few-Shot Learning:** Proporcionar al modelo algunos ejemplos de entrada y salida deseada (como en el punto 7 anterior, &quot;Ejemplo&quot;).  Esto le enseña al modelo el patrón que buscas.
-## *   **Chain-of-Thought Prompting:**  Solicitar al modelo que explique su razonamiento paso a paso antes de dar la respuesta final. Esto puede mejorar la precisión y la comprensión. (Ej: &quot;Explica paso a paso cómo resolverías este problema y luego da la solución.&quot;)
-## *   **Temperature Adjustment:** Ajusta el parámetro de &quot;temperatura&quot; (si la plataforma te lo permite). Una temperatura más baja produce respuestas más predecibles y conservadoras, mientras que una temperatura más alta genera respuestas más creativas y aleatorias (pero también potencialmente menos precisas).
-## *   **Iteración:** No te rindas si la primera respuesta no es perfecta.  Refina tu prompt basándote en la respuesta que recibiste.  Añade más contexto, sé más específico, o ajusta el formato.
+## *   **&quot;Few-Shot Learning&quot;:**
+##     *   **Proporciona algunos ejemplos de entrada y salida esperada.** Esto ayuda al modelo a aprender el patrón y a generalizar a nuevas entradas.
+##     *   **Útil para tareas complejas con requisitos específicos.**
 ## 
-## **Ejemplos de Buenos Prompts vs. Prompts Débiles:**
+## *   **&quot;Chain-of-Thought Prompting&quot;:**
+##     *   **Pide al modelo que explique su razonamiento paso a paso.** Esto puede mejorar la precisión y la transparencia, especialmente en tareas complejas.
+##     *   **Ejemplo:** &quot;Primero, identifica los puntos clave. Luego, analiza la relación entre ellos. Finalmente, escribe un resumen.&quot;
 ## 
-## **Ejemplo 1: Escribir un email**
+## *   **&quot;Role-Playing&quot;:**
+##     *   **Asigna un rol al modelo.** Esto puede influir en el tono, el estilo y el enfoque de la respuesta.
+##     *   **Ejemplo:** &quot;Actúa como un experto en historia del arte y explica el significado del cuadro &#39;La noche estrellada&#39;.&quot;
 ## 
-## *   **Débil:** &quot;Escribe un email.&quot; (Demasiado vago)
-## *   **Mejor:** &quot;Actúa como un asistente personal. Escribe un email para mi jefe, [Nombre del Jefe], solicitando una reunión para discutir el progreso del proyecto [Nombre del Proyecto].  Menciona que tengo actualizaciones importantes y que quiero presentar un plan para la siguiente fase.  Propón tres horarios posibles: Lunes a las 10am, Martes a las 2pm, y Miércoles a las 11am.  Mantén un tono profesional y conciso. El email no debe superar los 150 palabras.&quot;
+## *   **Usa palabras clave específicas:**
+##     *   **Palabras clave relevantes para el tema o dominio.** Ayudan a enfocar la respuesta.
 ## 
-## **Ejemplo 2: Resumir un Artículo**
+## *   **Iteración y Refinamiento:**
+##     *   **Experimenta con diferentes prompts y evalúa los resultados.**
+##     *   **Refina el prompt basándote en la respuesta del modelo.**
+##     *   **Considera la temperatura (aleatoriedad) del modelo si la opción está disponible.** Una temperatura más baja generalmente produce respuestas más deterministas.
 ## 
-## *   **Débil:** &quot;Resume este artículo.&quot; (Falta contexto)
-## *   **Mejor:** &quot;Resume este artículo: [Pegar el artículo aquí].  Quiero un resumen conciso de los puntos principales del artículo, dirigido a un público que no está familiarizado con el tema. Incluye los argumentos clave, las conclusiones principales y cualquier dato relevante. El resumen debe tener entre 200 y 250 palabras.&quot;
+## **III. Ejemplos de Buenos y Malos Prompts:**
 ## 
-## **Ejemplo 3: Generar Ideas para un Nombre de Producto**
+## *   **Mal Prompt:** &quot;Escribe sobre la Revolución Francesa.&quot; (Demasiado vago)
+## *   **Buen Prompt:** &quot;Escribe un ensayo de 500 palabras sobre las causas y consecuencias de la Revolución Francesa, incluyendo un análisis del papel de la Ilustración y el impacto en la monarquía europea.&quot;
 ## 
-## *   **Débil:** &quot;Dame ideas para un nombre.&quot; (No hay especificidad)
-## *   **Mejor:** &quot;Necesito ideas para el nombre de una nueva aplicación móvil que ayuda a los usuarios a aprender un nuevo idioma de forma divertida y sencilla. El nombre debe ser corto, pegadizo, fácil de recordar y debe transmitir la idea de aprendizaje y diversión.  Por favor, genera 10 opciones diferentes.&quot;
+## *   **Mal Prompt:** &quot;Resume este texto.&quot; (Falta contexto)
+## *   **Buen Prompt:** &quot;Resume el siguiente texto, enfocándote en los principales argumentos del autor y omitiendo ejemplos específicos: [TEXTO]&quot;
 ## 
-## **Ejemplo 4: Generar Código**
+## *   **Mal Prompt:** &quot;Explica la física cuántica.&quot; (Demasiado amplio)
+## *   **Buen Prompt:** &quot;Explica el principio de superposición en la física cuántica, utilizando una analogía comprensible para alguien sin conocimientos previos en física.&quot;
 ## 
-## *   **Débil:** &quot;Escribe un programa en Python.&quot;
-## *   **Mejor:** &quot;Escribe un programa en Python que tome una lista de números como entrada y devuelva la suma de todos los números pares en la lista. Comenta el código para que sea fácil de entender. Incluye ejemplos de uso.&quot;
+## *   **Ejemplo Few-Shot:**
+##     ```
+##     Texto: &quot;El gato es negro.&quot; Traducción al francés: &quot;Le chat est noir.&quot;
+##     Texto: &quot;El perro es blanco.&quot; Traducción al francés: &quot;Le chien est blanc.&quot;
+##     Texto: &quot;El pájaro es azul.&quot; Traducción al francés:
+##     ```
 ## 
-## **Consejos Adicionales:**
+## **IV. Errores Comunes que Debes Evitar:**
 ## 
-## *   **Experimenta:** La mejor manera de aprender a escribir buenos prompts es experimentar. Prueba diferentes enfoques y ve qué funciona mejor para ti.
-## *   **Sé Creativo:** No tengas miedo de probar prompts inusuales o creativos. A veces, las ideas más inesperadas producen los mejores resultados.
-## *   **Sé Paciente:** A veces, lleva varios intentos obtener la respuesta que buscas. No te frustres y sigue ajustando tus prompts.
-## *   **Utiliza Herramientas:** Existen herramientas en línea que te ayudan a crear y refinar prompts. Busca &quot;prompt engineering tools&quot;.
-## *   **Lee la Documentación:** Si estás utilizando una plataforma específica, lee su documentación sobre cómo escribir prompts efectivos.
+## *   **Ambigüedad:** Usa lenguaje claro y preciso.
+## *   **Instrucciones contradictorias:** Asegúrate de que las instrucciones sean coherentes.
+## *   **Falta de contexto:** Proporciona suficiente información de fondo.
+## *   **Suposiciones:** No asumas que el modelo sabe algo que no le has dicho.
+## *   **Expectativas poco realistas:** Recuerda que el modelo tiene limitaciones.
 ## 
-## En resumen, escribir un buen prompt es un arte y una ciencia. Requiere claridad, especificidad, contexto y experimentación.  Cuanto más practiques, mejor te volverás.  ¡Mucha suerte!</code></pre>
+## **V. Herramientas Útiles:**
+## 
+## *   **Playground de OpenAI (si usas la API de OpenAI):** Te permite experimentar con diferentes prompts y configuraciones.
+## *   **Otras plataformas de IA:** Muchas plataformas de IA tienen interfaces que facilitan la creación de prompts.
+## 
+## **En resumen:**
+## 
+## Un buen prompt es específico, claro, proporciona contexto e incluye instrucciones precisas.  No tengas miedo de experimentar y refinar tus prompts hasta obtener los resultados deseados. La práctica es la clave para dominar el arte de escribir buenos prompts.  Cuanto más practiques, mejor entenderás cómo funciona el modelo y cómo obtener las respuestas que necesitas.</code></pre>
 </div>
 <div id="segundo-paso-diseño-del-prompt" class="section level2">
 <h2>Segundo paso, diseño del prompt</h2>
@@ -2222,6 +2246,99 @@ original de “stars”.</p>
 ##  9 es_0240232 &quot;clasif: Ne… &quot;El tex… Negativa  mantiene l… Nega… home            
 ## 10 es_0774932 &quot;clasif: Ne… &quot;La res… Negativa  La histori… Nega… book            
 ## # ℹ 1,238 more rows</code></pre>
+<div id="usando-formatos-estructurados" class="section level3">
+<h3>Usando formatos estructurados</h3>
+<p>Muchas veces, una forma más consistente de trabajar con LLMs es
+requerir outputs estructurados para las respuestas. En el caso de
+<code>gemini.r</code>, esto se logra mediante la función
+<code>gemini_structured()</code>. La misma es prácticamente igual a la
+que usamos antes, pero tiene un argumento más: un <code>schema</code>,
+es decir, un formato de salida estructurado.</p>
+<p>Veamos como se usa. Primero generamos un objeto <code>schema</code>
+que, a los efectos, de R es una lista; indica al modelo que debe
+devolver una lista de objetos con dos propiedades de tipo texto.</p>
+<pre class="r"><code>schema &lt;- list(
+  type = &quot;ARRAY&quot;,
+  items = list(
+    type = &quot;OBJECT&quot;,
+    properties = list(
+      clasif = list(type = &quot;STRING&quot;),
+      expl   = list(type = &quot;STRING&quot;)
+    ),
+    propertyOrdering = c(&quot;clasif&quot;, &quot;expl&quot;)
+  )
+)</code></pre>
+<p>Luego, hacemos las consultas, al LLM usando la función
+<code>gemini_structured</code>:</p>
+<pre class="r"><code>rtas &lt;- list()
+
+for (i in 1:5){
+  id  &lt;- df_list$review_id[i]
+  Sys.sleep(4.5)  # pausa para evitar límite de tasa
+
+  cat(&quot;Procesando comentario&quot;, i, &quot;de&quot;, nrow(df_list), &quot;\n&quot;)
+
+  rta &lt;- gemini_structured(
+    paste0(prompt, df_list$review_body[i]),
+    schema = schema
+  )
+
+  cat(rta)  # muestra el JSON crudo
+  rtas[[id]] &lt;- fromJSON(rta)
+}</code></pre>
+<pre><code>## Procesando comentario 1 de 1259</code></pre>
+<pre><code>## Gemini is generating a structured response...</code></pre>
+<pre><code>## [
+##   {
+##     &quot;clasif&quot;: &quot;Positiva&quot;,
+##     &quot;expl&quot;: &quot;Paso 1: La reseña destaca la facilidad de instalación y el centrado perfecto del cristal, lo cual son puntos muy positivos. Paso 2: A pesar de mencionar un pequeño levantamiento de 1mm en los laterales, se califica como &#39;casi inapreciable&#39;, minimizando su impacto negativo. Paso 3: Se compara favorablemente con el producto original de Apple, lo que refuerza la percepción positiva. Paso 4: La mención sobre la durabilidad es una observación futura y no un problema actual. Por lo tanto, el sentimiento general de la reseña es claramente positivo.&quot;
+##   }
+## ]Procesando comentario 2 de 1259</code></pre>
+<pre><code>## Gemini is generating a structured response...</code></pre>
+<pre><code>## [
+##   {
+##     &quot;clasif&quot;: &quot;Negativa&quot;,
+##     &quot;expl&quot;: &quot;El usuario indica claramente que &#39;no he notado ningún cambio&#39; después de usar la mitad del producto. Esto sugiere que el producto no está cumpliendo con sus expectativas o no está produciendo los efectos deseados, lo cual es una experiencia negativa para el consumidor.&quot;
+##   }
+## ]Procesando comentario 3 de 1259</code></pre>
+<pre><code>## Gemini is generating a structured response...</code></pre>
+<pre><code>## [{&quot;clasif&quot;:&quot;Negativa&quot;,&quot;expl&quot;:&quot;Paso 1: El usuario expresa que el producto &#39;dio problemas serios&#39; al primer día de uso. Paso 2: Esta falla inicial fue considerada una &#39;muy mala señal&#39; para un producto nuevo, lo que llevó a la decisión de devolverlo. Paso 3: Aunque se destaca positivamente la gestión del vendedor al no presentar inconvenientes con el reembolso, el foco principal de la reseña sobre el *producto* es su mal funcionamiento y la necesidad de devolución. Por lo tanto, la experiencia global con el producto es negativa.&quot;}]Procesando comentario 4 de 1259</code></pre>
+<pre><code>## Gemini is generating a structured response...</code></pre>
+<pre><code>## [{&quot;clasif&quot;: &quot;Negativa&quot;, &quot;expl&quot;: &quot;Paso 1: La frase \&quot;Se rompen con mirarlos\&quot; es una expresión idiomática que denota que el producto es sumamente frágil y de baja calidad. Paso 2: Esta observación implica una experiencia muy insatisfactoria con la durabilidad del artículo. Paso 3: Por lo tanto, la reseña se clasifica como negativa.&quot;}]Procesando comentario 5 de 1259</code></pre>
+<pre><code>## Gemini is generating a structured response...</code></pre>
+<pre><code>## [
+##   {
+##     &quot;clasif&quot;: &quot;Positiva&quot;,
+##     &quot;expl&quot;: &quot;El texto presenta múltiples frases con connotación positiva: &#39;Bonitos los colores&#39; valora la estética, &#39;Relación calidad precio adecuada&#39; indica satisfacción con el valor, &#39;muy rápido en envío&#39; elogia el servicio de entrega y &#39;se adapta a lo que necesitaba&#39; resalta la utilidad del producto. La reseña culmina con la declaración &#39;Contenta con la compra&#39;, confirmando una experiencia globalmente positiva. Todos los comentarios son favorables, sin incluir aspectos negativos.&quot;
+##   }
+## ]</code></pre>
+<p>Cada iteración:</p>
+<ul>
+<li>envía una reseña al modelo,</li>
+<li>recibe una respuesta estructurada,</li>
+<li>convierte el JSON a objeto R,</li>
+<li>y lo almacena bajo su <code>review_id</code>.</li>
+</ul>
+<p>Finalmente, unificamos todo en una <code>tibble</code></p>
+<pre class="r"><code>test &lt;- rtas %&gt;%
+  map_dfr(as_tibble, .id = &quot;name&quot;)
+
+test</code></pre>
+<pre><code>## # A tibble: 5 × 3
+##   name       clasif   expl                                                      
+##   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;                                                     
+## 1 es_0179810 Positiva &quot;Paso 1: La reseña destaca la facilidad de instalación y …
+## 2 es_0506233 Negativa &quot;El usuario indica claramente que &#39;no he notado ningún ca…
+## 3 es_0627963 Negativa &quot;Paso 1: El usuario expresa que el producto &#39;dio problema…
+## 4 es_0629229 Negativa &quot;Paso 1: La frase \&quot;Se rompen con mirarlos\&quot; es una expre…
+## 5 es_0776446 Positiva &quot;El texto presenta múltiples frases con connotación posit…</code></pre>
+<p>El resultado es un tibble con columnas:</p>
+<ul>
+<li><code>name</code>: identificador (<code>review_id</code>)</li>
+<li><code>clasif</code>: etiqueta asignada</li>
+<li><code>expl</code>: explicación textual</li>
+</ul>
+</div>
 </div>
 <div id="resultados" class="section level2">
 <h2>Resultados</h2>
@@ -2236,12 +2353,13 @@ calcular las métricas habituales.</p>
 ## ✔ parsnip      1.3.1     ✔ yardstick    1.3.2
 ## ✔ recipes      1.3.0</code></pre>
 <pre><code>## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
-## ✖ scales::discard() masks purrr::discard()
-## ✖ dplyr::filter()   masks stats::filter()
-## ✖ recipes::fixed()  masks stringr::fixed()
-## ✖ dplyr::lag()      masks stats::lag()
-## ✖ yardstick::spec() masks readr::spec()
-## ✖ recipes::step()   masks stats::step()</code></pre>
+## ✖ scales::discard()   masks purrr::discard()
+## ✖ dplyr::filter()     masks stats::filter()
+## ✖ recipes::fixed()    masks stringr::fixed()
+## ✖ jsonlite::flatten() masks purrr::flatten()
+## ✖ dplyr::lag()        masks stats::lag()
+## ✖ yardstick::spec()   masks readr::spec()
+## ✖ recipes::step()     masks stats::step()</code></pre>
 <pre class="r"><code>accuracy(rtas_df, stars, llm_stars) %&gt;%
 bind_rows(precision(rtas_df, stars, llm_stars)) %&gt;%
 bind_rows(recall(rtas_df, stars, llm_stars)) %&gt;%
@@ -2283,11 +2401,11 @@ sesgos en los datos de entrenamiento.</p>
 <pre><code>## # A tibble: 5 × 2
 ##   review_body                                                           llm_expl
 ##   &lt;chr&gt;                                                                 &lt;chr&gt;   
-## 1 escribe bien, borra regular, y las gomas se salen, tienen poca tinta  &quot;La res…
-## 2 Me gusta porque es una sorpresa y lo que no me gusta es que no se pu… &quot;La res…
-## 3 Lo que ves en la foto, la calidad se puede ver                        &quot;La fra…
-## 4 Esta bien pero se me hace que no es el mismo que te muestran.         &quot;La res…
-## 5 Esperemos que dure con el tiempo.                                     &quot;La fra…</code></pre>
+## 1 pará los huesos y dolores                                             &quot;La fra…
+## 2 Interesante sin embargo a veces tedioso para leer                     &quot;La res…
+## 3 Es muy bonito, como todos los del autor, pero me parece que no es ad… &quot;La res…
+## 4 La sensación en la mano es de endebles. Diría que no van a durar dem… &quot;La res…
+## 5 Cumple su función pero la calidad de enlace con la radio genera ruid… &quot;La res…</code></pre>
 <p>Ahora, los “falsos positivos”, según la matriz de confusión solamente
 tenemos 4, así que podemos analizarlos todos</p>
 <pre class="r"><code>rtas_df %&gt;%

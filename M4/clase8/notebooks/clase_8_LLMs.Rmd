@@ -227,6 +227,7 @@ Cargamos, ahora, los paquetes...
 ```{r}
 library(tidyverse)
 library(gemini.R)
+library(jsonlite)
 ```
 
 ## Primer paso, autenticación
@@ -445,6 +446,69 @@ Este código combina el dataframe rtas_df con información adicional del datafra
 ```{r}
 rtas_df
 ```
+
+### Usando formatos estructurados
+Muchas veces, una forma más consistente de trabajar con LLMs es requerir outputs estructurados para las respuestas. En el caso de `gemini.r`, esto se logra mediante la función `gemini_structured()`. La misma es prácticamente igual a la que usamos antes, pero tiene un argumento más: un `schema`, es decir, un formato de salida estructurado.
+
+Veamos como se usa. Primero generamos un objeto `schema` que, a los efectos, de R es una lista; indica al modelo que debe devolver una lista de objetos con dos propiedades de tipo texto.
+
+```{r}
+schema <- list(
+  type = "ARRAY",
+  items = list(
+    type = "OBJECT",
+    properties = list(
+      clasif = list(type = "STRING"),
+      expl   = list(type = "STRING")
+    ),
+    propertyOrdering = c("clasif", "expl")
+  )
+)
+```
+
+Luego, hacemos las consultas, al LLM usando la función `gemini_structured`:
+
+```{r}
+rtas <- list()
+
+for (i in 1:5){
+  id  <- df_list$review_id[i]
+  Sys.sleep(4.5)  # pausa para evitar límite de tasa
+
+  cat("Procesando comentario", i, "de", nrow(df_list), "\n")
+
+  rta <- gemini_structured(
+    paste0(prompt, df_list$review_body[i]),
+    schema = schema
+  )
+
+  cat(rta)  # muestra el JSON crudo
+  rtas[[id]] <- fromJSON(rta)
+}
+```
+
+Cada iteración:
+
+- envía una reseña al modelo,
+- recibe una respuesta estructurada,
+- convierte el JSON a objeto R,
+- y lo almacena bajo su `review_id`.
+
+
+Finalmente, unificamos todo en una `tibble`
+
+```{r}
+test <- rtas %>%
+  map_dfr(as_tibble, .id = "name")
+
+test
+```
+
+El resultado es un tibble con columnas:
+
+- `name`: identificador (`review_id`)
+- `clasif`: etiqueta asignada
+- `expl`: explicación textual
 
 ## Resultados
 Vemamos ahora, entonces, cómo funcionó nuestro modelo. Vamos a calcular las métricas habituales.
