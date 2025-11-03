@@ -1481,7 +1481,7 @@ border-radius: 0px;
 <h1 class="title toc-ignore">Clasificación de texto</h1>
 <h3 class="subtitle">Analizando reseñas de Amazon</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">08 septiembre, 2025</h4>
+<h4 class="date">03 noviembre, 2025</h4>
 
 </div>
 
@@ -1976,7 +1976,8 @@ atmpoco vamos a eliminar caracteres no ascii.</p>
 <h3>Carga del embedding</h3>
 <p>Vamos a usar un embedding entrenado mediante el algoritmo wor2vec por
 C. Cardelino. Está entrenado sobre un corpus grande en español. Pueden
-encontrar los detalles <a href="https://crscardellino.ar/SBWCE/">aquí</a>.</p>
+encontrar los detalles <a href="https://crscardellino.net/SBWCE/">aquí</a>. Pueden descargar el
+archivo binario desde <a href="https://cs.famaf.unc.edu.ar/~ccardellino/SBWCE/SBW-vectors-300-min5.bin.gz">acá</a></p>
 <p>Escribamos una función que cargue el embedding y ejecutémosla:</p>
 <pre class="r"><code>load_embeddings &lt;- function(path=NULL, type=c(&quot;w2v&quot;, &quot;ft&quot;)){
         if (type==&quot;w2v&quot;){
@@ -2023,7 +2024,7 @@ cargarlo . La función también permite cargar (si quisieran hacerlo) un
 <pre class="r"><code>tictoc::tic()
 rev_embed &lt;- reviews_rec_embed %&gt;% prep() %&gt;% bake(reviews_embed)
 tictoc::toc()</code></pre>
-<pre><code>## 133.161 sec elapsed</code></pre>
+<pre><code>## 127.861 sec elapsed</code></pre>
 <p>La secuencia de operaciones que se va a realizar por detrás de
 bambalinas es la siguiente:</p>
 <ol style="list-style-type: decimal">
@@ -2084,7 +2085,7 @@ tune_lasso_embed &lt;- tune_grid(
         control = control_resamples(save_pred = TRUE)
 )
 tictoc::toc()</code></pre>
-<pre><code>## 13.955 sec elapsed</code></pre>
+<pre><code>## 13.456 sec elapsed</code></pre>
 </div>
 <div id="evaluación-1" class="section level3">
 <h3>Evaluación</h3>
