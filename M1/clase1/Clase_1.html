@@ -1539,12 +1539,12 @@ solucionar el problema.</p>
 <div id="objetos-de-r-base" class="section level2">
 <h2>Objetos de R base</h2>
 <p>Los <strong>Objetos/Elementos</strong> constituyen la categoría
-escencial de R. De hecho, todo en R es un objeto, y se almacena con un
+esencial de R. De hecho, todo en R es un objeto, y se almacena con un
 nombre específico que <strong>no debe poseer espacios</strong>. Un
 número, un vector, una función, la progresión de letras del abecedario,
 una base de datos, un gráfico, constituyen para R objetos de distinto
 tipo. Los objetos que vamos creando a medida que trabajamos pueden
-visualizarse en la panel derecho superior de la pantalla
+visualizarse en el panel derecho superior de la pantalla
 (“Environment”).</p>
 <p>Los nombres de los objetos deben empezar con una letra y únicamente
 pueden contener letras, números, _ y .. Por convención, se recomienda
@@ -1586,7 +1586,7 @@ generar un objeto con el mismo nombre que tiene otro ya existente, el
 elemento llamado <strong>vector</strong>.</p>
 <pre class="r"><code>&gt; vector_1 &lt;- c(55, 65, 75, 85, 95, 105) #Este sería un vector numérico
 &gt; vector_2 &lt;- c(&quot;Uno&quot;, &quot;Dos&quot;, &quot;Tres&quot;, &quot;Cuatro&quot;, &quot;Cinco&quot;) #Y este un vector de texto</code></pre>
-<p>Cuandose mezclan diferentes objetos en un vector R hace uso de la
+<p>Cuando se mezclan diferentes objetos en un vector R hace uso de la
 “coerción”: se fuerza a los objetos a transformarse en una misma
 clase</p>
 <pre class="r"><code>&gt; y&lt;-c(1.2,&quot;a&quot;) 
@@ -1605,7 +1605,7 @@ no solo a vectores</p>
 <div id="factores" class="section level3">
 <h3>Factores</h3>
 <p>Para almacenar valores categóricos se usa el objeto factor. Funcionan
-como un integrer con una etiqueta asociada. Se puede generar factors
+como un integer con una etiqueta asociada. Se puede generar factors
 ordenados con el argumento <code>levels</code>. Por default, R usa el
 orden numérico ascendente u orden alfabético dependiendo el tipo de
 valor.</p>
@@ -1658,7 +1658,7 @@ datos que pueden ser de distinto tipo.</p>
 <p>Este objeto es central en el proceso de trabajo, ya que es la
 estructura más usada para realizar análisis de datos, y suele ser la
 forma en que se cargan datos externos para trabajar en el ambiente de R,
-y en que se exportan los resultados de nuestros trabajo.</p>
+y en que se exportan los resultados de nuestro trabajo.</p>
 <ul>
 <li><p>Tienen un atributo especial: <code>row.names</code>, que vendría
 a ser como el identificador de cada fila.</p></li>
@@ -1748,7 +1748,7 @@ indicando qué valores son NA.</p>
 <div id="operaciones-con-los-objetos" class="section level2">
 <h2>Operaciones con los objetos</h2>
 <p>Puedo hacer múltiples operaciones con los objetos a través de <a href="https://www.datamentor.io/r-programming/operator/#arithmetic_operators">operadores</a>.
-Estos pueden ser <strong>arimétricos</strong>, por ejemplo:</p>
+Estos pueden ser <strong>aritméticos</strong>, por ejemplo:</p>
 <pre class="r"><code>&gt; objeto_1/5
 ## [1] 11
 &gt; objeto_1+objeto_2
@@ -1760,9 +1760,8 @@ forma:</p>
 ##  [1]  6  7  8  9 10 11 12 13 14 15</code></pre>
 <p><strong>Pero</strong> no sobre listas, ya que un operador arimétrico
 sólo se puede aplicar en un subconjunto numérico.</p>
-<p>Los operadores también pueden pueden ser
-<strong>relacionales</strong>, para hacer comparaciones entre valores.
-Éstos son:</p>
+<p>Los operadores también pueden ser <strong>relacionales</strong>, y
+servir para hacer comparaciones entre valores. Éstos son:</p>
 <ul>
 <li><code>&lt;</code> o <code>&gt;</code>, para indicar si es menor a o
 mayor a y <code>&lt;=</code> o <code>&gt;=</code> para indicar si es
@@ -1855,8 +1854,8 @@ comando <code>$</code>:</p>
 <strong>dataframes</strong> mediante <code>[ ]</code> puede utilizarse
 también para realizar filtros con operadores. Por ejemplo, puedo
 utilizar los <code>[ ]</code> para obtener del
-<strong>dataframe</strong> <code>Datos</code> unicamente los registros
-de desocupados:</p>
+<strong>dataframe</strong> <code>data</code> unicamente los registros de
+desocupados:</p>
 <pre class="r"><code>&gt; data[data$cat_ocup==&quot;Desoc&quot;, ]
 ##        nombres edades cat_ocup
 ## 3 Julián López     51    Desoc</code></pre>

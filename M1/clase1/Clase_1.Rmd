@@ -45,7 +45,7 @@ Cuando hay un  mensaje de error, lo que queríamos hacer no salió. Esto es lo m
 
 ## Objetos de R base
 
-Los __Objetos/Elementos__ constituyen la categoría escencial de R. De hecho, todo en R es un objeto, y se almacena con un nombre específico que **no debe poseer espacios**. Un número, un vector, una función, la progresión de letras del abecedario, una base de datos, un gráfico, constituyen para R objetos de distinto tipo. Los objetos que vamos creando a medida que trabajamos pueden visualizarse en la panel derecho superior de la pantalla ("Environment"). 
+Los __Objetos/Elementos__ constituyen la categoría esencial de R. De hecho, todo en R es un objeto, y se almacena con un nombre específico que **no debe poseer espacios**. Un número, un vector, una función, la progresión de letras del abecedario, una base de datos, un gráfico, constituyen para R objetos de distinto tipo. Los objetos que vamos creando a medida que trabajamos pueden visualizarse en el panel derecho superior de la pantalla ("Environment"). 
 
 Los nombres de los objetos deben empezar con una letra y únicamente pueden contener letras, números, _ y .. Por convención, se recomienda hacer nombres descriptivos y utilizar el guión bajo como espacio (por ejemplo, si quiero crear una columna de nombres y apellidos la puedo nombrar nombre_apellido).
 
@@ -85,7 +85,7 @@ vector_1 <- c(55, 65, 75, 85, 95, 105) #Este sería un vector numérico
 vector_2 <- c("Uno", "Dos", "Tres", "Cuatro", "Cinco") #Y este un vector de texto
 ```
 
-Cuandose mezclan diferentes objetos en un vector R hace uso de la "coerción": se fuerza a los objetos a transformarse en una misma clase
+Cuando se mezclan diferentes objetos en un vector R hace uso de la "coerción": se fuerza a los objetos a transformarse en una misma clase
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE, }
 y<-c(1.2,"a") 
 y
@@ -100,7 +100,7 @@ as.character(x)
 ```
 
 ### Factores
-Para almacenar valores categóricos se usa el objeto factor. Funcionan como un integrer con una etiqueta asociada. Se puede generar factors ordenados con el argumento `levels`. Por default, R usa el orden numérico ascendente u orden alfabético dependiendo el tipo de valor. 
+Para almacenar valores categóricos se usa el objeto factor. Funcionan como un integer con una etiqueta asociada. Se puede generar factors ordenados con el argumento `levels`. Por default, R usa el orden numérico ascendente u orden alfabético dependiendo el tipo de valor. 
 ```{r, highlight=TRUE, prompt=TRUE, strip.white=FALSE, collapse=TRUE,   echo=TRUE}
 cat_ocup<- factor(c("Ocup","Ocup","Desoc","Ocup"
 	    ,"Inact"))
@@ -127,7 +127,7 @@ l
 ### Dataframes
 Finalmente, están los dataframes. Son lo más parecido a lo que entendemos por base de datos. Cada columna es una variable, y cada fila es una observación. Para R son un tipo especial de vector, en la cual cada elemento del vector tiene la misma longitud (`length()`). Cada observación (fila) está compuesta por datos que pueden ser de distinto tipo.
 
-Este objeto es central en el proceso de trabajo, ya que es la estructura más usada para realizar análisis de datos, y suele ser la forma en que se cargan datos externos para trabajar en el ambiente de R, y en que se exportan los resultados de nuestros trabajo.  
+Este objeto es central en el proceso de trabajo, ya que es la estructura más usada para realizar análisis de datos, y suele ser la forma en que se cargan datos externos para trabajar en el ambiente de R, y en que se exportan los resultados de nuestro trabajo.  
 
 - Tienen un atributo especial: `row.names`, que vendría a ser como el identificador de cada fila. 
 
@@ -187,7 +187,7 @@ m1
 ```
 
 ## Operaciones con los objetos
-Puedo hacer múltiples operaciones con los objetos a través de [operadores](https://www.datamentor.io/r-programming/operator/#arithmetic_operators). Estos pueden ser **arimétricos**, por ejemplo:
+Puedo hacer múltiples operaciones con los objetos a través de [operadores](https://www.datamentor.io/r-programming/operator/#arithmetic_operators). Estos pueden ser **aritméticos**, por ejemplo:
 ```{r, echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, highlight=TRUE, paged.print=FALSE, prompt=TRUE, strip.white=FALSE}
 objeto_1/5
 objeto_1+objeto_2
@@ -199,7 +199,7 @@ n+5
 ```
 **Pero** no sobre listas, ya que un operador arimétrico sólo se puede aplicar en un subconjunto numérico.  
 
-Los operadores también pueden pueden ser **relacionales**, para hacer comparaciones entre valores. Éstos son:
+Los operadores también pueden ser **relacionales**, y servir para hacer comparaciones entre valores. Éstos son:
 
 - `<` o `>`, para indicar si es menor a o mayor a y `<=` o `>=` para indicar si es mayor o igual/menor o igual. 
 ```{r}
@@ -275,7 +275,7 @@ data$edades
 ```
 
 Acorde a lo visto anteriormente, el acceso a los __dataframes__ mediante  ```[ ]``` puede utilizarse también para realizar filtros con operadores. 
-Por ejemplo, puedo utilizar los  ```[ ]``` para obtener del __dataframe__ ```Datos ```  unicamente los registros de desocupados:
+Por ejemplo, puedo utilizar los  ```[ ]``` para obtener del __dataframe__ ```data```  unicamente los registros de desocupados:
 ```{r}
 data[data$cat_ocup=="Desoc", ]
 ```
