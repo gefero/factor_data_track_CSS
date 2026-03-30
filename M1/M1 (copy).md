@@ -2,13 +2,11 @@
 
 # Módulo 1: Procesamiento de datos en R y estadística para Ciencias Sociales
 
-## Docentes
+## Docente
 - [Germán Rosati](https://gefero.github.io/)
-- [Nayla Sol Garcilazo]()
-
 
 ## Adscripto
-- [Román Fernández Arias]()
+- [Santiago Núñez Rimedio]()
 
 ## Presentación
 Esta materia se constituye como la primera de un trayecto de materias optativas orientado a incorporar a las carreras de la EIDAES un conjunto de materias que permitan realizar a les estudiantes un primer acercamiento al campo disciplinar conocido como "Ciencias Sociales Computacionales". Por ello, se plantean como una continuación y profundización de la materia Metodologías Cuantitativas. En este sentido, la orientación es correlativa a las materias “Metodología de la Investigación” y “Metodologías Cuantitativas”.
@@ -28,8 +26,12 @@ adviertan la posibilidad de operacionalizar y medir conceptos complejos (como lo
 - identifiquen situaciones de aplicación de este tipo de herramientas a problemas de investigación básica y aplicada
 
 ## Programa
-- [Programa de la materia - 1er. cuatrimestre 2025](https://docs.google.com/document/d/1Fe3e2h6806euTQXUKYqg34YGMrddIObUzEE9DXxRpqw/edit?usp=sharing)
+- [Programa de la materia - 1er. cuatrimestre 2024](https://docs.google.com/document/d/1e1xa9xs47hFTcJYBnCbcaT28PRFmjgBflx2ylJNyYJY/edit?usp=sharing)
 
+## Trabajo Final Integrador
+- [Consignas](https://docs.google.com/document/d/16N3dNuAa5tgU1LhGq-m88OUNORRd_7NJCPK-FrNd5xE/edit?usp=sharing)
+- Fecha de entrega: 24 de Junio
+- Entrega vía Google Classroom
 
 ## Contenidos y materiales
 ### Clase 1. Presentación - Introducción a R
