@@ -8,7 +8,7 @@
 
 # 4. Crear un vector de tipo character que tenga la misma cantidad de valores que el vector "ingresos"
 
-# 5. Crear un factor que se llame "nivel_educativo", que contenga los valores: 
+# 5. Crear un factor que se llame "nivel_educativo", que contenga las categorías: 
 # "Hasta primario completo", "Hasta secundario completo" y "Hasta terciario/universitario completo" 
 # y tenga la misma cantidad de registros que el vector "ingresos".
 # Asígnele los niveles que le parezcan correspondientes. 

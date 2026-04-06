@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo=FALSE)
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ```
 
-#Exploración de datos categóricos 
+# Exploración de datos categóricos 
 En este capítulo vamos a trabajar sobre las diferentes formas en las que podemos resumir una o dos variables cualitativas o categóricas. Seguiremos usando la EPH y vamos a calcular algunas tablas.
 
 # Librerías
@@ -66,7 +66,7 @@ df %>% group_by(ESTADO)%>%
   mutate(frec_acum = cumsum(n))
 ```
 
-Podemos hacer el cálculo por proporción con operaciones matematicas. 
+Podemos hacer el cálculo por proporción con operaciones matemáticas. 
 ```{r}
 freq_prop <- df %>% group_by(ESTADO)%>%
   summarize(n=n())%>%
@@ -85,7 +85,7 @@ freq_prop
 ---
 
 ## Gráficos con `ggplot()`
-Una de las grandes ventajas de `tidyverse` es el paquete para realizar gráficos, `ggplot`. Incluye funciones para realizar uan gran variedad de visualizaciones. Su concepto central es la asignación (*mapping* en inglés) de atributos estéticos a los valores que toma una variable. Dicho de otra forma, como mostrar de modo perceptible a la vista la diferencia entre valores: con distintos colores, distintos tamaños, distintas posiciones en un gráfico, etc.
+Una de las grandes ventajas de `tidyverse` es el paquete para realizar gráficos, `ggplot`. Incluye funciones para realizar una gran variedad de visualizaciones. Su concepto central es la asignación (*mapping* en inglés) de atributos estéticos a los valores que toma una variable. Dicho de otra forma, como mostrar de modo perceptible a la vista la diferencia entre valores: con distintos colores, distintos tamaños, distintas posiciones en un gráfico, etc.
 
 Su funcionamiento básico consiste en:
 
@@ -156,13 +156,13 @@ df %>%
 
 - **¿Qué podemos decir sobre la condición de actividad según este gráfico?**
 
-Finalmente, también tenemos la opción de pasar la capa `labs` para para agregar título, subtítulo y cambiar los nombres del eje x e y. 
+Finalmente, también tenemos la opción de pasar la capa `labs` para agregar título, subtítulo y cambiar los nombres del eje x e y. 
 
 ```{r}
 df %>%
   filter(ESTADO != "Menor de 10 anios." & ESTADO != "Entrevista individual no realizada (no respuesta al cuestionario individual)")%>% 
   ggplot(aes(x=CH04, fill=ESTADO))+
-  geom_bar(position = "fill")+
+  geom_bar(position = "fill") +
   labs(title = "Condición de actividad según sexo",
              subtitle = "2° trimestre de 2021",
              x = "Sexo",

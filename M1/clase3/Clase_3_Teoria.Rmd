@@ -1,5 +1,5 @@
 ---
-title: "Clase 4. Explorando datos categóricos"
+title: "Clase 3. Explorando datos categóricos"
 subtitle: "Contenidos conceptuales"
 output: 
   html_document:
@@ -28,7 +28,7 @@ df <- df %>%
         mutate(REGION = if_else(REGION == '44', 'Patagonia', REGION))
 ```
 
-## Tablas de contingencia (dos variable)
+## Tablas de contingencia (dos variables)
 La siguiente tabla nos resume la condición de actividad en función del sexo.
 ```{r echo=FALSE}
 df %>%
@@ -99,7 +99,7 @@ df %>%
 
 Este gráfico muestra con mayor claridad que la condición de actividad más común entre mujeres es la inactividad y entre los varones la ocupación. A su vez, la proporción de desocupados es muy similar entre varones y mujeres.
 
-El gráfico de barras apiladas es más útil cuando es razonable asignar una variable como variable explicativa (aquí, sexo `CH04`) y la otra variable como respuesta (aquí, condición de actividad `ESTADO`), ya que estamos agrupando primero por una variable y luego separándola por las demás. .
+El gráfico de barras apiladas es más útil cuando es razonable asignar una variable como variable explicativa (aquí, sexo `CH04`) y la otra variable como respuesta (aquí, condición de actividad `ESTADO`), ya que estamos agrupando primero por una variable y luego separándola por las demás.
 
 Los diagramas de barras esquivadas son más agnósticos en su visualización sobre qué variable, si alguna, representa la variable explicativa y cuál la variable de respuesta. También es fácil discernir el número de casos en cada una de las seis combinaciones de grupos diferentes. Sin embargo, una desventaja es que tiende a requerir más espacio horizontal; la estrechez del segundo gráfico en comparación con las otras dos . Además, cuando dos grupos son de tamaños muy diferentes, como vemos en el propio grupo en relación con cualquiera de los otros dos grupos, es difícil discernir si existe una asociación entre las variables.
 
@@ -142,10 +142,7 @@ Las proporciones de fila y columna también pueden considerarse proporciones con
 ## Comparando datos numéricos en diferentes grupos
 Algunas de las preguntas de investigación más interesantes surgen del análisis y la comparación de variables cuantitativas entre diferentes grupos. En esta sección, ampliaremos algunos métodos que ya hemos visto para hacer gráficos de datos numéricos de múltiples grupos, así como también presentaremos algunos métodos nuevos para comparar datos numéricos entre grupos.
 
-Vamos a analizary comparar el ingreso total familiar promedio, la cantidad promedio de miembros por hogar y la edad promedio de la población en las 6 regiones que releva la EPH.
-
-
-el conjunto de datos del condado y compararemos el ingreso familiar medio de los condados que aumentaron la población entre 2010 y 2017 con los condados que no aumentaron. Si bien nos gustaría hacer una conexión causal entre el ingreso y el crecimiento de la población, recuerde que estos son datos de observación y, por lo tanto, tal interpretación sería, en el mejor de los casos, a medias.
+Vamos a analizar y comparar el ingreso total familiar promedio, la cantidad promedio de miembros por hogar y la edad promedio de la población en las 6 regiones que releva la EPH.
 
 ```{r echo=FALSE}
 df %>%
@@ -171,4 +168,4 @@ df %>%
 - ¿Cuáles son las variables que están en juego acá? 
 - ¿Qué nivel de medición tiene cada una de ellas?
 
-Se observa que la Patagonia es la región que mayores ingresos per cápita muestra y de las de menores hogares. En contraste, la zona del Nordeste y Noroeste son las que menores ingresos per cápita familiares presentan y que mayores tamaños medios de hogar presentan.
+Se observa que la Patagonia es la región que mayores ingresos per cápita muestra y de las de menores tamaño promedio de los hogares. En contraste, la zona del Nordeste y Noroeste son las que menores ingresos per cápita familiares presentan y que mayores tamaños medios de hogar presentan.

@@ -15,5 +15,5 @@
 ### a. ¿Qué grupo presenta la mayor frecuencia agrupada?
 ### b. ¿Qué grupo presenta la menor frecuencia? 
 
-### 7.a. Quienes presentan mayor nivel de desocupación, ¿los hombres o las mujeres? 
-### b. ¿Quiénes presentan mayores niveles de ocupación, ¿los hombres o las mujeres?
+### 7a. Quienes presentan mayor nivel de desocupación, ¿los hombres o las mujeres? 
+### 7b. ¿Quiénes presentan mayores niveles de ocupación, ¿los hombres o las mujeres?
