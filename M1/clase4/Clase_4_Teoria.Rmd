@@ -1,5 +1,5 @@
 ---
-title: "Clase 5. Explorando datos cuantitativos"
+title: "Clase 4 Explorando datos cuantitativos"
 subtitle: "Contenidos conceptuales"
 output: 
   html_document:
@@ -11,7 +11,7 @@ theme: Boadilla
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE)
-install.packages("gapminder")
+#install.packages("gapminder")
 ```
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
@@ -38,7 +38,7 @@ Pensemos, ahora, en variables como el ingreso laboral `P21` o la edad `CH06`. Am
 Vamos a ver, entonces, ahora algunos métodos para realizar un análisis descriptivo de variables cuantitativas.
 
 ## Gráficos de dispersión (o scatterplots)
-Un diagrama de dispersión proporciona una vista caso por caso de los datos de dos variables numéricas. En la Figura siguiente, se usó un diagrama de dispersión para examinar el promedio de ingresos laborales y no laborales de cada algomerado. 
+Un diagrama de dispersión proporciona una vista caso por caso de los datos de dos variables numéricas. En la Figura siguiente, se usó un diagrama de dispersión para examinar el promedio de ingresos laborales y no laborales de cada aglomerado 
 
 ```{r echo=FALSE}
 df %>%
@@ -60,7 +60,7 @@ df %>%
 
 En cualquier diagrama de dispersión, cada punto representa un solo caso. Como hay 32 aglomerados urbanos relevados en la EPH hay 32 puntos en la Figura 5.1.
 
-Se ve que parece existir una cierta relación entre ambas variables. A medida que hay se incrementan los ingresos laborales lo mismo parece suceder con los no laborales. No obstante, existe algunos puntos en los que esta relación no se cumple. ¿Cuáles son?
+Se ve que parece existir una cierta relación entre ambas variables. A medida que se incrementan los ingresos laborales lo mismo parece suceder con los no laborales. No obstante, existen algunos puntos en los que esta relación no se cumple. ¿Cuáles son?
 
 A continuación hemos calculado el porcentaje de personas pobres y la media del ingreso total del hogar para cada aglomerado.
 
@@ -146,13 +146,11 @@ gapminder %>%
   gt()
 ```
 
-
-Si completamos estos pasos encontraríamos que el ingreso per cápita para los EE. UU. es de 75.5. Si hubiéramos calculado la media simple ¡el resultado hubiera sido solo 73.6!. Dos años son una gran diferencia en términos de estimaciones poblacionales.
+Si completamos estos pasos encontraríamos que la expectativa de vida de la región es de 75.5 años. Si hubiéramos calculado la media simple ¡el resultado hubiera sido solo 73.6!. Dos años son una gran diferencia en términos de estimaciones poblacionales.
 
 Este ejemplo usó lo que se llama una media ponderada, la formula es simple:
 
 $$\overline x = \frac{w_{1}x_{1} + w_{1}x_{1} + ... + w_{n}x_{n}}{w_{1} + w_{2} + ... w_{n}} = \frac{\sum_{i=1}^n w_{i}x_{i}}{\sum_{i=1}^n w_{i}}$$ 
-
 
 
 ## Histogramas
@@ -204,7 +202,7 @@ $$ edad_{59550} - \overline x_{edad} = 22 - 34.22 =  -12.22$$
 
 Si elevamos al cuadrado estos valores y los promediamos el resultado es igual a la varianza muestral, denotada como $s^2$:
 
-$$ s^2 = \frac{(-12.22)^20 + 15.78^2 + ... + (-12.22)^2 +}{59550-1} = 496.29$$
+$$ s^2 = \frac{(-12.22)^2 + 15.78^2 + ... + (-12.22)^2 +}{59550-1} = 496.29$$
 
 Dividimos por $n-1$ en lugar de hacerlo por $n$ porque se trata de la varianza muestral (un estimador de la varianza poblacional). Es importante notar que elevar al cuadrado hace dos cosas: 
 
@@ -217,7 +215,7 @@ $$ s = \sqrt \frac{\sum_{i=1}(x_{i}^n - \overline x)^2}{n-1}$$
 En nuestro caso, el desvío estándar es igual a 
 
 $$s_{edad} = \sqrt 496.29  = 22.28$$
-Aunque a menudo se omite, un subíndice de la variable en cuestión puede agregarse a la notación de la varianza y el desvío estándar como recordatorio de que estas son la varianza y la desviación estándar de las observaciones representadas por cierta varaible (en nuestro caso, la edad)
+Aunque a menudo se omite, un subíndice de la variable en cuestión puede agregarse a la notación de la varianza y el desvío estándar como recordatorio de que estas son la varianza y la desviación estándar de las observaciones representadas por cierta variable (en nuestro caso, la edad)
 
 ### Varianza y desviación estándar
 La varianza es la distancia promedio al cuadrado de la media. La desviación estándar es la raíz cuadrada de la varianza. La desviación estándar es útil cuando se considera qué tan lejos se distribuyen los datos de la media.
