@@ -34,7 +34,7 @@ prop.table(table(df$REGION))
 df %>%
         group_by(REGION) %>%
         summarise(n=n()) %>%
-        mutate(prop=n/sum(n)*100)
+        mutate(porc=n/sum(n)*100)
 
 ### 4. ¿Qué región se lleva la mayor cantidad de casos? 
 
@@ -42,9 +42,6 @@ df %>%
 ### Filtre los casos que crea correspondientes.
 ### Coloque título, subtítulo, epígrafe y nombre correctamente los ejes. 
 
-
-df <- df %>%
-        mutate(REGION = if_else(REGION == "44", "Patagonia", REGION))
 
 df %>%
         ggplot(aes(x=REGION)) +
@@ -56,22 +53,26 @@ df %>%
 df %>%
         group_by(REGION) %>%
         summarise(n=n()) %>%
-        mutate(prop=prop.table(n)*100) %>%
-        ggplot(aes(x=REGION, y=prop)) +
-                geom_col() +
+        mutate(prop=prop.table(n)*100)  %>% 
+        ggplot(aes(x=REGION, y=prop)) +        
+        geom_col() +
                 labs(title="Cantidad de personas por región",
                      subtitle="EPH - 2T 2021",
                      x="Región",
                      y="%")
+
+
 
 ### 6. Realice un gráfico que cruce las variable de nivel educativo por estado ocupacional. 
 ### Filtre los casos que crea correspondientes.
 ### Coloque título, subtítulo, epígrafe y nombre correctamente los ejes. 
 ### TIP: Si las categorías del eje x se superponen, prueben agregar el atributo theme(axis.text.x = element_text(angle = 90)) o coord_flip()
 
-orden <- c("Sin instruccion", "Primaria incompleta (incluye educación especial)",
+orden <- c("Sin instruccion", "Primaria incompleta (incluye educacion especial)",
            "Primaria completa", "Secundaria incompleta", "Secundaria completa",
            "Superior universitaria incompleta", "Superior universitaria completa")
+
+table(df$NIVEL_ED)
 
 df$NIVEL_ED <- factor(df$NIVEL_ED, levels=orden)
 
@@ -84,7 +85,6 @@ df %>%
         ggplot(aes(x=NIVEL_ED, fill=ESTADO)) +
                 geom_bar(position="fill") +
                 scale_fill_viridis_d() + 
-                #scale_fill_viridis(discrete="t", option="A") +
                 labs(title="Nivel educativo según estado ocupacional",
                      subtitle="2do T. 2021",
                      x="Nivel educativo",
@@ -98,11 +98,20 @@ df %>%
 df %>%
         filter(ESTADO != "Menor de 10 anios." & 
                        ESTADO != "Entrevista individual no realizada (no respuesta al cuestionario individual)") %>%
-        group_by(NIVEL_ED, ESTADO) %>%
+        filter(CH06 > 23) %>%
+         group_by(NIVEL_ED, ESTADO) %>%
         summarise(n=n()) %>%
         mutate(p = n/sum(n)*100) %>%
         ggplot(aes(x=NIVEL_ED, y=p, fill=ESTADO)) +
-                geom_col()
+                geom_col() +
+        scale_fill_viridis_d() + 
+        labs(title="Nivel educativo según estado ocupacional",
+             subtitle="2do T. 2021",
+             x="Nivel educativo",
+             y="%",
+             fill="Condición de actividad",
+             caption="Fuente: EPH") + 
+        coord_flip()
 
 
 
@@ -111,15 +120,15 @@ df %>%
 ### 8. Cruce estas dos variables por la región. 
 
 df %>%
-        filter(ESTADO != "Menor de 10 anios." & 
-                       ESTADO != "Entrevista individual no realizada (no respuesta al cuestionario individual)") %>%
+        filter(
+                ESTADO != "Menor de 10 anios." &
+                        ESTADO != "Entrevista individual no realizada (no respuesta al cuestionario individual)") %>%
         group_by(REGION, NIVEL_ED, ESTADO) %>%
         summarise(n=n()) %>%
         mutate(p = n/sum(n)*100) %>%
-        ggplot(aes(x=NIVEL_ED, y=p, fill=ESTADO)) +
+         ggplot(aes(y=NIVEL_ED, x=p, fill=ESTADO)) +
         geom_col() + 
-        coord_flip() +
+       # coord_flip() +
         facet_wrap(~REGION)
-
 
 ### 9. ¿Qué puede decir a partir de este gráfico?

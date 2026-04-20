@@ -201,11 +201,11 @@ Además de observar si una distribución es asimétrica o simétrica, los histog
 
 Se observa un pico prominente. Este tipo de distribuciones se denominan unimodal. Cualquier distribución con más de dos picos prominentes se denomina multimodal. 
 
-Buscar modas no se trata de encontrar una respuesta clara y correcta sobre la cantidad de modas en una distribución, razón por la cual la noción de "prominente" no se define rigurosamente en este libro. La parte más importante de este examen es comprender mejor los datos.
+Buscar modas no se trata de encontrar una respuesta clara y correcta sobre la cantidad de modas en una distribución, razón por la cual la noción de "prominente" no se define rigurosamente. La parte más importante de este examen es comprender mejor los datos.
 
-## Varianza y desvío estándar
 La media se introdujo como un método para describir el centro de una variable. Ahora bien, la variabilidad en los datos también es importante. Aquí presentamos dos medidas de variabilidad: la varianza y la desviación estándar. Ambos son muy útiles en el análisis de datos, aunque sus fórmulas son un poco tediosas para calcularlas a mano. La desviación estándar es la más fácil de comprender de las dos, ya que describe aproximadamente qué tan lejos está la observación típica de la media.
 
+## Varianza y desviación estándar
 Llamamos a la distancia de una observación de su media su desviación. A continuación se muestran las desviaciones de los ingresos laborales para el cinco casos muestreados aleatoriamiente de la base de la EPH:
 
 $$ edad_{1} - \overline x_{edad} = 17 - 34.22 =  -17.22$$
@@ -230,7 +230,6 @@ En nuestro caso, el desvío estándar es igual a
 $$s_{edad} = \sqrt 496.29  = 22.28$$
 Aunque a menudo se omite, un subíndice de la variable en cuestión puede agregarse a la notación de la varianza y el desvío estándar como recordatorio de que estas son la varianza y la desviación estándar de las observaciones representadas por cierta variable (en nuestro caso, la edad)
 
-### Varianza y desviación estándar
 La varianza es la distancia promedio al cuadrado de la media. La desviación estándar es la raíz cuadrada de la varianza. La desviación estándar es útil cuando se considera qué tan lejos se distribuyen los datos de la media.
 
 La desviación estándar representa la desviación típica de las observaciones de la media. A menudo, alrededor del 68 % de los datos estarán dentro de una desviación estándar de la media y alrededor del 95 % estarán dentro de dos desviaciones estándar. Sin embargo, estos porcentajes no son reglas estrictas.
