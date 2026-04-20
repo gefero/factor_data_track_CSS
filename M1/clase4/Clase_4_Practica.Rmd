@@ -107,7 +107,8 @@ df %>%
         filter(ITF > 0) %>%
         ggplot(aes(y=ITF)) +
         geom_boxplot() +
-        scale_y_log10()
+        scale_y_log10() +
+        theme_minimal()
 ```
 
 - **histograma:** nos muestra la frecuencia de una variable cuantitativa continua
@@ -118,7 +119,8 @@ df %>%
                 ggplot(aes(x=ITF))+
                 geom_histogram()+
         labs(x="Ingreso total del hogar",
-             y = "n")
+             y = "n") +
+        theme_minimal()
 ```
 
 Probemos cómo se ve el mismo gráfico en una escala logarítmica...
@@ -126,11 +128,11 @@ Probemos cómo se ve el mismo gráfico en una escala logarítmica...
 ```{r}
 df %>%
   filter(ITF > 0) %>%
-  ggplot(aes(x=ITF))+
-  geom_histogram()+
-  scale_x_log10()+
-  labs(x="Ingreso total del hogar",
-       y = "n")
+  ggplot(aes(x=ITF)) +
+        geom_histogram() +
+        scale_x_log10() +
+        theme_minimal() +
+        labs(x="Ingreso total del hogar", y = "n")
 
 ```
 
@@ -138,12 +140,13 @@ Puedo "recortar" el gráfico con los atributos `ylim()` o `xlim()` :
 
 ```{r}
 df %>%
-  ggplot(aes(x=ITF))+
-  geom_histogram()+
-  scale_x_log10()+
-  labs(x="Ingreso total del hogar",
-       y = "n")+
-  xlim(0, 400000)
+  ggplot(aes(x=ITF)) +
+        geom_histogram() +
+        scale_x_log10() +
+        theme_minimal() +
+        labs(x="Ingreso total del hogar",
+       y = "n") +
+        xlim(0, 400000)
 ```
 
 - **scatterplot:** es un gráfico que nos sirve para mostrar la correlación entre dos variables cuantitativas. Vamos a analizar la relación entre el ingreso de la ocupación principal (P21) y la edad (CH06) entre les ocupades.
@@ -151,9 +154,10 @@ df %>%
 df %>% 
   filter(ESTADO==1 & P21 > 0) %>%
   ggplot(aes(x=CH06, y=P21)) +
-  geom_point() +
-  labs(x="Edad",
-       y = "Ingreso de la ocupación principal")
+        geom_point() +
+        theme_minimal() +
+        labs(x="Edad",
+             y = "Ingreso de la ocupación principal")
 ```
 
 ¿Qué pasa si re-escalamos esto mediante logaritmos? Podemos hacerlo transformando directamente la variable en 
@@ -163,9 +167,10 @@ df %>%
 df %>% 
   filter(ESTADO==1 & P21 > 0) %>%
   ggplot(aes(x=log10(CH06), y=log10(P21))) +
-  geom_point()+
-  labs(x="Edad",
-       y = "Ingreso de la ocupación principal")
+        geom_point() +
+        theme_minimal() +
+        labs(x="Edad",
+             y = "Ingreso de la ocupación principal")
 ```
 
 O usando las funciones para reescalar los ejes:
@@ -173,10 +178,11 @@ O usando las funciones para reescalar los ejes:
 df %>% 
   filter(ESTADO==1 & P21 > 0) %>%
   ggplot(aes(x=CH06, y=P21)) +
-  scale_y_log10() + 
-  scale_x_log10() +
-  geom_point()+
-  labs(x="Edad",
+        geom_point() +
+        scale_y_log10() + 
+        scale_x_log10() +
+        theme_minimal() +
+        labs(x="Edad",
        y = "Ingreso de la ocupación principal")
 ```
 

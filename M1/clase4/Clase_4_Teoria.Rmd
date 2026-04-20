@@ -1,5 +1,5 @@
 ---
-title: "Clase 4 Explorando datos cuantitativos"
+title: "Clase 4. Explorando datos cuantitativos"
 subtitle: "Contenidos conceptuales"
 output: 
   html_document:
@@ -104,11 +104,12 @@ df %>%
     geom_histogram(aes(x=CH06), bins=100, color='white') +
     geom_vline(xintercept = mean(df$CH06), color='red') +
     theme_minimal() +
-    labs(x='Edad en años simples',
-         y='Frecuencia')
+    labs(
+            title = 'Histograma de edad',
+            x='Edad en años simples',
+            y='Frecuencia')
 
 ```
-
 
 La media, a menudo llamada promedio, es una forma común de medir el centro de una distribución de datos. Para calcular la tasa de interés media, sumamos todas las tasas de interés y las dividimos por el número de observaciones.
 
@@ -146,7 +147,7 @@ gapminder %>%
   gt()
 ```
 
-Si completamos estos pasos encontraríamos que la expectativa de vida de la región es de 75.5 años. Si hubiéramos calculado la media simple ¡el resultado hubiera sido solo 73.6!. Dos años son una gran diferencia en términos de estimaciones poblacionales.
+Si completamos estos pasos encontraríamos que la expectativa de vida de la región es de 75.5 años. Si hubiéramos calculado la media simple el resultado hubiera sido solo 73.6. Dos años son una gran diferencia en términos de estimaciones poblacionales.
 
 Este ejemplo usó lo que se llama una media ponderada, la formula es simple:
 
@@ -167,20 +168,32 @@ df %>%
     geom_histogram(aes(x=P21), color='white', fill='lightblue', bins = 50) +
     scale_x_continuous(breaks=seq(0,75000, 8000)) +
     theme_minimal() +
-    labs(x='Ingresos laborales',
+    labs(
+            title = 'Histograma ingresos laborales',
+            x='Ingresos laborales',
          y='Frec.')
 
 ``` 
-
-Los histogramas proporcionan una vista de la densidad de datos. Las barras más altas representan dónde los datos son relativamente más comunes. Por ejemplo, hay muchos más préstamos con ingresos hasta \$8000 que ingresos mayores a \$24000. Las barras facilitan ver cómo cambia la densidad de los datos en relación con los ingresos.
-
 Los histogramas son especialmente convenientes para comprender la forma de la distribución de datos. La figura anterior sugiere que la mayoría de las personas tenían en 2016 ingresos laborales menores a \$16000, mientras que solo unas pocas personas tienen ingresos superiores al \$32000. Cuando la distribución de una variable se desvía hacia la derecha de esta manera y tiene una cola derecha más larga, se dice que la forma está sesgada a la derecha.
 
 La figura siguiente muestra un gráfico de densidad que es un histograma suavizado. Los detalles técnicos sobre cómo dibujar gráficos de densidad (precisamente cómo suavizar el histograma) están más allá del alcance de esta materia. Pero se nota que la forma, la escala y la dispersión de las observaciones se muestran de manera similar en un histograma que en un gráfico de densidad.
 
-
-
-
+```{r}
+df %>%
+  mutate(P21 = as.numeric(as.character(P21))) %>%
+  mutate(P21 = case_when(
+    P21 >= 75000 ~ 75000, 
+    P21 < 75000 ~ P21)) %>%
+  filter(P21 > 0) %>%
+  ggplot() +
+    geom_density(aes(x=P21), color='white', fill='lightblue', bins = 50) +
+    scale_x_continuous(breaks=seq(0,75000, 8000)) +
+    theme_minimal() +
+    labs(
+            title = 'Density plot de ingresos laborales',
+            x='Ingresos laborales',
+         y='Frec.')
+```
 
 Se dice que las variables con la característica inversa (una cola larga y más delgada hacia la izquierda) están sesgadas (o son asimétricas) a la izquierda. También decimos que tal distribución tiene una larga cola izquierda. Las variables que muestran un final aproximadamente igual en ambas direcciones se denominan simétricas.
 
@@ -238,7 +251,8 @@ df %>%
   ggplot() +
     geom_boxplot(aes(x=P21)) +
     theme_minimal() +
-    labs(x='Ingresos laborales')
+    labs(x='Ingresos laborales',
+         title="Boxplot ingresos laborales")
 ```
 
 La línea oscura dentro del cuadro representa la _mediana_, que divide los datos por la mitad. El 50% de los datos caen por debajo de este valor y el 50% por encima. Dado que en el conjunto de datos de préstamo50 hay 50 observaciones (un número par), la mediana se define como el promedio de las dos observaciones centrales. Cuando hay un número impar de observaciones, habrá exactamente una observación que divide los datos en dos mitades y, en tal caso, esa observación es la mediana (no se necesita un promedio).
