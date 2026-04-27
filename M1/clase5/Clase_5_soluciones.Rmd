@@ -1,5 +1,6 @@
 ---
-title: "Clase 3"
+title: "Clase 5"
+subtitle: "Práctica integradora de `tidyverse`"
 output: 
   html_document:
     toc: TRUE
@@ -16,8 +17,6 @@ knitr::opts_chunk$set(echo=FALSE)
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ```
 
-### Práctica tidyverse
-
 1. Importe las liberías `tidyverse` y `eph`. 
 
 ```{r}
@@ -25,25 +24,25 @@ library(eph)
 library(tidyverse)
 ```
 
-2. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo del tercer trimestre de 2020?
+2. ¿Cuáles son las tasas de actividad, empleo y desempleo según sexo del III trimestre de 2025?
   + Tasa de actividad: PEA/población total
   + Tasa de empleo: población ocupada/población total
   + Tasa de desempleo: Población desocupada/PEA
   
 Input para las tasas de actividad y empleo
 ```{r}
-eph2020 <- get_microdata(year=2020,
+eph2025 <- get_microdata(year=2025,
                          trim=3)
-eph2020 <- eph2020 %>% organize_labels()
+eph2025 <- eph2025 %>% organize_labels()
 
-eph2020 <- eph2020 %>% mutate(across(c(CH04, ESTADO), ~as.character(.x)))
+eph2025 <- eph2025 %>% mutate(across(c(CH04, ESTADO), ~as.character(.x)))
 
-eph2020 <- eph2020 %>%
+eph2025 <- eph2025 %>%
         mutate(estado_r = if_else(
                 ESTADO == "Entrevista individual no realizada (no respuesta al cuestionario individual)" | ESTADO == "Menor de 10 anios.", "Inactivo", ESTADO)
         )
 
-table(eph2020$ESTADO, eph2020$estado_r)
+table(eph2025$ESTADO, eph2025$estado_r)
 
 eph2020 %>%
         group_by(CH04, estado_r) %>%
@@ -56,7 +55,7 @@ eph2020 %>%
 
 Tasas de desocupación
 ```{r}
-eph2020 %>%
+eph2025 %>%
         filter(estado_r != "Inactivo") %>%
         group_by(CH04, estado_r) %>%
         summarise(n=n()) %>%
@@ -67,15 +66,16 @@ eph2020 %>%
 ```
 
 
-3. ¿Cómo variaron estos niveles entre 2020 y el tercer trimestre de 2021? Plasme los resultados en una tabla comparativa. 
+3. ¿Cómo variaron estos niveles en relación al tercer trimestre de 2024? Plasme los resultados en una tabla comparativa. 
 ```{r}
 ### 
 ```
 
-4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)? Calcularla para el III trimestre de 2020
+
+4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)? Calcularla para el III trimestre de 2025
 
 ```{r}
-eph2020 %>%
+eph2025 %>%
         filter(CH06 >=18 & CH06 <=35) %>%
         group_by(CH04) %>%
         summarise(media_P21 = mean(P21, na.rm=TRUE)) %>%
@@ -86,7 +86,7 @@ eph2020 %>%
 
 
 ```{r}
-eph2020 %>%
+eph2025 %>%
         filter(CH06 >= 36 & CH06 <= 70) %>%
         group_by(CH04) %>%
         summarise(media_inglab = mean(P21)) %>%
@@ -96,7 +96,7 @@ eph2020 %>%
 ```
 
 ```{r}
-eph2020 %>%
+eph2025 %>%
         mutate(grupo_edad = case_when(
                 CH06 >= 36 & CH06 <= 70 ~ '36 a 70',
                 CH06 >= 18 & CH06 <= 35 ~ '18 a 35',
@@ -109,14 +109,14 @@ eph2020 %>%
         mutate(brecha = Mujer/Varon)
 ```
 
-5. ¿Qué región presenta los mayores niveles de desocupación? Calcularla para el III trimestre de 2021
+5. ¿Qué región presenta los mayores niveles de desocupación? Calcularla para el III trimestre de 2025
 ```{r}
-eph2020 <- eph2020 %>% mutate(REGION = as.character(REGION))
-eph2020 <- eph2020 %>%
+eph2025 <- eph2025 %>% mutate(REGION = as.character(REGION))
+eph2025 <- eph2025 %>%
         mutate(REGION = if_else(REGION == "44", "Patagonia", REGION))
 
 
-eph2020 %>%
+eph2025 %>%
         filter(estado_r == "Desocupado" | estado_r == "Ocupado") %>%
         group_by(REGION, estado_r) %>%
         summarise(n=n()) %>%
@@ -125,9 +125,9 @@ eph2020 %>%
         arrange(desc(prop))
 ```
 
-6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? Calcularla para el III trimestre de 2021
+6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? Calcularla para el III trimestre de 2025
 ```{r}
-eph2020 %>%
+eph2025 %>%
         group_by(REGION, estado_r) %>%
         summarise(n=n()) %>%
         mutate(pob_total_region=sum(n)) %>%
