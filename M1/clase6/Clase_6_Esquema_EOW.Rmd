@@ -17,9 +17,9 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, collapse=TRUE, hi
 ```
 
 # Introducción
-Hoy vamos a centrarnos en la generación de tipologías. Si bien no entraremos en detalles epistemológicos, diremos que la construcción de tipologías es una herramienta fundamental para la investigación social. Si bien tienen utilidad como herramienta puramente conceptual, aqui nos centraremos en la construcción de tipologías de carácter empírico, es decir, en estrecha relación con los datos. Pueden encontrar discusiones sumamente interesantes al respecto [aquí](https://dialnet.unirioja.es/descarga/articulo/5275947.pdf) y [aquí](https://consejopsuntref.files.wordpress.com/2017/08/cap-iii-el-concepto-de-espacio-de-propiedades.pdf).
+Hoy vamos a centrarnos en la generación de tipologías. Si bien no entraremos en detalles epistemológicos, diremos que la construcción de tipologías es una herramienta fundamental para la investigación social. Aunque tienen utilidad como herramienta puramente conceptual, aqui nos centraremos en la construcción de tipologías de carácter empírico, es decir, en estrecha relación con los datos. Pueden encontrar discusiones sumamente interesantes al respecto [aquí](https://dialnet.unirioja.es/descarga/articulo/5275947.pdf) y [aquí](https://consejopsuntref.files.wordpress.com/2017/08/cap-iii-el-concepto-de-espacio-de-propiedades.pdf).
 
-Para esto, vamos a tomar como ejemplo una operacionalización posible del concepto de "clase social": el de Erik Olin Wright, particularmente en el esquema en que idenficaba  "posiciones contradictorias de clase". Pero primero, vamos a introducir algunas herramientas en R.
+Para esto, vamos a tomar como ejemplo una operacionalización posible del concepto de "clase social": el de Erik Olin Wright, particularmente en el esquema en que idenficaba "posiciones contradictorias de clase". Pero primero, vamos a introducir algunas herramientas en R.
 
 # Combinando variables en R
 De la lectura de los textos mencionados más arriba, puede concluirse que la construcción de una tipología es básicamente una combinación de otras variables. Así, por ejemplo, la variable "condición de actividad" tal y como es utilizada en nuestro Sistema Estadístico Nacional puede ser pensado como una tipología que combina varias variables:
@@ -29,7 +29,7 @@ De la lectura de los textos mencionados más arriba, puede concluirse que la con
 | Buscó trabajo    | /////                     | Desocupado                   |
 | No buscó trabajo | Ocupado                   | Inactivo                     |
 
-De esta forma, tenemos que introducir alguna herrmienta que nos permita realizar este tipo de combinaciones. Vamos a usar una función que se llama `case_when()`. Con frecuencia, cuando manipulamos datos en R, necesitamos modificar los datos en función de varias condiciones posibles. Esto es particularmente cierto cuando estamos creando nuevas variables con la función de mutación de dplyr.
+De esta forma, tenemos que introducir alguna herrmienta que nos permita realizar este tipo de combinaciones. Vamos a usar una función que se llama `case_when()`. Con frecuencia, cuando manipulamos datos en R, necesitamos modificar los datos en función de varias condiciones posibles. Esto es particularmente cierto cuando estamos creando nuevas variables con la función `mutate()` de dplyr.
 
 Veamos el siguiente ejemplo... Hoy vamos a trabajar con la Encuesta Nacional sobre Estructura Social, llevada adelante por el PISAC. Pueden encontrar más información [aquí](https://www.argentina.gob.ar/ciencia/pisac/bases-de-datos).
 
@@ -225,7 +225,6 @@ Uno de los objetivos del ejercicio es replicar algunos análisis del texto de Er
 
 Para ello, era necesario reproducir el esquema de clases del autor de la forma más aproximada posible. Veamos, primero, la sintaxis general...
 
-
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 df <- df %>%
   mutate(class_eow = case_when(
@@ -253,7 +252,7 @@ df <- df %>%
 ```
 
 ### Empleadores
-Para la construcción de la categoría **empleadores** (ver esquena de Wright 1974 pp. 242-247) se siguieron los siguientes criterios
+Para la construcción de la categoría **empleadores** (ver esquema de Wright 1974 pp. 242-247) se siguieron los siguientes criterios
 
 ```
     (cat_ocup == 'Patrón' | cat_ocup == 'Cuenta propia' | cat_ocup == 'Trabajador familiar sin remuneración')

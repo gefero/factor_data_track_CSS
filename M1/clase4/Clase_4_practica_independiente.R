@@ -6,6 +6,8 @@ library(eph)
 
 ### 3. En base a la variable PP08D1, ¿cuánto cobra por mes la media de asalariados? ¿Y la mediana? 
 
+individuo$PP08D1
+
 ### 4. ¿Cuánto gana mensualmente el percentil 30 de los asalariados?
 ### ¿Qué puede hacer con esta variable para que los outliers no afecten la respuesta?
 
