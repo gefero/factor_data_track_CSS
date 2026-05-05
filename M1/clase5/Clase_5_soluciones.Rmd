@@ -18,7 +18,6 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE, tidy=TRUE)
 ```
 
 1. Importe las liberías `tidyverse` y `eph`. 
-
 ```{r}
 library(eph)
 library(tidyverse)
@@ -85,39 +84,39 @@ eph2025 %>%
         
 ```
 
-
-
-
 3. ¿Cómo variaron estos niveles en relación al tercer trimestre de 2024? Plasme los resultados en una tabla comparativa. 
 ```{r}
+
 
 eph2425 <- get_microdata(year=2024:2025,
                          trim=3)
 
 eph2425 <- eph2425 %>% organize_labels()
 
-eph2425 <- eph2425 %>% mutate(across(c(ANO4, CH04, ESTADO), ~as.character(.x)))
+eph2425 <- eph2425 %>% 
+        mutate(across(c(ANO4, CH04, ESTADO), ~as.character(.x)))
 
 eph2425 <- eph2425 %>%
         mutate(estado_r = if_else(
                 ESTADO == "Entrevista individual no realizada (no respuesta al cuestionario individual)" | ESTADO == "Menor de 10 anios.", "Inactivo", ESTADO)
         )
         
-        
-eph2425 %>%
+eph2425_agg <- eph2425 %>%
         mutate(oc = if_else(estado_r == "Ocupado",1,0),
                des = if_else(estado_r == "Desocupado",1,0),
                inact = if_else(estado_r == "Inactivo",1,0),
                pea = if_else(estado_r == "Ocupado" | estado_r == "Desocupado", 1,0)
         ) %>%
-        group_by(ANO4, CH04) %>%
+        group_by(ANO4) %>%
         summarise(across(c(oc:pea), ~sum(.x))) %>%
         mutate(tasa_act = 100* pea / (oc + des + inact),
                tasa_empleo = 100* oc / (oc+des+inact),
                tasa_desoc = 100* des / pea
              ) %>%
-        select(CH04, starts_with("tasa")) %>%
-        pivot_longer(tasa_act:tasa_desoc) %>%
+        select(ANO4, starts_with("tasa")) %>%
+        pivot_longer(tasa_act:tasa_desoc)
+
+eph2425_agg %>%
         ggplot() + 
                 geom_line(aes(x=ANO4, y=value, color=CH04, group=CH04)) +
                 facet_wrap(~name) +
@@ -125,17 +124,9 @@ eph2425 %>%
                 labs(x="Año",
                      y="%",
                      color="Sexo")
-
-
- 
 ```
 
-
 4. ¿Cómo es la brecha salarial en el grupo de jóvenes (18 a 35 años)? ¿Y para mayores (36 a 70 años)? Calcularla para el III trimestre de 2025
-
-
-
-
 ```{r}
 eph2025 %>%
         filter(CH06 >= 18 & CH06 <= 35) %>%
@@ -144,10 +135,7 @@ eph2025 %>%
         summarise(media_ingreso = mean(P21)) %>%
         pivot_wider(names_from=CH04,
                     values_from = media_ingreso)
-        
 ```
-
-
 
 
 
@@ -193,15 +181,11 @@ eph2025 %>%
 
 5. ¿Qué región presenta los mayores niveles de desocupación? Calcularla para el III trimestre de 2025
 
-
-
 ```{r}
 eph2025 <- eph2025 %>% mutate(REGION = as.character(REGION))
 eph2025 <- eph2025 %>%
         mutate(REGION = if_else(REGION == "44", "Patagonia", REGION))
-
-
-eph2025 %>%
+        
         filter(estado_r == "Desocupado" | estado_r == "Ocupado") %>%
         group_by(REGION, estado_r) %>%
         summarise(n=n()) %>%
@@ -213,17 +197,17 @@ eph2025 %>%
 6. ¿Cómo son los niveles de actividad y desocupación para el Gran Buenos Aires? Calcularla para el III trimestre de 2025
 ```{r}
 eph2025 %>%
-        group_by(REGION, estado_r) %>%
-        summarise(n=n()) %>%
-        mutate(pob_total_region=sum(n)) %>%
-        ungroup() %>%
-        filter(estado_r=="Desocupado" | estado_r == "Ocupado") %>%
-        mutate(pea_region = sum(n)) %>%
-        mutate(        
-                tasa_desoc = n/sum(pea_region)*100,
-                tasa_act = pea_region / pob_total_region * 100) %>%
-        select(REGION, tasa_desoc, tasa_act, n, pea_region, pob_total_region)
-        
+        mutate(oc = if_else(estado_r == "Ocupado",1,0),
+               des = if_else(estado_r == "Desocupado",1,0),
+               inact = if_else(estado_r == "Inactivo",1,0),
+               pea = if_else(estado_r == "Ocupado" | estado_r == "Desocupado", 1,0)
+        ) %>%
+        group_by(REGION) %>%
+        summarise(across(c(oc:pea), ~sum(.x))) %>%
+        mutate(tasa_act = 100* pea / (oc + des + inact),
+               tasa_desoc = 100* des / pea
+             ) %>%
+        filter(REGION == "Gran Buenos Aires")
  
 ```
 

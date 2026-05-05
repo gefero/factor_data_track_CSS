@@ -172,6 +172,47 @@ df %>% select(estado, EOW_class) %>%
 ```
 
 
+### Versión dictómica
+
+```{r}
+df<- df %>%
+        mutate(
+                emplea = if_else(
+                        cat_ocup %in% c('Patrón', 'Cuenta propia','Trabajador familiar sin remuneración') 
+                        & (v196 %in% c('Sí, siempre', 'Sólo a veces, por temporadas')),
+                        "Sí", "No"
+                        ),
+                cuenta_propia = if_else(
+                       cat_ocup %in% c('Cuenta propia', 'Trabajador familiar sin remuneración') 
+                       & (v196 == 'No contrata' | is.na(v196)), "Sí", "No"),
+                supervisa = if_else(v186 =="Sí", "Sí", "No"),
+                tamaño = if_else(v187 >= 5, "Sí", "No"),
+                empleado = if_else(cat_ocup == 'Obrero o empleado', "Sí", "No")
+                )
+
+
+table(df$emplea, df$cat_ocup)
+
+df <- df %>%
+        mutate(EOW_class_2 = case_when(
+                cuenta_propia == "No" & emplea == "Sí" & supervisa == "Sí" & tamaño == "Sí" & empleado == "No" ~ "Empleadores",
+               cuenta_propia == "Sí" ~ "Pequeña burguesía",
+               cuenta_propia == "No" & emplea == "No" & supervisa == "Sí" & tamaño == "Sí" & empleado == "Sí" ~ "Managers",
+               cuenta_propia == "No" & emplea == "No" & supervisa == "Sí" & tamaño == "No" & empleado == "Sí" ~ "Supervisores",
+               empleado == "Sí" ~ "Trabajadores",
+               estado == "Desocupado" ~ "Desocupado",
+               TRUE ~ "Menores e inactivos")
+        )
+
+
+table(df$class_eow, df$EOW_class_2)
+
+```
+
+
+
+
+
 ## Generación de años de educación (ver INDEC 2018)
 
 ```{r}

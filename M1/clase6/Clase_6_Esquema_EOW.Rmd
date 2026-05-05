@@ -241,7 +241,7 @@ df <- df %>%
     & (v187 < 5 | is.na(v187)) ~ 'Supervisores',
     
     cat_ocup == 'Obrero o empleado'
-    & df$v186 == 'No' ~ 'Trabajadores',
+    & v186 == 'No' ~ 'Trabajadores',
     
     (cat_ocup == 'Cuenta propia' | cat_ocup=='Trabajador familiar sin remuneración') 
     & (v196 == 'No contrata' | is.na(v196)) ~ 'Pequeña burguesía',
@@ -295,7 +295,7 @@ Los **trabajadores**
 
 ``` 
     cat_ocup == 'Obrero o empleado'
-    & df$v186 == 'No' ~ 'Trabajadores',
+    & v186 == 'No' ~ 'Trabajadores',
 ```
 
 están constituidos por todos los asalariados que no son ni **managers** ni **supervisores**: aquellos que no realizan tareas de supervisión ni control sobre otros -`v196`.
@@ -359,8 +359,17 @@ filter(class_eow!="Sin datos y menores") %>%
 
 ```
 
-
+Finalmente, podemos salvar el nuevo dataset mediante `write_rds()`
 ```{r}
 write_rds(df, './data/ENES_Personas_M1_EOW.rds')
+```
+
+
+## Ejercicio
+A partir de la tabla 1 (más arriba) construir nuevamente la tipología de clases 
+de Erik Olin Wright pero usando cinco variables dicotómicas.
+
+```{r}
+###
 ```
 
