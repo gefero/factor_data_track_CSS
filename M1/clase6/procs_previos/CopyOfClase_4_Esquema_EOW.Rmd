@@ -195,8 +195,8 @@ table(df$emplea, df$cat_ocup)
 
 df <- df %>%
         mutate(EOW_class_2 = case_when(
-                cuenta_propia == "No" & emplea == "Sí" & supervisa == "Sí" & tamaño == "Sí" & empleado == "No" ~ "Empleadores",
-               cuenta_propia == "Sí" ~ "Pequeña burguesía",
+                cuenta_propia == "No" & emplea == "Sí" & supervisa == "Sí" & tamaño == "Sí" & empleado == "No" ~ "Empleadores", 
+                cuenta_propia == "Sí" ~ "Pequeña burguesía",
                cuenta_propia == "No" & emplea == "No" & supervisa == "Sí" & tamaño == "Sí" & empleado == "Sí" ~ "Managers",
                cuenta_propia == "No" & emplea == "No" & supervisa == "Sí" & tamaño == "No" & empleado == "Sí" ~ "Supervisores",
                empleado == "Sí" ~ "Trabajadores",
