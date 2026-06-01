@@ -9,12 +9,26 @@ df <- read_rds('./clase7/data/ENES_Personas_M1_EOW.rds')
 ### Para ello, construir una variable que dicotomize la categoría ocupacional en asalariados 
 ## y no asalariados
 
+asalxregion <- df %>%
+        filter(estado == "Ocupado") %>%
+        mutate(cat_ocupr = if_else(
+                cat_ocup == "Obrero o empleado", "Asalariado", "No asalariado")
+               ) %>%
+        group_by(region, cat_ocupr) %>%
+        summarise(n=n()) %>%
+        mutate(porc = 100*n/sum(n)) %>%
+        filter(cat_ocupr=="Asalariado") %>%
+        select(-cat_ocupr) %>%
+        arrange(desc(porc))
+        
 
 ## 3. Caracterizar la clase social según el esquema de EOW según las siguientes variables. 
 ### (en todos los casos, generar una tabla y un gráfico)
 # a. Sexo
 
 # b. Nivel educativo (recodificarlo a tres clases)
+
+
 
 # c. Monto de ingreso individual (ITI)
 

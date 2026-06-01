@@ -34,20 +34,22 @@ df %>%
                 theme_minimal()
 
 # b. Nivel educativo (recodificarlo a tres clases)
-df %>%
+nedxeow<- df %>%
         mutate(nivel_ed_agg = case_when(
                 nivel_ed == 'Menores de 5 años' | nivel_ed == 'Sin instrucción (incluye nunca asistió o sólo asistió a sala de 5)' |
                         nivel_ed == 'Primaria/EGB incompleto' | nivel_ed == 'Primaria/EGB completo' ~ 'Bajo',
                 nivel_ed == 'Secundario/Polimodal incompleto' | nivel_ed == 'Secundario/Polimodal completo' ~ 'Medio',
                 TRUE ~ 'Alto')) %>%
         filter(estado=='Ocupado') %>%
-        group_by(nivel_ed_agg, class_eow) %>%
+        group_by(class_eow, nivel_ed_agg) %>%
         summarise(n=n()) %>%
-        mutate(perc = round(100*n/sum(n),2)) %>%
-        ggplot(aes(x=nivel_ed_agg, y=perc, fill=class_eow)) + 
-        geom_col() +
-        geom_text(aes(label=perc), position = position_stack(vjust = 0.5)) +
-        theme_minimal()
+        mutate(perc = round(100*n/sum(n),2))
+
+nedxeow %>%
+        ggplot(aes(x=class_eow, y=perc, fill=nivel_ed_agg)) + 
+                geom_col() +
+                geom_text(aes(label=perc), position = position_stack(vjust = 0.5)) +
+                theme_minimal()
 
 # c. Monto de ingreso individual (ITI)
 df %>%
@@ -61,6 +63,14 @@ df %>%
                   mediana = median(ITI),
                   q3 = quantile(ITI, probs=0.75),
                   ) 
+
+df %>%
+        filter(estado=='Ocupado') %>%
+        drop_na(ITI) %>%
+        ggplot() + 
+                geom_boxplot(aes(x=ITI, y=class_eow)) + 
+                theme_minimal()
+        
 
 # 4. Genere una nueva variable que contenga una tipología que permita 
 ## clasificar a cada categoría ocupacional según los diferentes niveles de calificación.
@@ -76,7 +86,7 @@ df %>%
 ### Primero creamos la variable calificación
 
 df <- df %>%
-        mutate(calif = str_sub(df$v183cno_cod, start = 5, end=5)) %>%
+        mutate(calif = str_sub(v183cno_cod, start = 5, end=5)) %>%
         mutate(calif = case_when(
                 calif == 1 ~ 'Profesional',
                 calif == 2 ~ 'Técnico',
@@ -107,5 +117,11 @@ df <- df %>%
                 cat_ocup == 'Obrero o empleado' & calif == 'Profesional' ~ 'Asalariado prof.',
                 cat_ocup == 'Obrero o empleado' & calif == 'Técnico' ~ 'Asalariado tecn',
                 cat_ocup == 'Obrero o empleado' & calif == 'Operativo' ~ 'Asalariado baja calif',
-                cat_ocup == 'Obrero o empleado' & calif == 'No calificado' ~ 'Asalariado baja calif'
+                cat_ocup == 'Obrero o empleado' & calif == 'No calificado' ~ 'Asalariado baja calif',
+                
+                TRUE ~ "Sin dato o N/C"
         ))
+
+df %>%
+        group_by(cat_calif) %>%
+        summarise(n=n()) 

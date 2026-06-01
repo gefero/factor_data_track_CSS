@@ -1,7 +1,7 @@
 library(googlesheets4)
 library(tidyverse)
-datos <- read_sheet("https://docs.google.com/spreadsheets/d/1qbe64Q5w2K1qxyv39sYCA3DNLddz-MaijC8OQOFErO4/edit?resourcekey#gid=1177396456")
-
+#datos <- read_sheet("https://docs.google.com/spreadsheets/d/1qbe64Q5w2K1qxyv39sYCA3DNLddz-MaijC8OQOFErO4/edit?resourcekey#gid=1177396456")
+datos <- read_sheet("https://docs.google.com/spreadsheets/d/1rhrm8Tb9V3EWAmoRbzATKBmbo6cmqwaohZrt0a-WKLg/edit?gid=175850295#gid=175850295")
 datos <- datos %>%
         rename(timestap = `Marca temporal`,
                mail = `Dirección de correo electrónico`,
@@ -19,12 +19,12 @@ datos <- datos %>%
 
 
 # Parámetros
-paramtros <- datos %>%
+parametros <- datos %>%
         summarise(
-                size = n,
+#                size = n,
                 media_edad = mean(edad),
-                prop_trabaja = mean(trabaja),
-                media_horas = mean(horas_trabajo),
+                prop_trabaja = mean(trabajo),
+                media_horas = mean(horas_trabajo, na.rm=TRUE),
                 media_materias = mean(materias)
         )
 
@@ -37,8 +37,8 @@ estimaciones <- datos %>%
         summarise( # Estas líneas calculan los estadísticos
                 size = n,
                 media_edad = mean(edad),
-                prop_trabaja = mean(trabaja),
-                media_horas = mean(horas_trabajo),
+                prop_trabaja = mean(trabajo),
+                media_horas = mean(horas_trabajo, na.rm=TRUE),
                 media_materias = mean(materias)
                 )
 
@@ -46,15 +46,15 @@ estimaciones
 
 # Ahora repitámoslo muchas veces...
 muestras <- list()
-for (r in 1:100){
+for (r in 1:1000){
         estimaciones <- datos %>%
                 sample_n(size=n) %>%
                 summarise(
                         sample = r,
                         size = n,
                         media_edad = mean(edad),
-                        prop_trabaja = mean(trabaja),
-                        media_horas = mean(horas_trabajo),
+                        prop_trabaja = mean(trabajo),
+                        media_horas = mean(horas_trabajo, na.rm=TRUE),
                         media_materias = mean(materias)
                 )
         
@@ -64,17 +64,17 @@ for (r in 1:100){
 muestras <- do.call(rbind, muestras )
 
 muestras %>%
-        ggplot(aes(x=media_horas)) +
+        ggplot(aes(x=media_materias)) +
                 geom_histogram() +
                 theme_minimal()
 
 
 # Ahora repitámoslo muchas veces y con diferentes tamaños de muestra
 it <- 0
-ns <- 2:9
+ns <- 2:15
 muestras <- list()
 for (n_ in ns){
-        for (r in 1:100){
+        for (r in 1:1000){
                 it <- it + 1
                 estimaciones <- datos %>%
                         sample_n(size=n_) %>%
@@ -82,8 +82,8 @@ for (n_ in ns){
                                 sample = r,
                                 size = n_,
                                 media_edad = mean(edad),
-                                prop_trabaja = mean(trabaja),
-                                media_horas = mean(horas_trabajo),
+                                prop_trabaja = mean(trabajo),
+                                media_horas = mean(horas_trabajo, na.rm=TRUE),
                                 media_materias = mean(materias)
                         )
                                 
@@ -94,7 +94,7 @@ for (n_ in ns){
 muestras <- do.call(rbind, muestras )
 
 muestras %>%
-        ggplot(aes(x=media_edad)) +
+        ggplot(aes(x=media_materias)) +
         geom_histogram() +
         theme_minimal() +
         facet_wrap(~size)

@@ -374,8 +374,7 @@ df %>%
 En el esquema conceptual "clásico" deberíamos plantear primero una hipótesis nula
 
 $$H_{0} = P_{h,pb} - P_{m,pb} = 0 \\
-H_{A} = P_{h,pb} - P_{m,pb} \neq 0
-$$
+H_{A} = P_{h,pb} - P_{m,pb} \neq 0 $$
 
 Pero podemos usando bootstrap dar una vuelta de rosca a las pruebas de hipótesis clásicas y pensar en construir un intervalo de confianza para la diferencia entre la proporción de hombres pertenecientes a la pequeña burguesía $\hat p_{h,t}$ y mujeres pertenecientes a la pequeña burguesía $\hat p_{pb,t}$. 
 
