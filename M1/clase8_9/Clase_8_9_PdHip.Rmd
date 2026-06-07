@@ -258,6 +258,7 @@ for (i in 1:reps){
         mutate(n_sample = n()) %>%
         sample_n(
               n_sample[1],
+              weight = f_calib3, 
               replace = TRUE
               )  %>%
         ungroup()

@@ -31,7 +31,7 @@ Constaba de los siguientes elementos:
 
 Estos elemenos nos van a dar toda la información necesaria para poder cuantificar y evaluar la existencia (o no) de asociación entre dos variables.
 
-# Asociación entre vos variables cualitativas
+# Asociación entre dos variables cualitativas
 En general, cuando nos preguntamos si dos variables están asociadas podemos definir cuatro grandes preguntas que se desprenden de esta:
 
 1. ¿Existe asociación entre ambas?
