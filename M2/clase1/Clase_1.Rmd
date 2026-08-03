@@ -29,14 +29,14 @@ Este texto se basa en los siguientes materiales:
 ***
 
 ## Introducción
-La regresión lineal es una técnica estadística muy poderosa. Muches estamos algo familiarizades con los modelos de regresión solo por leer las noticias. Hemos visto alguna vez un gráfico de dispersión. Los modelos lineales se pueden utilizar para varias tareas. Probablemente, las dos más importantes sean
+La regresión lineal es una técnica estadística muy poderosa. Muches tenemos algún grado de familiaridad con los modelos de regresión solo por leer las noticias. Hemos visto alguna vez un gráfico de dispersión. Los modelos lineales se pueden utilizar para varias tareas. Probablemente, las dos más importantes sean
 
 - evaluar si existe una relación lineal entre una variable numérica en el eje horizontal y el promedio de la variable numérica en el eje vertical
 - hacer predicciones (seguramente vamos a discutir bastante alrededor de este término) de la variable dependiente
 
 
 ## De ajustes, residuos y correlacion
-Al considerar la regresión lineal, es útil pensar en el proceso de ajuste de línea. ¿Qué signifca "ajustar" una recta a una nube de puntos? Vamos a definir la forma de un modelo lineal. Luego, vamos a tratar de explorar los criterios para definir que un ajuste es "bueno". Y vamos a introducir una nueva métrica llamda "correlación lineal".
+Al considerar la regresión lineal, es útil pensar en el proceso de ajuste de una línea. ¿Qué signifca "ajustar" una recta a una nube de puntos? Vamos a definir la forma de un modelo lineal. Luego, vamos a tratar de explorar los criterios para definir que un ajuste es "bueno". Y vamos a introducir una nueva métrica llamda "correlación lineal".
 
 ### Ajustando una línea a los datos
 El gráfico siguiente muestra dos variables. Podemos modelar esa relación entre ambas de forma **perfecta** con una línea recta. La ecuación de esa recta es
@@ -54,10 +54,12 @@ data %>%
 ggplot(aes(x,y)) +
         geom_line(color="black") + 
         geom_point(color="blue") +
+        xlim(0, 15) + 
+        ylim(0,800) +
         theme_minimal()
 ```
 
-¿Qué quiere decir esa idea de **relación perfecta**? Básicamente que podemos predecir **sin error** el valor de $y$ conociendo el valor de $X$. Obviamente, esto es un ejemplo de juguete y estas relaciones perfectas no existen práctiamente en ninguna situación de la vida real. Por ejemplo, si tomamos el ingreso familiar de una persona ($X$) este valor seguramente proporcione una buena cantidad de información útil sobre el monto que un banco le ofrecerá a esta persona si quisiera acceder a cierto tipo de instrumentos crediticios. Sin embargo, si quisiéramos hacer una predicción del monto prestado en base $X$ esa predicción no va a ser perfecta. 
+¿Qué quiere decir esa idea de **relación perfecta**? Básicamente que podemos predecir **sin error** el valor de $y$ conociendo el valor de $X$. Obviamente, esto es un ejemplo de juguete y estas relaciones perfectas no existen práctiamente en ninguna situación de la vida real. Por ejemplo, si tomamos el ingreso familiar de una persona ($X$) este valor seguramente proporcione una buena cantidad de información útil sobre el monto que un banco le ofrecerá a esta persona si quisiera acceder a cierto tipo de instrumentos crediticios. O, también, conociendo el ingreso de una persona ($X$) segurment podriamos tener información considerable sobre sus niveles de consumo. Sin embargo, si quisiéramos hacer una predicción del monto prestado en base $X$ esa predicción no va a ser perfecta. 
 
 ---
 
@@ -65,7 +67,7 @@ ggplot(aes(x,y)) +
 
 ---
 
-La regresión lineal es un método estadístico que se usa para ajustar una línea a los datos donde la relación entre dos variables, $X$ e $y$ puede ser modelada como si fuera una línea recta tolerando algún grado de error.
+La regresión lineal es un método estadístico que se usa para ajustar una línea a los datos donde la relación entre dos variables, $X$ e $y$ puede ser modelada **como si fuera** una línea recta tolerando algún grado de error.
 
 $$ y = \beta{0} + \beta{1}X + \epsilon$$
 - $\beta{0}$ representa el intercepto o la ordenada al origen. ¿Cómo podemos interpretar este valor? Como el valor que asume $y$ cuando $X = 0$.
@@ -77,6 +79,7 @@ $$ y = \beta{0} + \beta{1}X + \epsilon$$
 En general, estos valores se calculan en base a los datos. Si los datos observados son una muestra aleatoria de una población objetivo sobre la que estamos interesados en hacer inferencias, estos valores se consideran estimaciones puntuales para los parámetros de la población. Más adelante vamos a trabajar sobre cómo hacer inferencias sobre los parámetros de un modelo lineal.
 
 Cuando usamos $X$ para predecir $y$, solemos llamarla variable predictora y a $y$ variable dependiente, output o variable resultado. 
+
 Es raro que todos los datos caigan perfectamente en una línea recta. En cambio, es más común que los datos aparezcan como una nube de puntos, como los ejemplos que se muestran en el gráfico siguiente.
 
 ![](./img/imperfLinearModel-1.png)
@@ -98,7 +101,6 @@ También hay casos en los que ajustar una línea recta a los datos, incluso si e
 Se vé una relación perfecta entre las variables, aunque la misma no es lineal. ¿Qué tipo de relación se les ocurre que podría funcionar aquí? Por ahora vamos a centrarnos en los modelos lineales.
 
 ## Usando regresión lineal para predecir el peso de una población
-
 Vamos a trabajar con un dataset que proviene del [siguiente repositorio](https://github.com/rmcelreath/rethinking). Son datos censales parciales de un área de Botswana y, específicamente, de la etnia !Kung San. Son datos compilados a partir de e entrevistas realizadas por Nancy Howell a fines de la década de 1960. Los datasets completos (para les antropólogues que les interese) pueden ser recuperados desde [acá](https://tspace.library.utoronto.ca/handle/1807/10395).
 
 Vamos a trabajar con un recorte de estos datos, particularmente, con datos de edad, sexo, altura y peso.
@@ -294,7 +296,6 @@ El último gráfico muestra muy poca tendencia al alza y los residuos tampoco mu
 
 
 ## Describiendo relaciones lineales con correlaciones
-
 Hemos visto gráficos con relaciones lineales fuertes y otras con relaciones lineales muy débiles. Sería útil si pudiéramos cuantificar la fuerza de estas relaciones lineales con alguna métrica o estadístico.
 
 ### Correlación: fuerza de una relación lineal.
@@ -335,7 +336,6 @@ En el gráfico A, el peso se mide en kilogramos (kg) y la altura en centímetros
 
 
 ## Implementando una regresión lineal simple
-
 Hasta aquí la aproximación conceputal a una regresión lineal simple. Vamos a ver ahora el código para implementarla en R. La función que vamos a usar se llama `lm()` por linear models. Pueden consultar la ayuda de la función para más detalles pero aquí por ahora vamos a continuar con nuestro ejemplo de pesos y alturas. 
 
 Vamos a usar `height` como variable predictora ($X$) y `weight` como variable dependiente ($y$). La sintaxis básica de `lm()` es la siguiente: `lm(y~x, data)`, donde `x` es la variable independiente e `y` la dependiente y `data` la tibble o dataframe con datos.
