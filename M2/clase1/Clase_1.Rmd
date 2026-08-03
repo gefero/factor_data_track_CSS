@@ -29,14 +29,14 @@ Este texto se basa en los siguientes materiales:
 ***
 
 ## Introducción
-La regresión lineal es una técnica estadística muy poderosa. Muches tenemos algún grado de familiaridad con los modelos de regresión solo por leer las noticias. Hemos visto alguna vez un gráfico de dispersión. Los modelos lineales se pueden utilizar para varias tareas. Probablemente, las dos más importantes sean
+La regresión lineal es una técnica estadística muy poderosa. Muches tenemos algún grado de familiaridad con los modelos de regresión solo por leer las noticias y hemos visto alguna vez un gráfico de dispersión. Los modelos lineales se pueden utilizar para varias tareas. Probablemente, las dos más importantes sean
 
 - evaluar si existe una relación lineal entre una variable numérica en el eje horizontal y el promedio de la variable numérica en el eje vertical
 - hacer predicciones (seguramente vamos a discutir bastante alrededor de este término) de la variable dependiente
 
 
-## De ajustes, residuos y correlacion
-Al considerar la regresión lineal, es útil pensar en el proceso de ajuste de una línea. ¿Qué signifca "ajustar" una recta a una nube de puntos? Vamos a definir la forma de un modelo lineal. Luego, vamos a tratar de explorar los criterios para definir que un ajuste es "bueno". Y vamos a introducir una nueva métrica llamda "correlación lineal".
+## De ajustes, residuos y correlación
+Al considerar la regresión lineal, es útil pensar en el proceso de ajuste de una línea. ¿Qué significa "ajustar" una recta a una nube de puntos? Vamos a definir la forma de un modelo lineal. Luego, vamos a tratar de explorar los criterios para definir que un ajuste es "bueno". Y vamos a introducir una nueva métrica llamada "correlación lineal".
 
 ### Ajustando una línea a los datos
 El gráfico siguiente muestra dos variables. Podemos modelar esa relación entre ambas de forma **perfecta** con una línea recta. La ecuación de esa recta es
@@ -59,7 +59,7 @@ ggplot(aes(x,y)) +
         theme_minimal()
 ```
 
-¿Qué quiere decir esa idea de **relación perfecta**? Básicamente que podemos predecir **sin error** el valor de $y$ conociendo el valor de $X$. Obviamente, esto es un ejemplo de juguete y estas relaciones perfectas no existen práctiamente en ninguna situación de la vida real. Por ejemplo, si tomamos el ingreso familiar de una persona ($X$) este valor seguramente proporcione una buena cantidad de información útil sobre el monto que un banco le ofrecerá a esta persona si quisiera acceder a cierto tipo de instrumentos crediticios. O, también, conociendo el ingreso de una persona ($X$) segurment podriamos tener información considerable sobre sus niveles de consumo. Sin embargo, si quisiéramos hacer una predicción del monto prestado en base $X$ esa predicción no va a ser perfecta. 
+¿Qué quiere decir esa idea de **relación perfecta**? Básicamente que podemos predecir **sin error** el valor de $y$ conociendo el valor de $X$. Obviamente, esto es un ejemplo de juguete y estas relaciones perfectas no existen prácticamente en ninguna situación de la vida real. Por ejemplo, si tomamos el ingreso familiar de una persona ($X$) este valor seguramente proporcione una buena cantidad de información útil sobre el monto que un banco le ofrecerá a esta persona si quisiera acceder a cierto tipo de instrumentos crediticios. O, también, conociendo el ingreso de una persona ($X$) seguramente podríamos tener información considerable sobre sus niveles de consumo. Sin embargo, si quisiéramos hacer una predicción del monto prestado en base $X$ esa predicción no va a ser perfecta. 
 
 ---
 
@@ -67,18 +67,18 @@ ggplot(aes(x,y)) +
 
 ---
 
-La regresión lineal es un método estadístico que se usa para ajustar una línea a los datos donde la relación entre dos variables, $X$ e $y$ puede ser modelada **como si fuera** una línea recta tolerando algún grado de error.
+La regresión lineal es un método estadístico que se usa para ajustar una línea a los datos donde la relación entre dos variables ( $X$ e $y$ ) puede ser modelada **como si fuera** una línea recta tolerando algún grado de error.
 
 $$ y = \beta{0} + \beta{1}X + \epsilon$$
 - $\beta{0}$ representa el intercepto o la ordenada al origen. ¿Cómo podemos interpretar este valor? Como el valor que asume $y$ cuando $X = 0$.
 
 - $\beta_{1}$ es la pendiente de la recta, es decir, cuánto aumenta $y$ cuando $X$ aumenta una unidad
 
-- $\epsilon$ representa el error está representado por
+- $\epsilon$ representa el error, la variación de $y$ no explicada por el modelo
 
 En general, estos valores se calculan en base a los datos. Si los datos observados son una muestra aleatoria de una población objetivo sobre la que estamos interesados en hacer inferencias, estos valores se consideran estimaciones puntuales para los parámetros de la población. Más adelante vamos a trabajar sobre cómo hacer inferencias sobre los parámetros de un modelo lineal.
 
-Cuando usamos $X$ para predecir $y$, solemos llamarla variable predictora y a $y$ variable dependiente, output o variable resultado. 
+Cuando usamos $X$ para predecir $y$, solemos llamar a $X$ la variable predictora y a $y$ variable dependiente, output o variable resultado. 
 
 Es raro que todos los datos caigan perfectamente en una línea recta. En cambio, es más común que los datos aparezcan como una nube de puntos, como los ejemplos que se muestran en el gráfico siguiente.
 
@@ -98,7 +98,7 @@ También hay casos en los que ajustar una línea recta a los datos, incluso si e
 ![](./img/notGoodAtAllForALinearModel-1.png)
 
 
-Se vé una relación perfecta entre las variables, aunque la misma no es lineal. ¿Qué tipo de relación se les ocurre que podría funcionar aquí? Por ahora vamos a centrarnos en los modelos lineales.
+Se observa una relación perfecta entre las variables, aunque la misma no es lineal. ¿Qué tipo de relación se les ocurre que podría funcionar aquí? Por ahora vamos a centrarnos en los modelos lineales.
 
 ## Usando regresión lineal para predecir el peso de una población
 Vamos a trabajar con un dataset que proviene del [siguiente repositorio](https://github.com/rmcelreath/rethinking). Son datos censales parciales de un área de Botswana y, específicamente, de la etnia !Kung San. Son datos compilados a partir de e entrevistas realizadas por Nancy Howell a fines de la década de 1960. Los datasets completos (para les antropólogues que les interese) pueden ser recuperados desde [acá](https://tspace.library.utoronto.ca/handle/1807/10395).
@@ -144,7 +144,7 @@ df %>%
                 theme_minimal()
 ```
 
-Acá vemos que, si bien la relación entre ambas no es perfectamente lineal, la información sobre el peso de una persona ayuda a predecir la altura de la misma. Queremos, entonces, de alguna forma explicar el peso utilizando la altura. Para eso, vamos a realizar una regresión lineal.
+Acá vemos que, si bien la relación entre ambas no es perfectamente lineal, la información sobre la altura de una persona ayuda a predecir el peso de la misma. Queremos, entonces, de alguna forma explicar el peso utilizando la altura. Para eso, vamos a realizar una regresión lineal.
 
 ```{r}
 df_mayores <- df %>%
@@ -171,7 +171,7 @@ lm_1 <- lm(weight~height, data=df_mayores)
 
 $$\hat{wei} = -52.32 + 0.63 \times height = -52.3162 + 0.6294 \times 180 = 60.98$$
 
-La estimación puede verse como un **promedio**: la ecuación predice que las personas con una altutra total de 180 cm tendrán un peso de unos 61 kilogramos. A falta de más información sobre una persona de 180 cm, la predicción del peso en función de la **altura promedio** parece razonable.
+La estimación puede verse como un **promedio**: la ecuación predice que las personas con una altura total de 180 cm tendrán un peso de unos 61 kilogramos. A falta de más información sobre una persona de 180 cm, la predicción del peso en función de la **altura promedio** parece razonable.
 
 Puede haber otras variables que podrían ayudarnos a predecir el peso de una persona de la etnia !Kung San. Tal vez la relación sea diferente entre hombres y no hombres; o quizás sea diferente para diferentes áreas geográficas. El gráfico siguiente muestra la relación entre la altura y el peso de las personas !Kung San separando por la variable `male`.  
 
@@ -300,7 +300,7 @@ Hemos visto gráficos con relaciones lineales fuertes y otras con relaciones lin
 
 ### Correlación: fuerza de una relación lineal.
 
-El coefiiente de correlación lineal (R de Pearson) siempre toma valores entre -1 y 1 y describe la fuerza y dirección de la relación lineal entre dos variables. Denotamos la correlación por $r$.
+El coeficiente de correlación lineal (R de Pearson) siempre toma valores entre -1 y 1 y describe la fuerza y dirección de la relación lineal entre dos variables. Denotamos la correlación por $r$.
 
 El valor $r$ no tiene unidades y no se verá afectado por un cambio lineal en las unidades (por ejemplo, pasar de pulgadas a centímetros).
 
@@ -314,7 +314,7 @@ La fórmula del R de Pearson es es bastante compleja, como podrán ver. Al igual
 ![](./img/posNegCorPlots-1.png)
 
 
-La anterior muestra ocho parcelas y sus correlaciones correspondientes. Solo cuando la relación es perfectamente lineal, la correlación es -1 o 1. Si la relación es fuerte y positiva, la correlación será cercana a +1. Si es fuerte y negativo, estará cerca de -1. Si no existe una relación lineal aparente entre las variables, entonces la correlación será cercana a cero.
+La imagen anterior muestra ocho plots y sus correlaciones correspondientes. Solo cuando la relación es perfectamente lineal, la correlación es -1 o 1. Si la relación es fuerte y positiva, la correlación será cercana a +1. Si es fuerte y negativo, estará cerca de -1. Si no existe una relación lineal aparente entre las variables, entonces la correlación será cercana a cero.
 
 ![](./img/corForNonLinearPlots-1.png)
 
@@ -336,9 +336,9 @@ En el gráfico A, el peso se mide en kilogramos (kg) y la altura en centímetros
 
 
 ## Implementando una regresión lineal simple
-Hasta aquí la aproximación conceputal a una regresión lineal simple. Vamos a ver ahora el código para implementarla en R. La función que vamos a usar se llama `lm()` por linear models. Pueden consultar la ayuda de la función para más detalles pero aquí por ahora vamos a continuar con nuestro ejemplo de pesos y alturas. 
+Hasta aquí la aproximación conceptual a una regresión lineal simple. Vamos a ver ahora el código para implementarla en R. La función que vamos a usar se llama `lm()` por linear models. Pueden consultar la ayuda de la función para más detalles pero aquí por ahora vamos a continuar con nuestro ejemplo de pesos y alturas. 
 
-Vamos a usar `height` como variable predictora ($X$) y `weight` como variable dependiente ($y$). La sintaxis básica de `lm()` es la siguiente: `lm(y~x, data)`, donde `x` es la variable independiente e `y` la dependiente y `data` la tibble o dataframe con datos.
+Vamos a usar `height`(altura) como variable predictora ($X$) y `weight` (peso) como variable dependiente ($y$). La sintaxis básica de `lm()` es la siguiente: `lm(y~x, data)`, donde `x` es la variable independiente e `y` la dependiente y `data` la tibble o dataframe con datos.
 
 En nuestro caso, vamos a guardar los resultados en un objeto llamado `lm_1`.
  
@@ -352,7 +352,7 @@ Podemos ver que `lm_1` es una lista. Por ahora, pidamos un resumen del objeto:
 summary(lm_1)
 ```
 
-También acá hay bastante información por ahora centremos la mirada en la columna de `Estimate`. Puede verse que los valores son los mismos que mencionamos al inicio de la clase. `Intecept` se corresponde con $\beta_{0} = 52.31$ y `height`, con $\beta_{1} = 0.63$. 
+Hay bastante información extra, por ahora vamos a centrar la mirada en la columna de `Estimate`. Puede verse que los valores son los mismos que mencionamos al inicio de la clase. `Intecept` se corresponde con $\beta_{0} = 52.31$ y `height`, con $\beta_{1} = 0.63$. 
 
 Podemos usar la función `names()` para averiguar qué otra información se almacenan en  `lm_1`. 
 
@@ -361,7 +361,7 @@ Podemos usar la función `names()` para averiguar qué otra información se alma
 names(lm_1)
 ```
 
-Vemos que están los coeficientes de modelo, los residuos, etc... Contiene mucha información que vamos a ir trabajando a lo largo de las clases. Aunque podemos extraer estas objetos por su nombre `lm_1$coficients`es más seguro usar el extractor funciones como `coef()` para acceder a ellas.
+Vemos que están los coeficientes de modelo, los residuos, etc... Contiene mucha información que vamos a ir trabajando a lo largo de las clases. Aunque podemos extraer estas objetos por su nombre `lm_1$coefficients`, es más seguro usar funciones específicas de extracción como `coef()` para acceder a ellas.
 
 ```{r}
 coef(lm_1)
