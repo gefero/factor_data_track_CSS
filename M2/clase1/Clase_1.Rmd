@@ -67,10 +67,10 @@ ggplot(aes(x,y)) +
 
 ---
 
-La regresión lineal es un método estadístico que se usa para ajustar una línea a los datos donde la relación entre dos variables ( $X$ e $y$ ) puede ser modelada **como si fuera** una línea recta tolerando algún grado de error.
+La regresión lineal es un método estadístico que se usa para ajustar una línea a los datos donde la relación entre dos variables ($X$ e $y$) puede ser modelada **como si fuera** una línea recta tolerando algún grado de error.
 
-$$ y = \beta{0} + \beta{1}X + \epsilon$$
-- $\beta{0}$ representa el intercepto o la ordenada al origen. ¿Cómo podemos interpretar este valor? Como el valor que asume $y$ cuando $X = 0$.
+$$ y = \beta_{0} + \beta_{1}X + \epsilon$$
+- $\beta_{0}$ representa el intercepto o la ordenada al origen. ¿Cómo podemos interpretar este valor? Como el valor que asume $y$ cuando $X = 0$.
 
 - $\beta_{1}$ es la pendiente de la recta, es decir, cuánto aumenta $y$ cuando $X$ aumenta una unidad
 
@@ -219,7 +219,7 @@ df_mayores$resid <- residuals(lm_1)
 df_mayores %>%
   ggplot(aes(x=height, y=weight)) + 
                 geom_smooth(method = "lm", se = FALSE, color = "lightgrey") +
-                geom_segment(aes(xend = height, yend = predicted), alpha = .2) +  # alpha to fade lines
+                geom_segment(aes(xend = height, yend = predicted), alpha = .2) + 
                 geom_point(aes(color = (resid))) +
                 scale_color_viridis_c() +
                 theme_minimal()
@@ -282,9 +282,9 @@ df_mayores <- df_mayores %>%
         select(-resid, -predicted)
 ```
 
-A menudo los mostramos en un diagrama de dispersión como el anterior. Los residuos en el eje y se grafican con el valor predicho por el modelo en el eje horizontal. Crear un residual es algo así como volcar el gráfico de dispersión para que la línea de regresión sea horizontal, como lo indica la línea discontinua. ¿Cuál sería el valor de máximo residuo?
+A menudo los mostramos en un diagrama de dispersión como el anterior. Los residuos en el eje y se grafican con el valor predicho por el modelo en el eje horizontal. Crear un "residual plot" es algo así como volcar el gráfico de dispersión para que la línea de regresión sea horizontal, como lo indica la línea discontinua. ¿Cuál sería el valor de máximo residuo?
 
-Uno de los propósitos de las residual plots identificar características o patrones que aún aparecen en los datos después de ajustar un modelo. La siguiente muestra tres diagramas de dispersión con modelos lineales en la primera fila y diagramas residuales en la segunda fila. ¿Pueden identificar algún patrón que quede en los residuos?
+Uno de los propósitos de los "residual plots" es identificar características o patrones que aún aparecen en los datos después de ajustar un modelo. La siguiente muestra tres diagramas de dispersión con modelos lineales en la primera fila y diagramas residuales en la segunda fila. ¿Pueden identificar algún patrón que quede en los residuos?
 
 ![](./img/sampleLinesAndResPlots-1.png)
 
