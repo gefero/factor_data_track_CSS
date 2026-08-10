@@ -1480,9 +1480,9 @@ border-radius: 0px;
 
 <h1 class="title toc-ignore">Introducción a la regresión lineal simple
 (II)</h1>
-<h3 class="subtitle">Ejericio integrador</h3>
+<h3 class="subtitle">Ejercicio integrador</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">03 agosto, 2026</h4>
+<h4 class="date">09 agosto, 2026</h4>
 
 </div>
 
@@ -1494,24 +1494,24 @@ construida por el Banco Mundial acerca de la distribución de la
 población ocupada según grandes sectores de actividad y categoría
 ocupacional:</p>
 <ul>
-<li><code>SL.AGR.EMPL.ZS</code>: % total el empleo en agricultura:
-consistente en las actividades de agricultura, silvicultura, caza y
-pesca<br />
+<li><code>SL.AGR.EMPL.ZS.2019</code>: % total de empleo en agricultura:
+actividades de agricultura, silvicultura, caza y pesca<br />
 </li>
-<li><code>SL.IND.EMPL.ZS</code>: % total de empleo en industria: en
+<li><code>SL.IND.EMPL.ZS.2019</code>: % total de empleo en industria:
 actividades de minas y canteras, manufacturas, construcción y energía,
 gas y agua.</li>
-<li><code>SL.SERV.EMPL.ZS</code> % total de empleo el servicios
+<li><code>SL.SERV.EMPL.ZS.2019</code>: % total de empleo en servicios:
 comprende comercio al por mayor y menor y restaurantes y hoteles,
 transporte, almacenamiento y comunicaciones, finanzas, seguros,
 servicios inmobiliarios y a las empresas y servicios personales,
 sociales y comunales.</li>
-<li><code>SL.FAM.WORK.ZS</code>: % total de trabajadores familiares</li>
-<li><code>SL.EMP.MPYR.ZS</code>: % total de empleadores<br />
+<li><code>SL.FAM.WORK.ZS.2019</code>: % total de trabajadores
+familiares</li>
+<li><code>SL.EMP.MPYR.ZS.2019</code>: % total de empleadores<br />
 </li>
-<li><code>SL.EMP.SELF.ZS</code>: % total de independientes (cuenta
-propias)</li>
-<li><code>SL.EMP.WORK.ZS</code>: % total de trabajadores
+<li><code>SL.EMP.SELF.ZS.2019</code>: % total de independientes (cuenta
+propia)</li>
+<li><code>SL.EMP.WORK.ZS.2019</code>: % total de trabajadores
 asalariados</li>
 </ul>
 </div>
@@ -1536,20 +1536,22 @@ en la separación del trabajo industrial y comercial con respecto al
 trabajo agrícola y, con ello, en la separación de la ciudad y el campo y
 en la contradicción de los intereses entre una y otro. Su desarrollo
 ulterior conduce a la separación del trabajo comercial del industrial.
-(…) Las diferentes fases de desarrollo de la división del trahajo son
+(…) Las diferentes fases de desarrollo de la división del trabajo son
 otras tantas formas distintas de la propiedad; o, dicho en otros
 términos, cada etapa de la división del trabajo determina también las
 relaciones de los individuos entre sí, en lo tocante al material, el
 instrumento y el producto del trabajo…</p>
 </blockquote>
-<p>Entonces, existe una relación entre el desarrollo capitalista y la
-división del trabajo. Podemos intentar una primera medición de esta
-relación a partir de la información del dataset. Para ello, vamos a
-analziar la relación entre la proporción de población ocupada en la rama
-agro (<code>SL.AGR.EMPL.ZS</code>) y la proporción de asalariados
-(<code>SL.EMP.WORK.ZS</code>).</p>
-<p><strong>Importante:</strong> notar el formato de la tabla y pensar
-cómo debería formatearla para poder trabajarla de forma correcta.</p>
+<p>A partir de “La ideología alemana”, podemos plantear como hipótesis
+que existe una relación entre el desarrollo capitalista y la división
+del trabajo. Podemos intentar una primera medición de esta relación a
+partir de la información del dataset. Para ello, vamos a analizar la
+relación entre la proporción de población ocupada en la rama agro
+(<code>SL.AGR.EMPL.ZS.2019</code>) y la proporción de asalariados
+(<code>SL.EMP.WORK.ZS.2019</code>).</p>
+<p><strong>Importante:</strong> Observar el formato de la tabla e
+indicar qué transformación sería necesaria para poder trabajarla de
+forma correcta.</p>
 <pre class="r"><code>&gt; ###</code></pre>
 </div>
 <div id="existe-una-correlación-entre-ambas-variables-cómo-lo-podrían-evaluar-describa-la-relación" class="section level2">
@@ -1563,19 +1565,20 @@ variables</h2>
 <pre class="r"><code>&gt; ###</code></pre>
 </div>
 <div id="impriman-una-tabla-resumen-de-la-regresión" class="section level2">
-<h2>5. Impriman una tabla resumen de la regresión</h2>
+<h2>6. Impriman una tabla resumen de la regresión</h2>
 <pre class="r"><code>&gt; ###</code></pre>
 </div>
 <div id="interpreten-los-coeficientes" class="section level2">
-<h2>6. Interpreten los coeficientes</h2>
+<h2>7. Interpreten los coeficientes</h2>
 <pre class="r"><code>&gt; ###</code></pre>
 </div>
-<div id="qué-ajuste-tiene-la-regresión" class="section level2">
-<h2>7. ¿Qué ajuste tiene la regresión?</h2>
+<div id="qué-ajuste-tiene-la-regresión-qué-proporción-de-la-variabilidad-de-la-variable-dependiente-es-capturada-por-el-modelo" class="section level2">
+<h2>8. ¿Qué ajuste tiene la regresión? ¿Qué proporción de la
+variabilidad de la variable dependiente es capturada por el modelo?</h2>
 <pre class="r"><code>&gt; ###</code></pre>
 </div>
-<div id="generen-e-interpreten-un-residual-plot" class="section level2">
-<h2>8. Generen e interpreten un residual plot</h2>
+<div id="generen-e-interpreten-un-residual-plot-gráfico-de-residuos" class="section level2">
+<h2>9. Generen e interpreten un residual plot (gráfico de residuos)</h2>
 <pre class="r"><code>&gt; ###</code></pre>
 </div>
 

@@ -72,18 +72,18 @@ La línea que minimiza este criterio de mínimos cuadrados se representa como la
 
 - Es el método más utilizado.
 - El cálculo de la línea de mínimos cuadrados es ampliamente compatible con el software estadístico.
-- En muchas aplicaciones, un residual dos veces más grande que otro residual es más del doble de malo. Por ejemplo, estar equivocado en 4 suele ser más del doble de malo que estar equivocado en 2. Elevar al cuadrado los residuos da cuenta de esta discrepancia.
+- En muchas aplicaciones puede ser útil penalizar más fuertemente los errores grandes que los pequeños. Al elevar al cuadrado los residuos, un error dos veces mayor recibe cuatro veces más peso en la función que estamos minimizando. Por ejemplo, estar equivocado en 4 suele ser más del doble de malo que estar equivocado en 2. Elevar al cuadrado los residuos da cuenta de esta discrepancia.
 - Los análisis que vinculan el modelo con la inferencia sobre una población son más directos cuando la línea se ajusta por mínimos cuadrados.
 
 Las dos primeras razones son en gran parte por tradición y conveniencia; las razones tercera y cuarta explican por qué el criterio de mínimos cuadrados suele ser más útil cuando se trabaja con datos reales. Obviamente, existen situaciones (que no vamos a cubrir por ahora) en las que la suma de los absolutos de los desvíos pueden ser bastante más útiles.
 
 
 ### La recta de mínimos cuadrados
-Para los datos de Botswana podemos escribir ahora la ecuacion de regresión:
+Para los datos de la población de Botswana podemos escribir ahora la ecuacion de regresión:
 
 $$\hat{wei} =  -52.3162 + 0.6294 \times height$$
 
-La idea, entonces, es poder "predecir" el peso utilizando la altura. Los parámetros de la recta ($\beta_{0}, \beta_{1}$) son estimados mediante los datos ($wei, height$). En la práctica, esta estimación se hace usando una computadora. Pero también podría hacerse (de la misma manera que otras estimaciones, como la media de una muestra), usando una computadora o una calculadora.
+La idea, entonces, es poder "predecir" el peso utilizando la altura. Los parámetros de la recta ($\beta_{0}, \beta_{1}$) son estimados mediante los datos ($wei, height$). En la práctica, esta estimación se hace usando una computadora/software estadístico. Conocer las fórmulas permiten comprender de dónde provienen los coeficientes y permiten calcularlos manualmente, de la misma manera que otras estimaciones, como la media de una muestra.
 
 El software estadístico generalmente se usa para calcular la línea de mínimos cuadrados y el resultado típico generado como resultado del ajuste de los modelos de regresión se parece al que se muestra en la tabla siguiente. Por ahora nos centraremos en la primera columna de la salida, que enumera $\beta_{0}$ y  $\beta_{1}$. 
 
@@ -103,13 +103,13 @@ Interpretar el parámetro de pendiente es útil en casi cualquier aplicación. P
 
 ---
 
-**Para pensar tranquiles...**
+**Para pensar con tranquilidad...**
 
 ¿Qué queremos decir con que son datos "observacionales"? ¿Y por qué no podemos inferir causalidad de este tipo de datos? ¿Qué tipo de datos necesitaríamos para poder inferir causalidad?
 
 ---
 
-El intercepto estimado es negativo. En este caso, no tiene demasiado valor de interpretación, en tanto, no podemos afirmar que existe un peso negativo. Pero existen situaciones en las que es posible interpretar este parámetro como el promedio de la variable dependiente si la independiente fuese cero.
+El intercepto estimado es negativo. En este caso, no tiene demasiado valor de interpretación, en tanto, no podemos afirmar que existe un peso negativo (porque implicaría el peso esperado para una persona con 0 cm de altura: un valor que no pertenece al rango de valores posibles y observados de altura). Pero existen situaciones en las que es posible interpretar este parámetro como el promedio de la variable dependiente si la independiente fuese cero.
 
 ---
 
@@ -119,7 +119,7 @@ La pendiente describe la diferencia estimada en el resultado promedio pronostica
 
 ---
 
-Una forma alternativa de calcular los valores de la intersección y la pendiente de una línea de mínimos cuadrados es haciendo cuentas a mano mediante fórmulas. Si bien los estadísticos en ejercicio y los científicos de datos no suelen utilizar los cálculos manuales, es útil pensar de esta forma una primera vez sobre la línea de mínimos cuadrados y el modelado en general. 
+Recordemos que una forma alternativa de calcular los valores de la intersección y la pendiente de una línea de mínimos cuadrados es haciendo cuentas a mano mediante fórmulas. Si bien los estadísticos en ejercicio y los científicos de datos no suelen utilizar los cálculos manuales, es útil pensar de esta forma una primera vez sobre la línea de mínimos cuadrados y el modelado en general. 
 
 Estas fórmulas se basan en el método de mínimos cuadrados. Si les interesa alguna nota histórica al respecto pueden consultar este [link en Wikipedia](https://es.wikipedia.org/wiki/M%C3%ADnimos_cuadrados). La historia del método es interesante y está en el centro de una pelea entre Gauss y Legendre (dos matemáticos) respecto de la autoría del mismo.
 
@@ -206,7 +206,7 @@ En resumen, hubo una reducción de
 
 $$\frac{41.68908 - 17.94113}{41.68908} = 0.56964 \approx 0.57$$
 
-aproximadmante el 57% de la variación de la variable dependiente (`wei`) al usar información sobre la `height` y modelando su relación de forma lineal. Resulta que $R^2$ corresponde exactamente al valor al cuadrado de la correlación:
+aproximadmante el 57% de la variación de la variable dependiente (`wei`) al usar información sobre la `height` y modelando su relación de forma lineal. El 43% restante corresponde a la variabilidad que no es capturada por este modelo lineal. Resulta que $R^2$ corresponde exactamente al valor al cuadrado de la correlación:
 
 ```{r}
 cor(df_mayores$height, df_mayores$weight)
@@ -285,14 +285,14 @@ La ecuación quedaría escrita
 $$\hat{wei}_{i} = 41.81 + 6.778 \times male_{i}$$
 El intercepto ($\beta_{0}$) en este caso es el peso promedio cuando `male==0`; es decir, el peso promedio cuando el caso NO es varón. 
 
-La pendiente ($\beta_{1}$) puede ser interpreatada de la siguiente manera: si el caso es varón entonces, debemos sumarle al promedio del peso 6.778 kg. Es decir, que los varones son en promedio 6.77kg. más pasados que les no varones.
+La pendiente ($\beta_{1}$) puede ser interpreatada de la siguiente manera: si el caso es varón entonces, debemos sumarle al promedio del peso 6.778 kg. Es decir, que los varones son en promedio 6.77kg. más pesados que quienes no son varones.
 
 
 ---
   
 **Interpretación de las estimaciones del modelo para predictores categóricos**
 
-El intercepto estimado es el valor de la variable de resultado para la primera categoría (es decir, la categoría correspondiente a un valor de indicador de 0). La pendiente estimada es el cambio promedio en la variable de resultado entre las dos categorías.
+El intercepto estimado es el valor de la variable de resultado para la primera categoría (la categoría de referencia es la que se encuentra codificada con el valor de indicador 0). La pendiente estimada es el cambio promedio en la variable de resultado entre las dos categorías.
 
 ---
 
@@ -327,7 +327,7 @@ Hay tres gráficos más abajo junto con la línea de mínimos cuadrados y gráfi
 
 ![](./img/outlier-plots-2-1.png)
 
-- D: Hay una nube primaria y luego una pequeña nube secundaria de cuatro valores atípicos. La nube secundaria parece estar influyendo en la línea con cierta fuerza, lo que hace que la línea de mínimos cuadrados encaje mal en casi todas partes. Puede haber una explicación interesante para las nubes duales, que es algo que podría investigarse.
+- D: Hay una nube primaria y luego una pequeña nube secundaria de cuatro valores atípicos. La nube secundaria parece estar influyendo en la línea con cierta fuerza, lo que hace que la línea de mínimos cuadrados encaje mal en casi todas partes. Puede haber una explicación interesante para las nubes duales, podría indicar la presencia de un grupo diferente dentro de los datos, es algo que podría investigarse (indagar qué representan esas observaciones).
 - E: No hay una tendencia obvia en la nube principal de puntos y el valor atípico de la derecha parece controlar en gran medida (y de manera problemática) la pendiente de la línea de mínimos cuadrados.
 - F: Hay un valor atípico lejos de la nube. Sin embargo, cae bastante cerca de la línea de mínimos cuadrados y no parece ser muy influyente.
 
@@ -337,7 +337,7 @@ Si miran las gráficas de residuos en las dos figuras anteriores probablemente e
 
 **Leverage ("palanca")**
 
-Los puntos que caen horizontalmente alejándose del centro de la nube tienden a tirar más fuerte de la línea, por lo que los llamamos puntos con alto apalancamiento o puntos de apalancamiento.
+Los puntos que caen horizontalmente alejándose del centro de la nube tienden a tirar más fuerte de la línea, por lo que los llamamos "puntos con alto apalancamiento" o "puntos de apalancamiento".
 
 ---
 
@@ -345,16 +345,17 @@ Los puntos que caen horizontalmente lejos de la recta de regresión son puntos d
 
 ---
 
-**Tipos de outliers (valores atípico)**
+**Tipos de outliers (valores atípicos)**
 
-Un punto (o un grupo de puntos) que sobresale del resto de los datos se denomina valor atípico. Los valores atípicos que se alejan horizontalmente del centro de la nube de puntos se denominan puntos de apalancamiento. Los valores atípicos que influyen en la pendiente de la línea se denominan puntos influyentes.
+Un punto (o un grupo de puntos) que sobresale del resto de los datos se denomina valor atípico. Los valores atípicos que se alejan horizontalmente del centro de la nube de puntos se denominan puntos de apalancamiento. Los valores atípicos que influyen en la pendiente de la línea se denominan puntos influyentes. Un punto influyente es aquel cuya presencia tiene un efecto importante sobre los resultados del modelo. Un buen ejercicio de práctica, por ejemplo, puede ser evaluar cuánto cambian los coeficientes estimados al ajustar el modelo: incluyendo y excluyendo esa observación.
 
 ---
 
-Es tentador proceder a eliminar los valores atípicos sin demasiada más reflexión que mirar un boxplot. En general, no es una buena idea haerlo sin una buena razón. Los modelos que ignoran casos excepcionales (e interesantes) a menudo funcionan mal. Por ejemplo, si una empresa financiera ignorara las oscilaciones más grandes del mercado, los "valores atípicos", pronto quebraría debido a inversiones mal pensadas.
+Es tentador proceder a eliminar los valores atípicos sin demasiada más reflexión que mirar un boxplot. En general, no es una buena idea hacerlo sin una buena razón. Los modelos que ignoran casos excepcionales (e interesantes) a menudo funcionan mal. Por ejemplo, si una empresa financiera ignorara las oscilaciones más grandes del mercado (los "valores atípicos") pronto quebraría debido a inversiones mal pensadas.  
+Un valor atípico no es necesariamente un error. Puede representar un caso válido e informativamente importante por lo cual, antes de decidir si lo vamos a eliminar, deberíamos investigar por qué se encuentra alejado del resto de los datos.
 
 
 ## Resumen 
 Hemos trabajado sobre ciertos matices del modelo lineal. Hemos aprendido a crear un modelo lineal con variables explicativas que son numéricas y categóricas. 
 
-Los residuos en un modelo lineal son una métrica importante que se utiliza para comprender qué tan bien se ajusta un modelo; los puntos de alto apalancamiento, los puntos influyentes y otros tipos de valores atípicos pueden afectar el ajuste de un modelo. La correlación de Pearson es una medida de la fuerza y la dirección de la relación lineal de dos variables, sin especificar qué variable es la explicativa y cuál es el resultado. 
+Los residuos en un modelo lineal son una métrica importante que se utiliza para comprender qué tan bien se ajusta un modelo; los puntos de alto apalancamiento, los puntos influyentes y otros tipos de valores atípicos pueden afectar el ajuste de un modelo. La correlación de Pearson es una medida de la fuerza y la dirección de la relación lineal de dos variables, sin especificar qué variable es la explicativa y cuál es el resultado.
