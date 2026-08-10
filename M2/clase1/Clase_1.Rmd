@@ -101,7 +101,7 @@ También hay casos en los que ajustar una línea recta a los datos, incluso si e
 Se observa una relación perfecta entre las variables, aunque la misma no es lineal. ¿Qué tipo de relación se les ocurre que podría funcionar aquí? Por ahora vamos a centrarnos en los modelos lineales.
 
 ## Usando regresión lineal para predecir el peso de una población
-Vamos a trabajar con un dataset que proviene del [siguiente repositorio](https://github.com/rmcelreath/rethinking). Son datos censales parciales de un área de Botswana y, específicamente, de la etnia !Kung San. Son datos compilados a partir de e entrevistas realizadas por Nancy Howell a fines de la década de 1960. Los datasets completos (para les antropólogues que les interese) pueden ser recuperados desde [acá](https://tspace.library.utoronto.ca/handle/1807/10395).
+Vamos a trabajar con un dataset que proviene del [siguiente repositorio](https://github.com/rmcelreath/rethinking). Son datos censales parciales de un área de Botswana y, específicamente, de la etnia !Kung San. Son datos compilados a partir de entrevistas realizadas por Nancy Howell a fines de la década de 1960. Los datasets completos (para les antropólogues que les interese) pueden ser recuperados desde [acá](https://tspace.library.utoronto.ca/handle/1807/10395).
 
 Vamos a trabajar con un recorte de estos datos, particularmente, con datos de edad, sexo, altura y peso.
 
@@ -119,7 +119,7 @@ Hagamos un breve análisis descriptivo de estas cuatro variables.
 ```{r}
 summary(df)
 ```
-Tenemos 544 filas, correspondientes a 544 individios. De cada individuo tenemos el registro de su altura (`height`), peso (`weight`), edad (`age`) y si es masculino o no (`male`). Hagamos un gráfico de dispersión del peso y la altura.
+Tenemos 544 filas, correspondientes a 544 individuos. De cada individuo tenemos el registro de su altura (`height`), peso (`weight`), edad (`age`) y si es masculino o no (`male`). Hagamos un gráfico de dispersión del peso y la altura.
 
 ```{r}
 df %>%
@@ -254,7 +254,7 @@ Veamos el punto de máximo residuo: es el que tiene `height=``r max_resid`
 ¿Cómo lo calculamos?
 
 Primero, calculamos el valor predicho: 
-$$\hat{wei} = 52.3162 + 0.6294 \times height = 52.3162 + 0.6294 \times 139.7 = 35.61$$
+$$\hat{wei} = -52.3162 + 0.6294 \times height = -52.3162 + 0.6294 \times 139.7 = 35.61$$
 
 Luego, computamos la diferencia entre el valor observado y el predicho:
 $$\epsilon = wei - \hat{wei}= 50.3 - 35.61 = 14.7$$
@@ -274,7 +274,7 @@ df_mayores %>%
     geom_point() +
     geom_hline(yintercept=0, linetype='dashed') +
     theme_minimal() +
-    labs(x='Valores predichos de height',
+    labs(x='Valores predichos de weight',
          y="Residuos")
 ```
 ```{r, include=FALSE}
@@ -282,9 +282,9 @@ df_mayores <- df_mayores %>%
         select(-resid, -predicted)
 ```
 
-A menudo los mostramos en un diagrama de dispersión como el anterior. Los residuos en el eje y se grafican con el valor predicho por el modelo en el eje horizontal. Crear un residual es algo así como volcar el gráfico de dispersión para que la línea de regresión sea horizontal, como lo indica la línea discontinua. ¿Cuál sería el valor de máximo residuo?
+A menudo los mostramos en un diagrama de dispersión como el anterior. Los residuos en el eje y se grafican con el valor predicho por el modelo en el eje horizontal. Crear un residual es algo así como volcar el gráfico de dispersión para que la línea de regresión sea horizontal, como lo indica la línea discontinua. ¿Cuál sería el valor del máximo residuo?
 
-Uno de los propósitos de las residual plots identificar características o patrones que aún aparecen en los datos después de ajustar un modelo. La siguiente muestra tres diagramas de dispersión con modelos lineales en la primera fila y diagramas residuales en la segunda fila. ¿Pueden identificar algún patrón que quede en los residuos?
+Uno de los propósitos de los residual plots es identificar características o patrones que aún aparecen en los datos después de ajustar un modelo. La siguiente muestra tres diagramas de dispersión con modelos lineales en la primera fila y diagramas residuales en la segunda fila. ¿Pueden identificar algún patrón que quede en los residuos?
 
 ![](./img/sampleLinesAndResPlots-1.png)
 
@@ -352,7 +352,7 @@ Podemos ver que `lm_1` es una lista. Por ahora, pidamos un resumen del objeto:
 summary(lm_1)
 ```
 
-Hay bastante información extra, por ahora vamos a centrar la mirada en la columna de `Estimate`. Puede verse que los valores son los mismos que mencionamos al inicio de la clase. `Intecept` se corresponde con $\beta_{0} = 52.31$ y `height`, con $\beta_{1} = 0.63$. 
+Hay bastante información extra, por ahora vamos a centrar la mirada en la columna de `Estimate`. Puede verse que los valores son los mismos que mencionamos al inicio de la clase. `Intercept` se corresponde con $\beta_{0} = -52.31$ y `height`, con $\beta_{1} = 0.63$. 
 
 Podemos usar la función `names()` para averiguar qué otra información se almacenan en  `lm_1`. 
 
