@@ -1507,6 +1507,10 @@ por una nube de puntos pueden pasar infinitas líneas ¿cómo elegimos (o
 más precisamente, ¿cómo estimamos?) los parámetros de esa recta (<span class="math inline">\((\beta_{0}, \beta_{1})\)</span>? En esta clase
 vamos a trabajar sobre el método de Mínimos Cuadrados Ordinarios (MCO)
 como un enfoque para este problema.</p>
+<p>Como dice Stephen Stigler -gran historiador de la disciplina-, el MCO
+es “el automóvil de la estadística moderna”. En efecto, este método es
+absolutamente central en la práctica profesional y científica en las
+ciencias sociales. Vamos</p>
 <p>Volvamos (hoy, por última vez) a nuestros datos sobre la etnia !Kung
 San.</p>
 <pre class="r"><code>&gt; df &lt;- read_delim(&#39;https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/Howell1.csv&#39;, delim=&quot;;&quot;)
@@ -1551,7 +1555,7 @@ representa como la línea continua en la figura anterior y comúnmente se
 denomina línea de mínimos cuadrados. Podemos pensar en cuatro posibles
 razones para elegir la opción de mínimos cuadrados en lugar de tratar de
 minimizar la suma de las magnitudes residuales sin elevar al
-cuadrado:</p>
+cuadrado.</p>
 <ul>
 <li>Es el método más utilizado.</li>
 <li>El cálculo de la línea de mínimos cuadrados es ampliamente
@@ -1617,12 +1621,12 @@ corresponde mayor peso porque el coeficiente es positivo en el modelo.
 Debemos ser cautelosos en esta interpretación: si bien existe una
 asociación real, no podemos interpretar una conexión causal entre las
 variables porque estos datos son observacionales.</p>
-<hr />
-<p><strong>Para pensar con tranquilidad…</strong></p>
-<p>¿Qué queremos decir con que son datos “observacionales”? ¿Y por qué
-no podemos inferir causalidad de este tipo de datos? ¿Qué tipo de datos
-necesitaríamos para poder inferir causalidad?</p>
-<hr />
+<blockquote>
+<p><small><strong>Para pensar con tranquilidad…</strong> ¿Qué queremos
+decir con que son datos “observacionales”? ¿Y por qué no podemos inferir
+causalidad de este tipo de datos? ¿Qué tipo de datos necesitaríamos para
+poder inferir causalidad? </small></p>
+</blockquote>
 <p>El intercepto estimado es negativo. En este caso, no tiene demasiado
 valor de interpretación, en tanto, no podemos afirmar que existe un peso
 negativo (porque implicaría el peso esperado para una persona con 0 cm
@@ -1630,15 +1634,13 @@ de altura: un valor que no pertenece al rango de valores posibles y
 observados de altura). Pero existen situaciones en las que es posible
 interpretar este parámetro como el promedio de la variable dependiente
 si la independiente fuese cero..</p>
-<hr />
-<p><strong>Interpretación de parámetros estimados por mínimos
-cuadrados.</strong></p>
-<p>La pendiente describe la diferencia estimada en el resultado promedio
-pronosticado de <span class="math inline">\(y\)</span> si la variable
-predictora <span class="math inline">\(X\)</span> pasó a ser una unidad
-más grande. El intercepto describe el resultado promedio de <span class="math inline">\(y\)</span> si <span class="math inline">\(X=0\)</span> y el modelo lineal es válido hasta el
-cero. En muchas situaciones (como en este caso) la variable <span class="math inline">\(X\)</span> no puede tener valor cero.</p>
-<hr />
+<blockquote>
+<p><small> <strong>Interpretación de parámetros estimados por mínimos
+cuadrados.</strong> La pendiente describe la diferencia estimada en el
+resultado promedio pronosticado de <span class="math inline">\(y\)</span> si la variable predictora <span class="math inline">\(X\)</span> pasó a ser una unidad más grande. El
+intercepto describe el resultado promedio de <span class="math inline">\(y\)</span> si <span class="math inline">\(X=0\)</span> y el modelo lineal es válido hasta el
+cero. En muchas situaciones (como en este caso) la variable <span class="math inline">\(X\)</span> no puede tener valor cero.</small></p>
+</blockquote>
 <p>Recordemos que una forma alternativa de calcular los valores de la
 intersección y la pendiente de una línea de mínimos cuadrados es
 haciendo cuentas a mano mediante fórmulas. Si bien los estadísticos y
@@ -1650,13 +1652,13 @@ interesa alguna nota histórica al respecto pueden consultar este <a href="https
 Wikipedia</a>. La historia del método es interesante y está en el centro
 de una pelea entre Gauss y Legendre (dos matemáticos) respecto de la
 autoría del mismo.</p>
-<p>Habíamos dicho que la recta de regresión es la que “pasa más cerca
-por todos los puntos”. Ahora, ¿cómo definimos esa idea general? Una
-primera cosa que tenemos que hacer es definir una medida que resuma es
-“más cerca”. Podríamos pensar en los residuos: efectivamente, si
-calculamos el residuo para cada observación y lo sumamos podríamos tener
-una medida “promedio” del error de la recta, es decir qué tan cerca o
-lejos pasa por todos los puntos:</p>
+<p>Habíamos dicho que la recta de regresión es la que “pasa lo más cerca
+posible de todos los puntos”. Ahora, ¿cómo definimos esa idea general?
+Una primera cosa que tenemos que hacer es definir una medida que resuma
+qué queremos decir con “que pase lo más cerca”. Podríamos pensar en los
+residuos: efectivamente, si calculamos el residuo para cada observación
+y lo sumamos podríamos tener una medida “promedio” del error de la
+recta, es decir qué tan cerca o lejos pasa por todos los puntos:</p>
 <p><span class="math display">\[\sum_{i=1}^n e_{i} = \sum_{i=1}^ny_{i} -
 \hat{y}_{i}\]</span></p>
 <p>Ahora, esta medida tiene un problema: ya vimos a “ojo” en el gráfico
@@ -1687,7 +1689,11 @@ dura) para obtener el valor de <span class="math inline">\(\beta_{1}\)</span>:</
 covarianza de las dos variables y, en el denominador, la varianza de la
 variable independiente. A partir de aquí, el cálculo de <span class="math inline">\(\beta_{0}\)</span> es simple:</p>
 <p><span class="math display">\[\beta_{0} = \overline{y} - \beta_{1}
-\overline{X}\]</span></p>
+\overline{X}\]</span> &gt; <small> Si les interesa, <a href="https://statproofbook.github.io/P/slr-ols.html">aquí</a> dejamos
+una demostración de lo que acabamos de mostrar.</small></p>
+<p>Vamos a tratar de calcula “a mano” los parámetros de la recta de
+regresión con los datos que estamos trabajando. Primero obtenemos media,
+varianza y covarianza de cada variable:</p>
 <pre class="r"><code>&gt; df_mayores %&gt;%
 +   select(height, weight) %&gt;%
 +   summarise(across(everything(), 
@@ -1703,7 +1709,7 @@ variable independiente. A partir de aquí, el cálculo de <span class="math inli
 ##   height_Mean height_Var weight_Mean weight_Var   Cov
 ##         &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;
 ## 1        155.       59.9        45.0       41.7  37.7</code></pre>
-<p>Entonces, podemos reemplazar los valores en las ecuaciones
+<p>Ahora, podemos reemplazar los valores en las ecuaciones
 anteriores:</p>
 <p><span class="math display">\[\beta_{1} = \frac{s_{xy}}{s^2_{x}} =
 \frac{37.72983}{7.74232^2} = \frac{37.72983}{59.94371} =
@@ -1734,11 +1740,11 @@ Generalmente, un modelo lineal es solo una aproximación de la relación
 real entre dos variables. Si <em>extrapolamos</em> estamos haciendo una
 apuesta poco fiable de que la relación lineal aproximada será válida en
 lugares donde no ha sido analizada.</p>
-<hr />
-<p><strong>Actividad breve</strong> Por ejemplo, ¿qué predicción haría
-nuestro modelo sobre el peso de una persona que mide 50 cm. (une niñe)?
-Pueden tomar 5 minutos para calcularlo.</p>
-<hr />
+<blockquote>
+<p><small> <strong>Actividad breve</strong> Por ejemplo, ¿qué predicción
+haría nuestro modelo sobre el peso de una persona que mide 50 cm. (une
+niñe)? Pueden tomar 5 minutos para calcularlo. </small></p>
+</blockquote>
 </div>
 <div id="describir-la-fuerza-de-un-ajuste" class="section level3">
 <h3>Describir la fuerza de un ajuste</h3>
