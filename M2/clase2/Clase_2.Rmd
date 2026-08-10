@@ -83,7 +83,7 @@ Para los datos de la población de Botswana podemos escribir ahora la ecuacion d
 
 $$\hat{wei} =  -52.3162 + 0.6294 \times height$$
 
-La idea, entonces, es poder "predecir" el peso utilizando la altura. Los parámetros de la recta ($\beta_{0}, \beta_{1}$) son estimados mediante los datos ($wei, height$). En la práctica, esta estimación se hace usando una computadora/software estadístico. Conocer las fórmulas permiten comprender de dónde provienen los coeficientes y permiten calcularlos manualmente, de la misma manera que otras estimaciones, como la media de una muestra.
+La idea, entonces, es poder "predecir" el peso utilizando la altura. Los parámetros de la recta ($\beta_{0}, \beta_{1}$) son estimados mediante los datos ($wei, height$). En la práctica, esta estimación se hace usando una computadora/software estadístico. Conocer las fórmulas permite comprender de dónde provienen los coeficientes y permite calcularlos manualmente, de la misma manera que otras estimaciones, como la media de una muestra.
 
 El software estadístico generalmente se usa para calcular la línea de mínimos cuadrados y el resultado típico generado como resultado del ajuste de los modelos de regresión se parece al que se muestra en la tabla siguiente. Por ahora nos centraremos en la primera columna de la salida, que enumera $\beta_{0}$ y  $\beta_{1}$. 
 
