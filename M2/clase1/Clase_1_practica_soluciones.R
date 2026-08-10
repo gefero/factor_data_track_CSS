@@ -1,4 +1,9 @@
+library(tidyverse)
 ## Prácticos
+df <- read_delim('https://raw.githubusercontent.com/rmcelreath/rethinking/master/data/Howell1.csv', delim=";")
+df_mayores <- df %>%
+        filter(age >= 18)
+
 ### Calcular los residuos de la regresión anterior. Agregarlos como columna en el dataset original.
 df_mayores <- df_mayores %>%
         mutate(weight_pred = predict(lm_1, df_mayores),
