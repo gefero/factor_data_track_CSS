@@ -118,6 +118,7 @@ El intercepto estimado es negativo. En este caso, no tiene demasiado valor de in
 La pendiente describe la diferencia estimada en el resultado promedio pronosticado de $y$ si la variable predictora $X$  pasó a ser una unidad más grande. El intercepto describe el resultado promedio de $y$ si $X=0$ y el modelo lineal es válido hasta el cero. En muchas situaciones (como en este caso) la variable $X$ no puede tener valor cero.
 
 ---
+
 Recordemos que una forma alternativa de calcular los valores de la intersección y la pendiente de una línea de mínimos cuadrados es haciendo cuentas a mano mediante fórmulas. Si bien los estadísticos y los científicos de datos no suelen utilizar los cálculos manuales, es útil pensar de esta forma una primera vez sobre la línea de mínimos cuadrados y el modelado en general. 
 
 Estas fórmulas se basan en el método de mínimos cuadrados. Si les interesa alguna nota histórica al respecto pueden consultar este [link en Wikipedia](https://es.wikipedia.org/wiki/M%C3%ADnimos_cuadrados). La historia del método es interesante y está en el centro de una pelea entre Gauss y Legendre (dos matemáticos) respecto de la autoría del mismo.
