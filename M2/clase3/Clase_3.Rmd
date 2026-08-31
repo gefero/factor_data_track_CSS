@@ -30,13 +30,13 @@ Este texto se basa en los siguientes materiales:
 ***
 
 ## Introducción: regresión múltiple para investigar la determinación de ingresos
-En base a lo que estuvimos viendo acerca de una regresión lineal simple, ahora vamos a trabajar con una familia de modelos que se llaman "regresión lineal múltiple"; es decir que vamos a tener dos o más variables predictoras. Al considerar cómo interactúan las diferentes variables explicativas, podemos descubrir relaciones complicadas entre las variables predictoras y la variable de respuesta. Un desafío para trabajar con varias variables es que a veces es difícil saber cuáles variables son las más importantes para incluir en el modelo. La construcción de modelos es un tema extenso y complicado. Aquí vamos a dar una breve introducción al tema a partir del uso del $R^2$.
+En base a lo que estuvimos viendo acerca de una regresión lineal simple, ahora vamos a trabajar con una familia de modelos que se llaman "regresión lineal múltiple"; es decir que vamos a tener dos o más variables predictoras. Al considerar simultáneamente diferentes variables explicativas, podemos descubrir relaciones complicadas entre las variables predictoras y la variable de respuesta. Un desafío para trabajar con varias variables es que a veces es difícil saber cuáles son las variables resultan más importantes para incluir en el modelo. La construcción de modelos es un tema extenso y complicado. Aquí vamos a dar una breve introducción al tema a partir del uso del $R^2$.
  
 La regresión múltiple extiende la idea de la regresión de predictor único. Todavía tenemos una variable de respuesta pero, ahora, nos encontramos con varios predictores (denotados $X_{1}, X_{2}, ..., X_{p}$). La idea (más o menos obvia) es que existen situaciones en las que muchas variables pueden conectarse simultáneamente a una misma variable resultado.
 
 En este caso, vamos a trabajar con problema bien clásico en las ciencias sociales: el proceso de determinación de ingresos. ¿Cuáles son las variables y los procesos que gobiernan la determinación de las remuneraciones que perciben los distintos sectores de una sociedad?
 
-Van a poder encontrar un muy interesante resúmen teórico en el libro de E. O. Wright citado al principio. Aquí nos vamos a centrar en la cuestión de ciertas diferencias metodológicas entre tres grandes cuerpos teóricos:
+Van a poder encontrar un muy interesante resumen teórico en el libro de E. O. Wright citado al principio. Aquí nos vamos a centrar en la cuestión de ciertas diferencias metodológicas entre tres grandes cuerpos teóricos:
 
 - el marxismo
 - la teoría del capital humano
@@ -46,16 +46,16 @@ El cuadro siguiente resume las principales diferencias entre las tres posturas t
 
 ![](./img/eow_income_theories.jpg)
 
-Aquí nos vamos a centrar en tres cuestiones. La primera tiene que ver con las diferencias entre las unidades de análisi: mientras que en la teoría marxista hay al menos tres -estructuras, clases e individuos-, las teorías del capital humano y del "logro" solamente cuentan a los individuos como unidades fundamentales. 
+Aquí nos vamos a centrar en tres cuestiones. La primera tiene que ver con las diferencias entre las unidades de análisis: mientras que en la teoría marxista hay al menos tres -estructuras, clases e individuos-, las teorías del capital humano y del "logro" solamente cuentan a los individuos como unidades fundamentales. 
 
-Al mismo tiempo, si observamos un poco los mecanismos de "causalidad" (nótense las comillas que ponemos a propósito) puede verse que mientras que las teorías "liberales" solo trabajan con mecanismos de causación "temporales"; en el esquema marxista (en parte debido a las diferentes unidades de análisis que juegan) vemos diferentes mecanismos de causación estructural. 
+Al mismo tiempo, si observamos los mecanismos de "causalidad" (nótense las comillas intencionales) puede verse que mientras que las teorías "liberales" solo trabajan con mecanismos de causación "temporales"; en el esquema marxista (en parte debido a las diferentes unidades de análisis que juegan) vemos diferentes mecanismos de causación estructural. 
 
-Por último, en el mecanismo de determinación de ingresos también hay diferentes campos de relaciones sociales en juego. En las teorías liberales consideran solamente cierto campo de las relaciones técnicas de producción (aquellas que determinan los procesos de trabajo calificados o no, la productividad del capital, etc.) y las relaciones de mercado (el mercado de trabajo, el "mercado" educativo, etc.). En cambio, las teorías marxistas consideran un campo más amplio de relaciones socialas: relaciones técnicas, de intercambio, relaciones de propiedad y producción, relaciones políticas, etc.
+Por último, en el mecanismo de determinación de ingresos también hay diferentes campos de relaciones sociales en juego. En las teorías liberales consideran solamente cierto campo de las relaciones técnicas de producción (aquellas que determinan los procesos de trabajo calificados o no, la productividad del capital, etc.) y las relaciones de mercado (el mercado de trabajo, el "mercado" educativo, etc.). En cambio, las teorías marxistas consideran un campo más amplio de relaciones sociales: relaciones técnicas, de intercambio, relaciones de propiedad y producción, relaciones políticas, etc.
 
 Sobre esta base, E. O. Wright va a proponer unas cuantas hipótesis acerca de las diferentes formas de determinación de ingresos en las diferentes clases. No nos vamos a detener por ahora con eso...
 
 
-## Analizando de ingresos con la ENES
+## Analizando los ingresos con la ENES
 Hoy vamos a trabajar nuevamente con la Encuesta Nacional sobre Estructura Social, llevada adelante por el PISAC. Pueden encontrar más información [aquí](https://www.argentina.gob.ar/ciencia/pisac/bases-de-datos).
 
 ```{r}
@@ -65,7 +65,7 @@ df <- read_rds('./data/ENES_Personas_M1_EOW.rds')
 
 ## Variables dummies y predictores categóricos
 
-Vamos a empezar entrenando una regresión lineal simple con una variable dummie dicotómica respecto al género. Como sabemos la ENES indaga sobre dos categorías de género (masculino y femenino) y una tercera categoría (otros). Dado que esta última presenta valores de frecuencias muy bajos, la vamos a dicotomizar.
+Vamos a empezar entrenando una regresión lineal simple con una variable dummy dicotómica respecto al género. Como sabemos, la ENES indaga sobre dos categorías de género (masculino y femenino) y una tercera categoría (otros). Dado que esta última presenta valores de frecuencias muy bajos, la vamos a dicotomizar.
 
 ```{r}
 df <- df %>% 
@@ -135,22 +135,22 @@ Como podemos ver el output de la regresión anterior muestra dos filas para dos 
 
 Podemos escribir la ecuación como si fuera un modelo de regresión (de hecho, lo es) con dos predictores
 
-$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times nivel\_ed\_agg_{1\_medio}+ 3367.7 \times nivel\_ed\_agg_{2\_alto}$$
+$$\hat{ingr\_ocup\_ppal} = 4585.3 + 1302.7 \times nivel\_ed\_agg_{1\_medio}+ 3367.7 \times nivel\_ed\_agg_{2\_alto}$$
 Usamos la notación $variable_{\ nivel}$ para representar variables dummies cuando la variable categórica toma un valor particular. Por ejemplo, $nivel\_ed\_agg_{alto}$ va a tomar un valor 1 cuando el nivel educativo sea alto y cero en caso contrario. Igualmente, $nivel\_ed\_agg_{medio}$ va a tomar valor 1 cuando el registro presente un nivel educativo medio y cero si tomara cualquier otro valor.
 
 Ahora bien, ¿cómo usamos e interpretamos este esquema de codificación? Veamos un ejemplo: vamos a calcular el ingreso promedio (usando nuestro modelo) para personas de nivel educativo bajo. Cuando el $nivel\_ed\_agg$ toma un valor "bajo", las dos variables indicadoras o dummies del modelo lineal, se setean en cero.
 
-$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times 0 + 3367.7 \times 0 \\
- \hat{ingr\_ocup\_ppal} = 4535.3$$
+$$\hat{ingr\_ocup\_ppal} = 4585.3 + 1302.7 \times 0 + 3367.7 \times 0 \\
+ \hat{ingr\_ocup\_ppal} = 4585.3$$
 
-El ingreso promedio de las personas con nivel educativo bajo es de $4535.3. Esta categoría no tiene un coeficiente propio (porque no entra como variable dummy) y es la categoría de referencia, entonces, los coeficientes del resto de las categorías se "borran".
+El ingreso promedio de las personas con nivel educativo bajo es de $4585.3. Esta categoría no tiene un coeficiente propio (porque no entra como variable dummy) y es la categoría de referencia, entonces, los coeficientes del resto de las categorías se "borran" (los términos asociados a las otras categorías aportan 0 al valor predicho, porque sus variables dummy toman el valor 0).
 
 Ahora, computemos el ingreso de una persona con nivel educativo medio. Se aplica la misma lógica; solamente que ahora, el coeficente que se va a cero es el de $nivel\_ed\_agg_{alto}$
 
-$$\hat{ingr\_ocup\_ppal} = 4535.3 + 1302.7 \times 1 + 3367.7 \times 0 \\
- \hat{ingr\_ocup\_ppal} = 5838$$
+$$\hat{ingr\_ocup\_ppal} = 4585.3 + 1302.7 \times 1 + 3367.7 \times 0 \\
+ \hat{ingr\_ocup\_ppal} = 5888$$
  
- El ingreso medio de la ocupación principal de las personas con nivel educativo medio es de $5961.3.
+ El ingreso medio de la ocupación principal de las personas con nivel educativo medio es de $5888
  
 
 ---
@@ -165,7 +165,7 @@ Calculen el ingreso medio de las personas con nivel educativo alto
 ### Predictores con varias categorías.
 
 Al ajustar un modelo de regresión con una variable categórica que tiene $k$ niveles o categorías donde
-$k > 2$, el software proporcionará $k - 1$ de esos coeficientes. El último nivel (el que no tiene un coeficiente=) es el nivel de referencia. Los coeficientes de los demás niveles se consideran relativos a este nivel de referencia.
+$k > 2$, el software proporcionará $k - 1$ de esos coeficientes. El último nivel (el que no tiene un coeficiente=) es el nivel de referencia. Los coeficientes de los demás niveles se consideran relativos a este nivel de referencia. 
 
 En este modelo, no parece haber nada demasiado contraintuitivo. Los coeficientes de los dos niveles $alto$ y $medio$ son positivos. Lo cual implica que ambos ganan más que el nivel educativo $bajo$. Y, de hecho, el coeficiente de $nivel\_ed\_agg_{alto}$ es casi 2.5 veces mayor que el de $nivel\_ed\_agg_{medio}$. Ahora bien, ¿qué otras variables podrían estar influyendo en esta relación?
 
@@ -208,7 +208,7 @@ Calculamos $\beta_{0}, \beta_{1}, ..., \beta_{8}$ de la misma manera que hicimos
 
 $$SSE = e_{1}^2 + e_{2}^2 + ... + e_{12135}^2 = \sum_{i=1}^{12135} e_{i}^2 = \sum_{i=1}^{12135} (y_{i} -\hat{y_{i}})^2$$
 
-dónde $y_{i}$ y $\hat{y_{i}}$ representan los ingresos de la ocupación principal y sus valores predichos  según el modelo, respectivamente. Se calculan 12.135 residuales, uno para cada observación de personas ocupadas. Es importante tener en cuenta que estos valores son estadísticos muestrales y, en el caso de que los datos observados sean una muestra aleatoria de una población objetivo sobre la que estamos interesados en hacer inferencias, son estimaciones de los parámetros de la población. Discutiremos la inferencia basada en modelos lineales en unas clases más. Por ahora nos centraremos en calcular estadísticos muestrales sin mayores complicaciones.
+donde $y_{i}$ y $\hat{y_{i}}$ representan los ingresos de la ocupación principal y sus valores predichos  según el modelo, respectivamente. Se calculan 12.135 residuales, uno para cada observación de personas ocupadas. Es importante tener en cuenta que estos valores son estadísticos muestrales y, en el caso de que los datos observados sean una muestra aleatoria de una población objetivo sobre la que estamos interesados en hacer inferencias, son estimaciones de los parámetros de la población. Discutiremos la inferencia basada en modelos lineales en unas clases más. Por ahora nos centraremos en calcular estadísticos muestrales sin mayores complicaciones.
 
 Por lo general, usamos una computadora para minimizar la suma de los cuadrados y calcular las estimaciones puntuales:
 
@@ -218,11 +218,12 @@ lm2 <- df %>% filter(estado == 'Ocupado') %>% lm(v213b ~ t_hogar +  v108 + v109 
 tidy(lm2)
 ```
 
-Si contamos el número de coeficientes predictores, obtenemos el número efectivo de predictores en el modelo; hay 8 predictores "efectivos". Es importante notar que los predictores categóricos cuentan de forma diferente: la variable `v109` (género) supone introducir un predictor efectivo, dado que es dicotómica. En cambio, `nivel_ed_agg` y `clase_eow_agg` introducen dos y 3 predictores efectivos, respectivamente: uno  cada uno de los dos niveles que se muestran en el modelo. En general, un predictor categórico con $p$ diferentes niveles estarán representados por $p - 1$ términos en un modelo de regresión múltiple. 
+Si contamos el número de coeficientes predictores (sin incluir el intercepto, claro), obtenemos el número efectivo de predictores en el modelo; hay 8 predictores "efectivos". Es importante notar que los predictores categóricos cuentan de forma diferente: la variable `v109` (género) supone introducir un predictor efectivo, dado que es dicotómica. En cambio, `nivel_ed_agg` y `clase_eow_agg` introducen dos y 3 predictores efectivos, respectivamente: uno  cada uno de los dos niveles que se muestran en el modelo. En general, un predictor categórico con $p$ diferentes niveles estarán representados por $p - 1$ términos en un modelo de regresión múltiple. 
+Es por este motivo que hablar de "predictores efectivos" no es necesariamente lo mismo que variables conceptuales (una variable conceptual puede generar más de un coeficiente).
 
 Si examináramos los datos cuidadosamente, veríamos algunas diferencias con el caso de la regresión lineal simple. Por ejemplo, cuando modelamos la relación del entre el ingreso laboral y el género (al principio de la clase) vimos que el $\beta_{1}$ (la pendiente) era de \$-1787.8. Ahora, en este nuevo modelo más completo pasó a ser \$-2181.8. ¿Por qué hay una diferencia entre los valores de los coeficientes entre los modelos con predictor único y múltiple?
 
-En nuestro primer modelo (simple) no pudimos controlar otras variables que pueden estar afectando el ingreso como por ejemplo, el nivel educativo o la clase social y muchas otras. Ese modelo original se construyó "en un vacío" y no consideró el contexto completo de todas las otras muchas variables y determinaciones que afectan el nivel de ingresos de una persona. Cuando incluimos otras variables, se reduce ese sesgo subyacente e involuntario. Por supuesto, el sesgo aún puede existir debido a otras variables de confusión.
+En nuestro primer modelo (simple) no pudimos controlar otras variables que pueden estar afectando el ingreso como, por ejemplo, el nivel educativo, la clase social y muchas otras. Ese modelo original se construyó "en un vacío" y no consideró el contexto completo de todas las otras variables y determinaciones que afectan el nivel de ingresos de una persona. Cuando incluimos otras variables, se reduce ese sesgo subyacente e involuntario, podemos analizar la asociación entre género e ingreso manteniendo constantes las demás variables incluidas en el modelo. Por supuesto, la incorporación de variables no garantiza la eliminación del mismo, aún puede existir debido a otras variables de confusión, problemas de medición o una especificación incorrecta del modelo.
 
 ---
 
@@ -280,13 +281,13 @@ $$R^2 = 1 - \frac{s^2_{residuos} / (n-k-1)}{s^2_{var\_depend} / (n-1)} \\
       = 1 - \frac{s^2_{residuos}}{s^2_{var\_depend}} \times \frac{n-1}{n-k-1}$$
       
       
-dónde $n$ es el número de observaciones utilizadas para ajustar el modelo y $k$ es el número de variables predictoras en el modelo. Recuerden que un predictor categórico con $p$ niveles o categorías va a agregar $p − 1$ varables al modelo.  
+donde $n$ es el número de observaciones utilizadas para ajustar el modelo y $k$ es el número de variables predictoras en el modelo. Recuerden que un predictor categórico con $p$ niveles o categorías va a agregar $p − 1$ variables al modelo.  
 
 ---
 
 El $R^2$ sin ajustar siempre aumenta o, en el peor de los casos, se mantiene igual cuando se agregan más variables al modelo, incluso si esas variables no aportan significativamente al ajuste. Esto puede dar una falsa impresión de que el modelo está mejorando. 
 
-Dado que $k$ nunca es negativo, el $R^2$ ajustado siempre será más pequeño, a menudo un poco más pequeño, que el $R^2$ no ajustado. El razonamiento está en los grados de libertad asociados con cada varianza, que es igual a $n − k − 1$ en el contexto de la regresión múltiple. Si tuviéramos que hacer predicciones para nuevos datos usando nuestro modelo actual, encontraríamos que el $R^2$ tendería a ser un poco demasiado optimista, mientras que el ajustado $R^2$ fórmula ayuda a corregir este sesgo.
+Dado que $k$ nunca es negativo, el $R^2$ ajustado siempre será más pequeño, a menudo un poco más pequeño, que el $R^2$ no ajustado. El razonamiento está en los grados de libertad asociados con cada varianza, que es igual a $n − k − 1$ en el contexto de la regresión múltiple. Si tuviéramos que hacer predicciones para nuevos datos usando nuestro modelo actual, encontraríamos que el $R^2$ tendería a ser un poco demasiado optimista, mientras que en el ajustado $R^2$ la fórmula ayuda a corregir este sesgo.
 
 Dicho de forma más simple: el $R^2$ ajustado penaliza, de cierta forma, la inclusión de variables innecesarias, lo que lo hace más confiable para evaluar si una nueva variable realmente mejora el modelo.
 
