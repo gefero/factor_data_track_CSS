@@ -1482,7 +1482,7 @@ border-radius: 0px;
 (II)</h1>
 <h3 class="subtitle">Colinealidad</h3>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">03 agosto, 2026</h4>
+<h4 class="date">31 agosto, 2026</h4>
 
 </div>
 
@@ -1577,40 +1577,149 @@ segundo, es 0.008.</p>
 problemas de colinealidad al ajustar el modelo. Una forma sencilla de
 detectar la colinealidad es observar la matriz de correlación de los
 predictores. Una celda de esta matriz con valores grandes indica un par
-de variables altamente correlacionadas.</p>
+de variables altamente correlacionadas:</p>
+<pre class="r"><code>&gt; df_menores %&gt;%
++         select(age, height) %&gt;%
++         cor(method = &quot;pearson&quot;)
+##             age   height
+## age    1.000000 0.943313
+## height 0.943313 1.000000</code></pre>
+<p>Vemos, entonces, que <code>age</code> y <code>height</code> presentan
+una alta correlación lineal (medida por el R de Perason).</p>
 <p>Desafortunadamente, no todos los problemas de colinealidad pueden ser
-detectado por inspección de la matriz de correlación: es posible que
-exista colinealidad entre tres o más variables incluso si no hay un par
-de variables tiene una correlación particularmente alta. A esta
-situación la llamamos <em>multicolinealidad</em>. En lugar de
-inspeccionar la matriz de correlación, una mejor manera de evaluar la
-multicolinealidad es calcular el factor de inflación de la varianza
-(VIF, por sus siglas en inglés).</p>
+detectados por inspección de la matriz de correlación. Esta solo nos
+brinda informació sobre correlaciones bivariadas (pares de variables).
+Sin embargo, es posible que exista colinealidad entre tres o más
+variables incluso si no hay un par de variables tiene una correlación
+particularmente alta. A esta situación la llamamos
+<em>multicolinealidad</em>. En lugar de inspeccionar la matriz de
+correlación, una mejor manera de evaluar la multicolinealidad es
+calcular el factor de inflación de la varianza (VIF, por sus siglas en
+inglés <em>Variance Inflation Factor</em>).</p>
 <p>El VIF es el cociente de la varianza de <span class="math inline">\(\beta_{j}\)</span> al ajustar el modelo completo
-dividido por el varianza de <span class="math inline">\(\beta_{j}\)</span> si se ajusta por sí solo. El
+dividido por la varianza de <span class="math inline">\(\beta_{j}\)</span> si se ajusta por sí solo. El
 valor más pequeño posible para VIF es 1, lo que indica la ausencia total
 de colinealidad. Típicamente en la práctica hay una pequeña cantidad de
 colinealidad entre los predictores. Como regla aproximada, un valor VIF
 que excede 5 o 10 indica una cantidad problemática de colinealidad.</p>
-<p>El VIF para cada variable se puede calcular usando la fórmula</p>
+<p>El VIF para cada variable se puede calcular usando la siguiente
+fórmula:</p>
 <p><span class="math display">\[VIF(\beta_{j}) =
 \frac{1}{1-R^2_{X_{j}|X_{-j}}}\]</span></p>
 <p>donde <span class="math inline">\(R^2_{X_{j}|X_{-j}}\)</span> es el
-<span class="math inline">\(R^2\)</span> de una regresión de <span class="math inline">\(X_{j}\)</span> contra todos los otros predictores.
-Si <span class="math inline">\(R^2_{X_{j}|X_{-j}}\)</span> es cercano a
-1, entonces, hay colinealidad, por lo cual <span class="math inline">\(VIF\)</span> será elevado.</p>
+<span class="math inline">\(R^2\)</span> de una regresión de <span class="math inline">\(X_{j}\)</span> contra todos los otros
+predictores.</p>
+<p>Conviene detenerse en qué es esa regresión auxiliar: se trata de
+hacer una regresión de <span class="math inline">\(X_{j}\)</span> contra
+los <strong>demás predictores</strong>, sin usar la variable
+dependiente. Su <span class="math inline">\(R^2\)</span> responde a la
+pregunta: ¿cuánto de la variación de <span class="math inline">\(X_{j}\)</span> ya está contenida en el resto del
+modelo? Si la respuesta es “casi toda”, esa variable aporta poca
+información propia y su coeficiente queda mal identificado.</p>
+<p>La lógica es la siguiente: se toma la variable <span class="math inline">\(X_{i}\)</span> y se hace una regresión
+utilizándola como variable dependiente. Esta regresión intenta
+“explicar” su comportamiento en función de todas las demás variables
+independientes del modelo original. Así, si <span class="math inline">\(X_{i}\)</span> no puede ser explicada por el resto
+de los predictores, entonces <span class="math inline">\(R^2_{X_{j}|X_{-j}}\)</span> será cercano a 0 y el
+<span class="math inline">\(VIF\)</span> será cercano a 1. Por el
+contrario, di <span class="math inline">\(R^2_{X_{j}|X_{-j}}\)</span> es
+cercano a 1, entonces, hay colinealidad, por lo cual <span class="math inline">\(VIF\)</span> será elevado.</p>
+<p>Podemos calcularlo a mano para ver que no hay nada mágico en la
+función <code>vif()</code>. Tomemos <code>height</code> y regresémosla
+contra los otros dos predictores del modelo:</p>
+<pre class="r"><code>&gt; aux &lt;- lm(height ~ age + male, data=df_menores)
+&gt; 
+&gt; r2_aux &lt;- summary(aux)$r.squared
+&gt; r2_aux
+## [1] 0.894438
+&gt; 
+&gt; 1 / (1 - r2_aux)
+## [1] 9.473102</code></pre>
+<p>Como el VIF multiplica la <em>varianza</em> del coeficiente, sobre el
+<em>error estándar</em> el efecto es <span class="math inline">\(\sqrt{VIF}\)</span>. Eso permite traducir cada
+valor a algo directamente interpretable: cuánto más ancho es el
+intervalo de confianza respecto del caso sin colinealidad.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right"><span class="math inline">\(R^2_{X_{j}\vert
+X_{-j}}\)</span></th>
+<th align="right">VIF</th>
+<th align="left">Multiplicador del error estándar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.00</td>
+<td align="right">1.0</td>
+<td align="left"><span class="math inline">\(\times\)</span> 1.00
+(ausencia de colinealidad)</td>
+</tr>
+<tr class="even">
+<td align="right">0.50</td>
+<td align="right">2.0</td>
+<td align="left"><span class="math inline">\(\times\)</span> 1.41</td>
+</tr>
+<tr class="odd">
+<td align="right">0.80</td>
+<td align="right">5.0</td>
+<td align="left"><span class="math inline">\(\times\)</span> 2.24</td>
+</tr>
+<tr class="even">
+<td align="right">0.89</td>
+<td align="right">9.5</td>
+<td align="left"><span class="math inline">\(\times\)</span> 3.08</td>
+</tr>
+<tr class="odd">
+<td align="right">0.90</td>
+<td align="right">10.0</td>
+<td align="left"><span class="math inline">\(\times\)</span> 3.16</td>
+</tr>
+</tbody>
+</table>
+<p>Es decir: un VIF de 10 no significa que el modelo esté “mal”, sino
+que el intervalo de confianza de ese coeficiente es unas 3 veces más
+ancho de lo que sería si la variable fuera independiente del resto.</p>
+<p>Veamos ahora la función:</p>
 <pre class="r"><code>&gt; vif(model1)
 ##   height      age     male 
 ## 9.473102 9.437404 1.043606</code></pre>
 <p>Vemos cómo <code>height</code> y <code>age</code> tienen valores
-bastante cercanos a nuestro límite.</p>
+bastante cercanos a nuestro límite. Noten que el valor de
+<code>height</code> coincide con el que calculamos a mano más
+arriba.</p>
+<p>Estos números cierran el ejercicio que hicimos al principio. Pasemos
+los VIF a escala de error estándar:</p>
+<pre class="r"><code>&gt; sqrt(vif(model1))
+##   height      age     male 
+## 3.077841 3.072036 1.021570</code></pre>
+<p>El error estándar de <code>height</code> debería ser aproximadamente
+3 veces mayor en el modelo completo que en un modelo sin colinealidad.
+Eso es exactamente lo que observamos al comparar <code>model1</code> con
+<code>model2</code>: 0.0247 contra 0.0083.</p>
+<p>El VIF, entonces, no informa nada que no pudiéramos ver comparando
+modelos a mano. Su ventaja es que lo hace <strong>de una sola vez, para
+todos los predictores y sin necesidad de reestimar nada</strong>. En un
+modelo con quince variables, la comparación manual es inviable.</p>
+<p>Antes de pasar a las soluciones, conviene fijar un criterio: la
+colinealidad <strong>no deteriora el ajuste ni la capacidad predictiva
+del modelo</strong>. Las predicciones dentro del rango de los datos
+siguen siendo tan buenas como antes. Lo único que se degrada es la
+posibilidad de atribuir un efecto a cada variable por separado. De ahí
+que la decisión dependa del objetivo:</p>
+<ul>
+<li>Si el objetivo es <strong>predecir</strong> un VIF alto puede
+ignorarse.</li>
+<li>Si el objetivo es <strong>interpretar coeficientes</strong> hay que
+resolverlo.</li>
+</ul>
 <p>Ante el problema de la colinealidad, existen dos soluciones
 sencillas. La primera es eliminar una de las variables problemáticas de
 la regresión. Esto generalmente se puede hacer sin mucho compromiso con
-la regresión. ajuste, ya que la presencia de colinealidad implica que la
-información que este variable proporciona sobre la respuesta es
-redundante en presencia de la otras variables.</p>
-<p>La segunda solución puede ser combinar las varaibles colineales en un
+el ajuste de la regresión, ya que la presencia de colinealidad implica
+que la información que esa variable proporciona sobre la respuesta es
+redundante en presencia de las otras variables.</p>
+<p>La segunda solución puede ser combinar las variables colineales en un
 solo predictor. Una opción es generar alguna tipología o algún índice.
 Veremos en el módulo 3 algunas formas de reducción de dimensionalidad
 (<a href="https://gefero.github.io/factor_data_track_CSS/M3/clase1/Clase_1.html">Análisis
@@ -1661,6 +1770,35 @@ variables podrían tener algún grado de colinealidad?</p>
 ## class_eow_agg 1.088522  3        1.014237</code></pre>
 <p>Pese a haber cierto grado de colinealidad (esperable, por cierto)
 ninguno supera el valor límite de 5.</p>
+<div id="una-aclaración-sobre-el-gvif" class="section level3">
+<h3>Una aclaración sobre el GVIF</h3>
+<p>Habrán notado que esta salida tiene tres columnas y la anterior una
+sola. La diferencia es que acá hay predictores categóricos de más de dos
+categorías. Cuando eso ocurre, la variable entra al modelo como varias
+dummies y no tiene un único coeficiente, así que <code>car::vif()</code>
+devuelve el <strong>GVIF</strong> (VIF generalizado), que evalúa el
+bloque completo de dummies:</p>
+<ul>
+<li><code>Df</code>: los grados de libertad, es decir la cantidad de
+dummies que genera la variable. <code>nivel_ed_agg</code> tiene 3
+categorías, entonces <code>Df = 2</code>; <code>class_eow_agg</code>
+tiene 4, entonces <code>Df = 3</code>.</li>
+<li><code>GVIF</code>: crece con la cantidad de categorías, así que
+<strong>no</strong> es comparable con los umbrales de 5 y 10.</li>
+<li><code>GVIF^(1/(2*Df))</code>: es la versión corregida por
+<code>Df</code>, y es la que hay que mirar. Como está en escala de error
+estándar (no de varianza), se compara con <span class="math inline">\(\sqrt{5} = 2.24\)</span> y <span class="math inline">\(\sqrt{10} = 3.16\)</span>; equivalentemente, se la
+puede elevar al cuadrado y comparar contra 5 y 10 directamente.</li>
+</ul>
+<p>Hagamos esa última transformación para poder leer la salida con los
+umbrales de siempre:</p>
+<pre class="r"><code>&gt; vif(lm_enes)[, 3]^2
+##       t_hogar          v108          v109  nivel_ed_agg class_eow_agg 
+##      1.089919      1.161298      1.063069      1.091319      1.028677</code></pre>
+<p>Todos los valores quedan muy por debajo de 5. Para las variables con
+<code>Df = 1</code>, <code>GVIF</code> coincide con el VIF común y las
+tres columnas dicen lo mismo.</p>
+</div>
 </div>
 
 
