@@ -46,7 +46,7 @@ El cuadro siguiente resume las principales diferencias entre las tres posturas t
 
 ![](./img/eow_income_theories.jpg)
 
-Aquí nos vamos a centrar en tres cuestiones. La primera tiene que ver con las diferencias entre las unidades de análisi: mientras que en la teoría marxista hay al menos tres -estructuras, clases e individuos-, las teorías del capital humano y del "logro" solamente cuentan a los individuos como unidades fundamentales. 
+Aquí nos vamos a centrar en tres cuestiones. La primera tiene que ver con las diferencias entre las unidades de análisis: mientras que en la teoría marxista hay al menos tres -estructuras, clases e individuos-, las teorías del capital humano y del "logro" solamente cuentan a los individuos como unidades fundamentales. 
 
 Al mismo tiempo, si observamos un poco los mecanismos de "causalidad" (nótense las comillas que ponemos a propósito) puede verse que mientras que las teorías "liberales" solo trabajan con mecanismos de causación "temporales"; en el esquema marxista (en parte debido a las diferentes unidades de análisis que juegan) vemos diferentes mecanismos de causación estructural. 
 
@@ -131,7 +131,7 @@ lm <- df %>% filter(estado=='Ocupado') %>% lm(v213b~nivel_ed_agg, data=.)
 tidy(lm)
 ```
 
-Como podemos ver el output de la regresión anterior muestra dos filas para dos categorías de la variable `nivel_ed_agg`. Cada fila representa la diferencia relativa para cada una de esas categorías. Sin embargo, falta una categoría: `nivel_ed_agg0_Bajo`. A esa categoría se llama "categoría de referencia" y representa el nivel por defecto contra el cual todos los otros niveles son comparados.
+Como podemos ver el output de la regresión anterior muestra dos filas para dos categorías de la variable `nivel_ed_agg`. Cada fila representa la diferencia relativa para cada una de esas categorías. Sin embargo, falta una categoría: `nivel_ed_agg_Bajo`. A esa categoría se llama "categoría de referencia" y representa el nivel por defecto contra el cual todos los otros niveles son comparados.
 
 Podemos escribir la ecuación como si fuera un modelo de regresión (de hecho, lo es) con dos predictores
 
@@ -202,7 +202,7 @@ $$
                          \beta_{8} \times clase\_eow\_agg_{trabaj}
 $$
 
-Esta ecuación representa un enfoque para modelar todas las variables simultáneamente. Observen que hay dos coeficientes para `niv_ed_agg` y tres coeficientes para `class_eow_agg`, ya que ambas son variables categóricas de 2 y 3 niveles, respectivamente.
+Esta ecuación representa un enfoque para modelar todas las variables simultáneamente. Observen que hay dos coeficientes para `niv_ed_agg` y tres coeficientes para `class_eow_agg`, ya que ambas son variables categóricas de 3 y 4 niveles, respectivamente.
 
 Calculamos $\beta_{0}, \beta_{1}, ..., \beta_{8}$ de la misma manera que hicimos en el caso de un modelo con un solo predictor. Seleccionamos valores que minimizan la suma de los cuadrados de los residuos:
 
@@ -226,13 +226,13 @@ En nuestro primer modelo (simple) no pudimos controlar otras variables que puede
 
 ---
 
-**Para discutir...**
+#### Para discutir...
 
 ¿Qué variables relevantes podríamos estar dejando afuera de este modelo?
 
----
 
-**Actividad**
+#### Actividad
+
 - Cuántas variables conceptuales hay en este modelo?
 - Armar la ecuación completa del modelo
 - Interpretar el coeficiente de la variable `t_hogar` (tamaño del hogar) 
@@ -241,8 +241,6 @@ En nuestro primer modelo (simple) no pudimos controlar otras variables que puede
 ---
 
 
----
-
 ### Regresión lineal múltiple
 Un modelo de regresión lineal múltiple es un modelo lineal con muchos predictores. En general, podemos escribir el modelo como
 
@@ -250,11 +248,10 @@ $$\hat{y_{i}} =  \beta_{0} + \beta_{1} X_{1} + \beta_{2} X_{2} + ... + \beta_{k}
 
 donde hay $k$ predictores. Siempre vamos a calcular los $\beta_{i}$ mediante algún software.
 
----
 
 ---
 
-**Actividades**
+#### Actividades
 
 - Interprete el coeficiente asociado a la variable edad (`v108`) y a la variable tamaño del hogar (`t_hogar`).
 - Computar el residuo de la primera observación del dataset usando el modelo completo
@@ -272,17 +269,14 @@ donde $e_{i}$ representa los residuos del modelo e $y_{i}$ los valores observado
 Esta estrategia para estimar $R^2$ es aceptable cuando hay una sola variable. Sin embargo, se vuelve menos útil cuando hay muchas variables. El $R^2$ "común" es una estimación sesgada de la cantidad de variabilidad explicada por el modelo cuando se aplica a un modelo con más de un predictor. Para obtener una mejor estimación, usamos el $R^2$ ajustado.
 
 
----
 
-### Fórmula para R2 ajustado
+#### Fórmula para R2 ajustado
 
 $$R^2 = 1 - \frac{s^2_{residuos} / (n-k-1)}{s^2_{var\_depend} / (n-1)} \\
       = 1 - \frac{s^2_{residuos}}{s^2_{var\_depend}} \times \frac{n-1}{n-k-1}$$
       
       
 dónde $n$ es el número de observaciones utilizadas para ajustar el modelo y $k$ es el número de variables predictoras en el modelo. Recuerden que un predictor categórico con $p$ niveles o categorías va a agregar $p − 1$ varables al modelo.  
-
----
 
 El $R^2$ sin ajustar siempre aumenta o, en el peor de los casos, se mantiene igual cuando se agregan más variables al modelo, incluso si esas variables no aportan significativamente al ajuste. Esto puede dar una falsa impresión de que el modelo está mejorando. 
 
@@ -292,10 +286,9 @@ Dicho de forma más simple: el $R^2$ ajustado penaliza, de cierta forma, la incl
 
 ---
 
-**Actividad**
+#### Actividad
 
 Supongamos que agregamos otro predictor al modelo, pero la varianza de los errores $Var(e_{i})$ no baja. ¿Qué pasaría con el $R^2$ sin ajustar? ¿Qué pasaría con el $R^2$ ajustado?
-
 
 ---
 
