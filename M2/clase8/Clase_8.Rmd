@@ -37,11 +37,13 @@ En la clase pasada, los p-valores se calcularon en cada uno de los coeficientes 
 
 Aquí, usamos el error de predicción de validación cruzada para centrarnos en qué variable(s) son importantes para predecir la variable de respuesta de interés. En general, los modelos lineales también se utilizan para hacer predicciones de observaciones individuales. Además de la construcción de modelos, la validación cruzada proporciona un método para generar predicciones que no se ajustan demasiado al conjunto de datos en particular. 
 
-La validación cruzada es una técnica computacional que elimina algunas observaciones antes de ejecutar un modelo y luego evalúa la precisión del modelo en la muestra reservada. Al eliminar algunas observaciones, nos proporcionamos una evaluación independiente del modelo (es decir, las observaciones eliminadas no contribuyen a encontrar los parámetros que minimizan la ecuación de mínimos cuadrados). La validación cruzada se puede usar de muchas maneras diferentes (como una evaluación independiente), y aquí solo vamos a tocar la superficie: solo vamos a mencionar una de las múltiples forma en que se puede usar la técnica para comparar modelos. 
+La validación cruzada es una técnica computacional que elimina algunas observaciones antes de ejecutar un modelo y luego evalúa la precisión del modelo en la muestra reservada. Al eliminar un subconjunto de observaciones, nos proporcion una evaluación independiente del modelo (es decir, las observaciones eliminadas no contribuyen a encontrar los parámetros que minimizan la ecuación de mínimos cuadrados). La validación cruzada se puede usar de muchas maneras diferentes (como una evaluación independiente) y aquí solo vamos a tocar la superficie: solo vamos a mencionar una de las múltiples forma en que se puede usar la técnica para comparar modelos. 
 
 ![](./imgs/CV.png)
 
-Nuestro objetivo en esta sección es comparar dos modelos de regresión diferentes que buscan predecir los ingresos de la ocupación principal de las personas ocupadas. Vamos a trabajar, como de costumbre, con la ENES-PISCAC y la idea es retomar algunas de las preguntas que nos planteamos hace algunas clases sobre los procesos de determinación de los ingresos. Pero, a diferencia de los primeros intentos en los que trabajamos sobre todos los individuos del dataset, aquí vamos a trabajar con PSHs y cónyuges. Esto nos va a permitir utilizar algunas variables relevantes sobre el origen social (que Erik Olin Wright usaba en su modelo de determinación de ingresos). Vamos a empezar entrenando un modelo simple: uno que busca predecir el ingreso de la ocupación principal a partir de una variable 
+Nuestro objetivo en esta sección es comparar dos modelos de regresión diferentes que buscan predecir los ingresos de la ocupación principal de las personas ocupadas. Vamos a trabajar, como de costumbre, con la ENES-PISCAC y la idea es retomar algunas de las preguntas que nos planteamos hace algunas clases sobre los procesos de determinación de los ingresos. 
+
+Pero, a diferencia de los primeros intentos en los que trabajamos sobre todos los individuos del dataset, aquí vamos a trabajar con PSHs y cónyuges. Esto nos va a permitir utilizar algunas variables relevantes sobre el origen social (que Erik Olin Wright usaba en su modelo de determinación de ingresos). Vamos a empezar entrenando un modelo simple: uno que busca predecir el ingreso de la ocupación principal a partir de una variable 
 
 
 
@@ -49,9 +51,10 @@ Nuestro objetivo en esta sección es comparar dos modelos de regresión diferent
 
 **Error de predicción**
 
-El error de preducción (también llamado anteriormente residuo) es la diferencia entre el valor observado y el valor pronosticado (del modelo de regresión).
+Recordemos qué es el error de preducción (también llamado anteriormente residuo): es la diferencia entre el valor observado y el valor pronosticado (del modelo de regresión).
 
-$$error\_prediccion_{i} = e_{i} = y_{i} - \hat{y}_{i}$$
+$error\_prediccion_{i} = e_{i} = y_{i} - \hat{y}_{i}$
+
 ---
 
 ```{r}
@@ -270,7 +273,7 @@ tidy(model_sin_ned)
 
 Cada uno de estos modelos fue entrenado en 3/4 del dataset y las predicciones fueron hechas en el 1/4 restante. Ahora, podemos comparar cómo performa cada modelo en ese 1/4 que NO fue utilizado para entrenar cada modelo. Simplemente tenemos que comparar las predicciones hechas en el 1/4 restante con los valores reales de ese mismo 1/4. 
 
-Para eso vamos a usar la media de la suma de los errores al cuadrado como métrica de validación de las predicciones (MSE). 
+Para eso vamos a usar la media de la suma de los errores al cuadrado como métrica de validación de las predicciones (MSE). Recordemos la fórmula:
 
 $$MSE = \frac{1}{n}\sum_{i=1}^n(y_{i} - \hat{y}_{i})^2$$
 
@@ -284,11 +287,6 @@ Entonces, en este fold, tenemos que
 errores[4,]
 ```
 
-
-```{r}
-errores[4,]
-```
-
 el modelo full tiene un $CV\_RMSE_{k=4} = \$5758.6$, el modelo sin clases $CV\_RMSE_{k=4} = \$5954.1$ y el modelo sin nivel educativo, de $CV\_RMSE_{k=4} = \$5871.4$. ¿Qué podemos decir al respecto de estos valores?
 
 Ahora bien, repetimos esta operación en cada uno de los 1/4 que vamos dejando "reservados" de forma iterativa. De esta forma, al finalizar el proceso de validación cruzada tenemos 4 estimaciones del error diferentes para cada uno de los modelos:
@@ -296,14 +294,12 @@ Ahora bien, repetimos esta operación en cada uno de los 1/4 que vamos dejando "
 ```{r}
 errores
 ```
-
 Para obtener una métrica agregada del error "cross validado", simplemente, promediamos para cada modelo cada una de las métricas de cada fold.
 
 ```{r}
 errores %>%
   summarise(across(everything(), mean))
 ```
-
 
 El RMSE de validación cruzada es la suma del error cuadrático asociado con las predicciones. Si $\hat{y}_{cv,i}$ es la predicción para la i-ésima observación donde la i-ésima observación formaba parte del "holdout fold" y las otras tres partes fueron las que se usaron para entrenar el modelo, entonces, el $CV\_RMSE$ del modelo completo es $5944.072
 
@@ -320,8 +316,8 @@ $$CV\_RMSE = \frac{1}{k}\sum_{1}^k(RMSE_{k})$$
 Vemos, entonces, que si comparamos el modelo completo con los dos siguientes podemos ver que al eliminar la variable de clase social el error se incrementa un 3.3%. En cambio, al eliminar la variable de nviel educativo, el error se incrementa un 1.9%. Por esto, podemos decir que la variable `EOW_class` es más relevante que `ned_agg`. 
 
 $$\begin{aligned}
-&\frac{sin\_clase}{full} - 1 = \frac{6137.681}{5944.072} - 1 = 0.0326\\
-&\frac{sin\_ned}{full} - 1 = \frac{6056.209}{5944.072} - 1 = 0.0189
+&\frac{sin\_clase - full}{full} = \frac{sin\_clase}{full} - 1 = \frac{6137.681}{5944.072} - 1 = 0.0326\\
+&\frac{sin\_ned - full}{full} = \frac{sin\_ned}{full} - 1 = \frac{6056.209}{5944.072} - 1 = 0.0189
 \end{aligned}
 $$
 
@@ -415,67 +411,5 @@ Hemos proporcionado una descripción general muy breve y un ejemplo utilizando l
 A partir del modelo trabajado en la parte teórica, evalúen la importancia de la variable vinculada al origen social: la claificación del PSH del hogar en que el respondente residía cuando tenía 15 años.
 
 ```{r}
-set.seed(753)
-df_ocupados <- df_ocupados %>%
-        slice_sample(n=nrow(df_ocupados), replace=FALSE)
-
-# Definimos la cantidad de grupos
-k <- 4
-
-# Creamos k grupos del mismo tamaño
-folds <- seq(1, nrow(df_ocupados)) %>%
-          cut_interval(., n=k) %>%
-          as.numeric()
-
-# Hacemos cross validation
-errores <- tibble(full = numeric(),
-                  sin_clase = numeric(),
-                  sin_ned = numeric(),
-                  sin_ms = numeric()
-                  )
-
-for(i in 1:k){
-  #Segement your data by fold using the which() function 
-  test_index <-  which(folds==i, arr.ind=TRUE)
-  test <- df_ocupados %>% slice(test_index)
-  train <- df_ocupados %>% slice(-test_index)
-  
-  model_full <- train %>%
-          lm(v213b ~ v108 + nivel_ed_agg + EOW_class_ + MS_CNO_calif , data = .)
-  
-  model_sin_clase <- train %>% 
-          lm(v213b ~ v108 + nivel_ed_agg + MS_CNO_calif, data = .)
-  
-  model_sin_ned <- train %>%
-          lm(v213b ~ v108 + EOW_class_ + MS_CNO_calif, data = .)
-  
-  model_sin_ms <-  train %>%
-          lm(v213b ~ v108 + nivel_ed_agg + EOW_class_ , data = .)
-
-  y_pred_full <- predict(model_full, test)
-  y_pred_sin_clase <- predict(model_sin_clase, test)
-  y_pred_sin_ned <- predict(model_sin_ned, test)
-  y_pred_sin_ms <- predict(model_sin_ms, test)
-
-  
-  err <- tibble(
-                full = sqrt(mean((test$v213bi - y_pred_full)**2)),
-                sin_clase = sqrt(mean((test$v213bi - y_pred_sin_clase)**2)),
-                sin_ned = sqrt(mean((test$v213bi - y_pred_sin_ned)**2)),
-                sin_ms = sqrt(mean((test$v213bi - y_pred_sin_ms)**2))
-                )
-  
-  errores <- errores %>% add_row(err)
-  
-}
+###
 ```
-
-
-```{r}
-errores %>%
-  summarise(across(everything(), mean))
-```
-
-
-
-

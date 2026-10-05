@@ -223,11 +223,7 @@ cc2 %>%
 - Calculen los límites exactos del intervalo de confianza para `age_mother`
 
 ```{r}
-cc2 %>%
-  pivot_longer(cols=-id_sample) %>%
-  group_by(name) %>%
-  summarise(lim_inf = quantile(value, probs=0.025),
-            lim_sup = quantile(value, probs=0.975))
+###
 ```
 
 - ¿Qué pueden decir de la relación entre edad de la madre y peso de la persona?
@@ -324,7 +320,6 @@ tidy(lm1)
 Las entradas en la primera columna representan las estimaciones de mínimos cuadrados $\beta_{0}$ y $\beta_{1}$, y los valores de la segunda columna corresponden a los errores estándar de cada estimación. Usando las estimaciones, podríamos escribir la ecuación para la línea de regresión de mínimos cuadrados como
 
 $$\hat{y} = 45.72 - 0.017 \times X$$
-
 Puede usarse un estadístico t para la prueba de hipótesis en el contexto de datos numéricos. La regresión es muy similar. En las hipótesis que consideramos, el valor nulo de la pendiente es 0, por lo que podemos calcular el estadístico de prueba usando la fórmula de T:
 
 
@@ -393,7 +388,7 @@ Al ajustar una línea de mínimos cuadrados, generalmente requerimos
 
 ---
 
-Los supuestos a menudo se recuerdan usando el mnemotécnico LINE. Las condiciones de linealidad, normalidad e igualdad de varianza generalmente se pueden evaluar a través de gráficos de residuos. Se debe realizar una cuidadosa consideración del diseño experimental para confirmar que los valores observados son realmente independientes.
+Los supuestos a menudo se recuerdan usando el mnemotécnico LINE. Ya vimos que las condiciones de linealidad, normalidad e igualdad de varianza generalmente se pueden evaluar a través de gráficos de residuos. Se debe realizar una cuidadosa consideración del diseño muestral para confirmar que los valores observados son realmente independientes.
 
 - L: modelo lineal
 - I: observaciones independientes

@@ -1480,7 +1480,7 @@ border-radius: 0px;
 
 <h1 class="title toc-ignore">Intermedio: loops</h1>
 <h4 class="author">Germán Rosati</h4>
-<h4 class="date">23 septiembre, 2024</h4>
+<h4 class="date">05 octubre, 2026</h4>
 
 </div>
 
@@ -1494,7 +1494,8 @@ Datos</a> de Hadley Wickham ***</li>
 <pre class="r"><code>&gt; library(tidyverse)
 &gt; library(broom)
 &gt; library(car)
-&gt; library(patchwork)</code></pre>
+&gt; library(patchwork)
+&gt; </code></pre>
 <div id="introducción" class="section level2">
 <h2>Introducción</h2>
 <p>En general, suele ser importante tratar de escribir código no
@@ -1526,28 +1527,32 @@ nos escapa del objetivo de este intermezzo.</p>
 <div id="for-loops" class="section level2">
 <h2><code>for</code> loops</h2>
 <p>Imagimemos que tenemos esta tabla:</p>
-<pre class="r"><code>&gt; df &lt;- tibble(a = rnorm(10), b = rnorm(10), c = rnorm(10), d = rnorm(10))</code></pre>
+<pre class="r"><code>&gt; df &lt;- tibble(
++   a = rnorm(10),
++   b = rnorm(10),
++   c = rnorm(10),
++   d = rnorm(10)
++ )</code></pre>
 <p>y queremos calcular la mediana de cada columna. Podríamos hacerlo
 copiando y pegando:</p>
 <pre class="r"><code>&gt; median(df$a)
-## [1] 0.5393077</code></pre>
+## [1] -0.1211349</code></pre>
 <pre class="r"><code>&gt; median(df$b)
-## [1] 0.0828265</code></pre>
+## [1] 0.4748701</code></pre>
 <pre class="r"><code>&gt; median(df$c)
-## [1] 0.1109587</code></pre>
+## [1] -0.05535954</code></pre>
 <pre class="r"><code>&gt; median(df$c)
-## [1] 0.1109587</code></pre>
+## [1] -0.05535954</code></pre>
 <p>Pero es medio engorroso. También podríamos hacerlo con las
 herramientas <code>tidy</code>. Pero la idea hoy es hacerlo con un
 <code>for</code> loop.</p>
 <pre class="r"><code>&gt; output &lt;- vector(&quot;double&quot;, ncol(df))  # 1. output
-&gt; for (i in seq_along(df)) {
-+     # 2. secuencia
-+     output[[i]] &lt;- median(df[[i]])  # 3. cuerpo
+&gt; for (i in seq_along(df)) {            # 2. secuencia
++   output[[i]] &lt;- median(df[[i]])      # 3. cuerpo
 + }
 &gt; 
 &gt; output
-## [1]  0.5393077  0.0828265  0.1109587 -0.3920435</code></pre>
+## [1] -0.12113492  0.47487012 -0.05535954  0.84951295</code></pre>
 <p>Cada bucle tiene tres componentes:</p>
 <ol style="list-style-type: decimal">
 <li>output: <code>output &lt;- vector(&quot;double&quot;, length(x))</code>. Antes
@@ -1571,8 +1576,8 @@ anterioridad. Es una versión segura de la más familiar
 vector de longitud cero, <code>seq_along()</code> hace lo correcto:</p>
 <pre class="r"><code>&gt; y &lt;- vector(&quot;double&quot;, 0)
 &gt; seq_along(y)
-## integer(0)</code></pre>
-<pre class="r"><code>&gt; 1:length(y)
+## integer(0)
+&gt; 1:length(y)
 ## [1] 1 0</code></pre>
 <p>Probablemente no vas a crear un vector de longitud cero
 deliberadamente, pero es fácil crearlos accidentalmente. Si usamos 1:
@@ -1611,10 +1616,15 @@ objeto.</li>
 <p>Algunas veces querrás usar un bucle for para modificar un objeto
 existente. Por ejemplo, recuerda el desafío que teníamos en el capítulo
 sobre funciones. Queríamos reescalar cada columna en un data frame:</p>
-<pre class="r"><code>&gt; df &lt;- tibble(a = rnorm(10), b = rnorm(10), c = rnorm(10), d = rnorm(10))
+<pre class="r"><code>&gt; df &lt;- tibble(
++   a = rnorm(10),
++   b = rnorm(10),
++   c = rnorm(10),
++   d = rnorm(10)
++ )
 &gt; rescale01 &lt;- function(x) {
-+     rng &lt;- range(x, na.rm = TRUE)
-+     (x - rng[1])/(rng[2] - rng[1])
++   rng &lt;- range(x, na.rm = TRUE)
++   (x - rng[1]) / (rng[2] - rng[1])
 + }
 &gt; 
 &gt; df$a &lt;- rescale01(df$a)
@@ -1632,7 +1642,7 @@ columnas, por lo que podemos iterar sobre cada columna con
 </ul>
 <p>Esto nos da:</p>
 <pre class="r"><code>&gt; for (i in seq_along(df)) {
-+     df[[i]] &lt;- rescale01(df[[i]])
++   df[[i]] &lt;- rescale01(df[[i]])
 + }</code></pre>
 <p>Por lo general, se modificará una lista o un data frame con este tipo
 de bucle, así que recuerda utilizar <code>[[</code> y no <code>[</code>.
@@ -1661,8 +1671,8 @@ porque dada la posición se puede extraer tanto el nombre como el
 valor:</p></li>
 </ul>
 <pre class="r"><code>&gt; for (i in seq_along(df)) {
-+     name &lt;- names(df)[[i]]
-+     value &lt;- df[[i]]
++   name &lt;- names(df)[[i]]
++   value &lt;- df[[i]]
 + }</code></pre>
 </div>
 </div>
@@ -1672,7 +1682,7 @@ valor:</p></li>
 <li>Calculen la media aritmética de este vector usando un
 <code>for</code> loop:</li>
 </ol>
-<pre class="r"><code>&gt; vec &lt;- c(3, 4, 6, 2, 6, 8, 9, 2, 3, 4, 5, 7, 8, 9, 4, 2, 3, 5, 7, 8, 9, 1)
+<pre class="r"><code>&gt; vec &lt;- c(3,4,6,2,6,8,9,2,3,4,5,7,8,9,4,2,3,5,7,8,9,1)
 &gt; 
 &gt; ###</code></pre>
 <ol start="2" style="list-style-type: decimal">
